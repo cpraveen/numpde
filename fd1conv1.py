@@ -1,5 +1,7 @@
 """
-Convergence of finite difference for first derivative
+Convergence of finite difference approximation to first derivative using
+backward, forward and central difference.
+              u(x) = sin(2*pi*x), x in [0,1]
 """
 import numpy as np
 import matplotlib.pyplot as plt

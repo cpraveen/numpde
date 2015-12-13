@@ -1,5 +1,6 @@
 """
-Convergence of finite difference for first derivative
+Convergence of finite difference approximation of first derivative when
+function is in C^2 but not in C^3
 """
 import numpy as np
 import matplotlib.pyplot as plt
