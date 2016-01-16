@@ -33,9 +33,18 @@ for n in npt:
     errf.append(np.abs(dfe - dff).max())
     errc.append(np.abs(dfe - dfc).max())
     
+# Compute convergence rates
+print "%5s %17s %10s %10s" % ('h','Backward','Forward','Central')
+for i in range(1,len(hh)):
+    pb = np.log(errb[i-1]/errb[i])/np.log(2)
+    pf = np.log(errf[i-1]/errf[i])/np.log(2)
+    pc = np.log(errc[i-1]/errc[i])/np.log(2)
+    print "%e   %f   %f   %f" % (hh[i],pb,pf,pc)
+
+# Plot error vs h
 plt.loglog(hh,errb,'o-',hh,errf,'*-',hh,errc,'s--')
 plt.xlabel('h')
 plt.ylabel('Maximum error')
 plt.legend(('Backward','Forward','Central'),loc='lower right')
-plt.title('First derivative for $u(x)=|x|^3$, $x\in[-1,1]$')
+plt.title('First derivative for $u(x)=x+\exp(-|x|^3)$, $x\in[-1,1]$')
 plt.show()

@@ -1,5 +1,7 @@
 """
-Convergence of finite difference
+Convergence of finite difference for 
+u(x) = sin(2*pi*x), x in [0,1]
+First and second derivative using central difference
 """
 import numpy as np
 import matplotlib.pyplot as plt
