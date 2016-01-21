@@ -1,7 +1,8 @@
 """
-Solve -u'' = f using finite difference
+Solve -u'' = f using finite difference on different grids
+If f(x) = sin(x) then the exact solution is u(x) = sin(x)
 """
-from numpy import pi, sin, linspace, zeros, ones, abs
+from numpy import pi, sin, linspace, zeros, ones, abs, log
 import matplotlib.pyplot as plt
 from tdma import *
 
@@ -30,13 +31,19 @@ def error(n):
     u[1:-1] = tdma(2*ones(n-2),-ones(n-2),-ones(n-2),b)
     return h, abs(uexact(x)-u).max()
 
-
+# Compute error norm for different meshes
 h = []; err = []
 for n in [20,40,80,160,320]:
     h1, err1 = error(n)
-    print "h = %e   err = %e" % (h1, err1)
     h.append(h1); err.append(err1)
 
+# Compute convergence rate in L2 norm
+print "h = %e   err = %e" % (h[0], err[0])
+for i in range(1,len(h)):
+    p = log(err[i-1]/err[i])/log(2)
+    print "h = %e   err = %e  rate = %f" % (h[i], err[i], p)
+
+# Plot error norm vs h
 plt.loglog(h, err, 'o-')
 plt.xlabel('h')
 plt.ylabel('Maximum Error')
