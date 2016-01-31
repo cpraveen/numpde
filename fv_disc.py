@@ -67,7 +67,7 @@ def solve(n):
 
 # Compute error norm for different meshes
 h = []; err = []
-for n in [21,41,81,161,321]:
+for n in [19,39,79,159,319]:
     h1, err1 = solve(n)
     h.append(h1); err.append(err1)
 
