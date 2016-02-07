@@ -3,72 +3,9 @@
 #include <cmath>
 #include <fstream>
 
+#include "array2d.h"
+
 using namespace std;
-
-class Array2D
-{
-public:
-   Array2D();
-   Array2D(const unsigned int nx, const unsigned int ny);
-   void resize (const unsigned nx, const unsigned int ny);
-   unsigned int sizex() const;
-   unsigned int sizey() const;
-   double  operator()(const unsigned int i, const unsigned int j) const;
-   double& operator()(const unsigned int i, const unsigned int j);
-   Array2D& operator= (const double scalar);
-   Array2D& operator= (const Array2D& u);
-   
-private:
-   unsigned int nx, ny;
-   vector<double> u;
-};
-
-Array2D::Array2D (const unsigned int nx, const unsigned int ny)
-:
-nx (nx),
-ny (ny)
-{
-   u.resize (nx*ny);
-}
-
-void Array2D::resize(const unsigned int nx, const unsigned int ny)
-{
-   u.resize (nx*ny);
-}
-
-unsigned int Array2D::sizex() const
-{
-   return nx;
-}
-
-unsigned int Array2D::sizey() const
-{
-   return ny;
-}
-
-double Array2D::operator() (const unsigned int i, const unsigned int j) const
-{
-   return u[i + j*nx];
-}
-
-double& Array2D::operator() (const unsigned int i, const unsigned int j)
-{
-   return u[i + j*nx];
-}
-
-Array2D& Array2D::operator= (const double scalar)
-{
-   for (unsigned int i=0; i<nx*ny; ++i)
-      u[i] = scalar;
-   return *this;
-}
-
-Array2D& Array2D::operator= (const Array2D& a)
-{
-   for (unsigned int i=0; i<nx*ny; ++i)
-      u[i] = a.u[i];
-   return *this;
-}
 
 double rhs(const double x, const double y)
 {
@@ -85,7 +22,8 @@ double residual (const double h, const Array2D& u, const Array2D& b)
    for(unsigned int i=1; i<nx-1; ++i)
       for(unsigned int j=1; j<ny-1; ++j)
       {
-         double res1 = - b(i,j) + ihh * ( 4.0 * u(i,j) - u(i-1,j) - u(i+1,j) - u(i,j-1) - u(i,j+1) );
+         double res1 = - b(i,j)
+                       + ihh * ( 4.0 * u(i,j) - u(i-1,j) - u(i+1,j) - u(i,j-1) - u(i,j+1) );
          res += res1 * res1;
       }
    
