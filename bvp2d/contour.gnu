@@ -18,3 +18,9 @@ set xran[0:1]
 set yran[0:1]
 set size square
 plot 'color.dat' with image, 'table.dat' u 1:2 w l lt -1 lw 1.5
+
+set term postscript enhanced color
+set out 'contour.eps'
+replot
+set out
+set term x11

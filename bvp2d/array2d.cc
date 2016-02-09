@@ -56,7 +56,6 @@ Array2D& Array2D::operator= (const double scalar)
 
 Array2D& Array2D::operator= (const Array2D& a)
 {
-   for (unsigned int i=0; i<n; ++i)
-      u[i] = a.u[i];
+   u = a.u;
    return *this;
 }
