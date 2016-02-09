@@ -1,3 +1,7 @@
+/*
+ Solves -Laplace(u) = f in (0,1)x(0,1)
+ with u = 0 on boundary
+*/
 #include <iostream>
 #include <vector>
 #include <cmath>
@@ -7,11 +11,13 @@
 
 using namespace std;
 
+// RHS function f(x,y) in Poisson eqn
 double rhs(const double x, const double y)
 {
    return 1.0;
 }
 
+// Computes L2 norm of residual
 double residual (const double h, const Array2D& u, const Array2D& b)
 {
    const unsigned int nx = u.sizex();
@@ -30,6 +36,7 @@ double residual (const double h, const Array2D& u, const Array2D& b)
    return sqrt(res/((nx-2)*(ny-2)));
 }
 
+// Main function
 int main()
 {
    const unsigned int n = 50;
@@ -41,13 +48,15 @@ int main()
    for(unsigned int i=1; i<n-1; ++i)
       for(unsigned int j=1; j<n-1; ++j)
       {
-         double x = i*h;
-         double y = j*h;
+         double x = i * h;
+         double y = j * h;
          b(i,j) = rhs(x, y);
       }
    
+   // Initial guess is zero
    u = 0.0;
    double res = residual (h, u, b);
+   
    unsigned int iter = 0;
    while (res > 1.0e-6)
    {
@@ -69,11 +78,12 @@ int main()
    {
       for(unsigned int j=0; j<n; ++j)
       {
-         double x = i*h;
-         double y = j*h;
+         double x = i * h;
+         double y = j * h;
          sol << x << "  " << y << "  " << u(i,j) << endl;
       }
       sol << endl;
    }
+   cout << "Saved solution into u.dat\n";
 
 }
