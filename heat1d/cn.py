@@ -1,6 +1,6 @@
 '''
 Solve u_t = mu * u_xx in (0,1) with dirichlet BC
-using BTCS scheme
+using Crank-Nicholson scheme
 '''
 import numpy as np
 import matplotlib.pyplot as plt
@@ -31,14 +31,16 @@ def solve(N, lam, Tf):
     wait = raw_input("Press enter to continue ")
 
     # Construct tridiagonal matrix and compute its LU decomposition
-    a = (1.0+2.0*lam)*np.ones(N-2)
-    b = -lam*np.ones(N-2)
-    c = -lam*np.ones(N-2)
+    a = (1.0+lam)*np.ones(N-2)
+    b = -0.5*lam*np.ones(N-2)
+    c = -0.5*lam*np.ones(N-2)
     tdma1 (a, b, c)
 
+    rhs = np.zeros(N-2)
     t, it = 0.0, 0
     while t < Tf:
-        u[1:-1] = tdma2(a, b, c, u[1:-1])
+        rhs[:] = 0.5*lam*u[0:-2] + (1-lam)*u[1:-1] + 0.5*lam*u[2:]
+        u[1:-1] = tdma2(a, b, c, rhs)
         t += dt; it += 1
         print "t = ", t
 
