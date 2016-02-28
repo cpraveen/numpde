@@ -1,3 +1,6 @@
+"""
+Solve u_t + u_x = 0 with periodic bc
+"""
 import numpy as np
 import matplotlib.pyplot as plt
 import argparse
@@ -10,6 +13,21 @@ def update_ftbs(nu, u):
     for i in range(1,len(u)):
         unew[i] = (1-nu)*u[i] + nu*u[i-1]
     unew[0] = unew[-1]
+    return unew
+
+def update_ftfs(nu, u):
+    unew = np.empty_like(u)
+    for i in range(0,len(u)-1):
+        unew[i] = (1+nu)*u[i] - nu*u[i+1]
+    unew[-1] = unew[0]
+    return unew
+
+def update_ftcs(nu, u):
+    unew = np.empty_like(u)
+    unew[0] = u[0] + 0.5*nu*(u[-2] - u[1])
+    for i in range(1,len(u)-1):
+        unew[i] = u[i] + 0.5*nu*(u[i-1] - u[i+1])
+    unew[-1] = unew[0]
     return unew
 
 def update_lw(nu, u):
@@ -45,6 +63,10 @@ def solve(N, cfl, scheme, Tf):
     while t < Tf:
         if scheme=='FTBS':
             u = update_ftbs(nu, u)
+        elif scheme=='FTFS':
+            u = update_ftfs(nu, u)
+        elif scheme=='FTCS':
+            u = update_ftcs(nu, u)
         elif scheme=='LW':
             u = update_lw(nu, u)
         else:
@@ -60,7 +82,7 @@ def solve(N, cfl, scheme, Tf):
 parser = argparse.ArgumentParser()
 parser.add_argument('-N', type=int, help='Number of cells', default=100)
 parser.add_argument('-cfl', type=float, help='CFL number', default=0.9)
-parser.add_argument('-scheme', choices=('FTBS','LW'), help='Scheme', default='FTBS')
+parser.add_argument('-scheme', choices=('FTBS','FTFS','FTCS','LW'), help='Scheme', default='FTBS')
 parser.add_argument('-Tf', type=float, help='Final time', default=1.0)
 args = parser.parse_args()
 
