@@ -30,6 +30,14 @@ def update_ftcs(nu, u):
     unew[-1] = unew[0]
     return unew
 
+def update_lf(nu, u):
+    unew = np.empty_like(u)
+    unew[0] = 0.5*(u[-1] + u[1]) + 0.5*nu*(u[-2] - u[1])
+    for i in range(1,len(u)-1):
+        unew[i] = 0.5*(u[i-1] + u[i+1]) + 0.5*nu*(u[i-1] - u[i+1])
+    unew[-1] = unew[0]
+    return unew
+
 def update_lw(nu, u):
     unew = np.empty_like(u)
     unew[0] = u[0] - 0.5*nu*(u[1]-u[-2]) + 0.5*nu**2*(u[-2]-2*u[0]+u[1])
@@ -67,6 +75,8 @@ def solve(N, cfl, scheme, Tf):
             u = update_ftfs(nu, u)
         elif scheme=='FTCS':
             u = update_ftcs(nu, u)
+        elif scheme=='LF':
+            u = update_lf(nu, u)
         elif scheme=='LW':
             u = update_lw(nu, u)
         else:
@@ -82,7 +92,7 @@ def solve(N, cfl, scheme, Tf):
 parser = argparse.ArgumentParser()
 parser.add_argument('-N', type=int, help='Number of cells', default=100)
 parser.add_argument('-cfl', type=float, help='CFL number', default=0.9)
-parser.add_argument('-scheme', choices=('FTBS','FTFS','FTCS','LW'), help='Scheme', default='FTBS')
+parser.add_argument('-scheme', choices=('FTBS','FTFS','FTCS','LF','LW'), help='Scheme', default='FTBS')
 parser.add_argument('-Tf', type=float, help='Final time', default=1.0)
 args = parser.parse_args()
 
