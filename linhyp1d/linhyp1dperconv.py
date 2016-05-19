@@ -2,8 +2,18 @@ import numpy as np
 import matplotlib.pyplot as plt
 import argparse
 
-def f(x):
+def smooth(x):
     return np.sin(2*np.pi*x)
+
+def hat(x):
+    u = np.empty_like(x)
+    for i in range(len(x)):
+        xx = np.abs(x[i] - int(x[i])) # xx in [0,1]
+        if np.abs(xx-0.5) < 0.25:
+            u[i] = 1.0
+        else:
+            u[i] = 0.0
+    return u
 
 def update_ftbs(nu, u):
     unew = np.empty_like(u)
@@ -20,7 +30,7 @@ def update_lw(nu, u):
     unew[-1] = unew[0]
     return unew
 
-def solve(N, cfl, scheme, Tf):
+def solve(N, cfl, scheme, Tf, uinit):
     xmin, xmax = 0.0, 1.0
     a          = 1.0
 
@@ -29,7 +39,7 @@ def solve(N, cfl, scheme, Tf):
     nu= a * dt / h
 
     x = np.linspace(xmin, xmax, N+1)
-    u = f(x)
+    u = uinit(x)
 
     t, it = 0.0, 0
     while t < Tf:
@@ -42,7 +52,7 @@ def solve(N, cfl, scheme, Tf):
             return
         t += dt; it += 1
 
-    err = np.abs(u - f(x-a*t))
+    err = np.abs(u - uinit(x-a*t))
     em  = np.max(err)
     e1  = h*err[0] + h*np.sum(err[1:-2])
     err = err**2
@@ -55,6 +65,7 @@ parser.add_argument('-N', metavar='N', type=int, nargs='+', help='Number of cell
 parser.add_argument('-cfl', type=float, help='CFL number', default=0.9)
 parser.add_argument('-scheme', choices=('FTBS','LW'), help='Scheme', default='FTBS')
 parser.add_argument('-Tf', type=float, help='Final time', default=1.0)
+parser.add_argument('-ic', choices=('smooth','hat'), help='Init cond', default='smooth')
 args = parser.parse_args()
 
 # Run the solver for different number of grid points
@@ -62,7 +73,10 @@ emax, e1, e2 = np.empty(len(args.N)), np.empty(len(args.N)), np.empty(len(args.N
 i    = 0
 for N in args.N:
     print "Running for cells = ", N
-    emax[i],e1[i],e2[i] = solve(N, args.cfl, args.scheme, args.Tf)
+    if args.ic == "smooth":
+        emax[i],e1[i],e2[i] = solve(N, args.cfl, args.scheme, args.Tf, smooth)
+    else:
+        emax[i],e1[i],e2[i] = solve(N, args.cfl, args.scheme, args.Tf, hat)
     i += 1
 
 # Compute convergence rate
