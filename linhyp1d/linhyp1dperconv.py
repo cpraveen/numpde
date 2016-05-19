@@ -57,19 +57,23 @@ parser.add_argument('-scheme', choices=('FTBS','LW'), help='Scheme', default='FT
 parser.add_argument('-Tf', type=float, help='Final time', default=1.0)
 args = parser.parse_args()
 
-# Run the solver
-emax = np.empty(len(args.N))
-e1   = np.empty(len(args.N))
-e2   = np.empty(len(args.N))
+# Run the solver for different number of grid points
+emax, e1, e2 = np.empty(len(args.N)), np.empty(len(args.N)), np.empty(len(args.N))
 i    = 0
 for N in args.N:
     print "Running for cells = ", N
-    a,b,c = solve(N, args.cfl, args.scheme, args.Tf)
-    emax[i] = a
-    e1[i]   = b
-    e2[i]   = c
+    emax[i],e1[i],e2[i] = solve(N, args.cfl, args.scheme, args.Tf)
     i += 1
 
+# Compute convergence rate
+print "  N        L1        rate         L2         rate         max        rate"
+for i in range(1,len(emax)):
+    pmax = np.log(emax[i-1]/emax[i])/np.log(2.0)
+    p1 = np.log(e1[i-1]/e1[i])/np.log(2.0)
+    p2 = np.log(e2[i-1]/e2[i])/np.log(2.0)
+    print "%3d  %e  %f  %e  %f  %e  %f" % (args.N[i], e1[i], p1, e2[i], p2, emax[i], pmax)
+
+# Plot error convergence
 plt.loglog(args.N, e1  , '*-')
 plt.loglog(args.N, e2  , 's-')
 plt.loglog(args.N, emax, 'o-')
