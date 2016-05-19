@@ -1,5 +1,8 @@
 """
 Solve u_t + u_x = 0 with periodic bc
+Finite volume scheme with different reconstruction schemes
+like first order, minmod, weno5. Time integration is first order
+euler or ssprk3
 """
 import numpy as np
 import matplotlib.pyplot as plt
@@ -93,11 +96,12 @@ def solve(N, cfl, rscheme, Tf, uinit, nrk):
 
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    line1, = ax.plot(x, u, 'r')
+    line1, = ax.plot(x, u, 'ro')
     line2, = ax.plot(x, u, 'b')
     ax.set_xlabel('x'); ax.set_ylabel('u')
     plt.legend(('Numerical','Exact'))
     plt.title('N='+str(N)+', CFL='+str(cfl)+', Scheme='+rscheme)
+    plt.axis([0.0, 1.0, -0.1, 1.1])
     plt.draw(); plt.pause(0.1)
     wait = raw_input("Press enter to continue ")
 
