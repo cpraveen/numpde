@@ -5,8 +5,18 @@ import numpy as np
 import matplotlib.pyplot as plt
 import argparse
 
-def f(x):
+def smooth(x):
     return np.sin(2*np.pi*x)
+
+def hat(x):
+    u = np.empty_like(x)
+    for i in range(len(x)):
+        xx = np.abs(x[i] - int(x[i])) # xx in [0,1]
+        if np.abs(xx-0.5) < 0.25:
+            u[i] = 1.0
+        else:
+            u[i] = 0.0
+    return u
 
 def update_ftbs(nu, u):
     unew = np.empty_like(u)
@@ -46,7 +56,7 @@ def update_lw(nu, u):
     unew[-1] = unew[0]
     return unew
 
-def solve(N, cfl, scheme, Tf):
+def solve(N, cfl, scheme, Tf, uinit):
     xmin, xmax = 0.0, 1.0
     a          = 1.0
 
@@ -55,7 +65,7 @@ def solve(N, cfl, scheme, Tf):
     nu= a * dt / h
 
     x = np.linspace(xmin, xmax, N+1)
-    u = f(x)
+    u = uinit(x)
 
     fig = plt.figure()
     ax = fig.add_subplot(111)
@@ -84,7 +94,7 @@ def solve(N, cfl, scheme, Tf):
             return
         t += dt; it += 1
         line1.set_ydata(u)
-        line2.set_ydata(f(x-a*t))
+        line2.set_ydata(uinit(x-a*t))
         plt.draw(); plt.pause(0.1)
     plt.show()
 
@@ -94,7 +104,11 @@ parser.add_argument('-N', type=int, help='Number of cells', default=100)
 parser.add_argument('-cfl', type=float, help='CFL number', default=0.9)
 parser.add_argument('-scheme', choices=('FTBS','FTFS','FTCS','LF','LW'), help='Scheme', default='FTBS')
 parser.add_argument('-Tf', type=float, help='Final time', default=1.0)
+parser.add_argument('-ic', choices=('smooth','hat'), help='Init cond', default='smooth')
 args = parser.parse_args()
 
 # Run the solver
-solve(args.N, args.cfl, args.scheme, args.Tf)
+if args.ic == "smooth":
+    solve(args.N, args.cfl, args.scheme, args.Tf, smooth)
+else:
+    solve(args.N, args.cfl, args.scheme, args.Tf, hat)
