@@ -1,5 +1,6 @@
 """
 Solve u_t + f(u)_x = 0  for f(u) = u^2/2
+Finite volume scheme
 """
 import numpy as np
 import matplotlib.pyplot as plt
@@ -50,6 +51,16 @@ def flux_roe(u):
         nf[i] = 0.5*(f[i-1] + f[i]) - 0.5*a*(u[i] - u[i-1])
     return nf
 
+# Godunov flux
+def flux_god(u):
+    n  = len(u)
+    nf = np.zeros(n+1)
+    for i in range(1,n):
+        u1 = max(0.0, u[i-1])
+        u2 = min(0.0, u[i])
+        nf[i] = max(flux(u1), flux(u2))
+    return nf
+
 def solve(N, cfl, scheme, Tf):
     xmin, xmax = 0.0, 1.0
 
@@ -78,6 +89,8 @@ def solve(N, cfl, scheme, Tf):
             f = flux_lw(lam, u)
         elif scheme=='ROE':
             f = flux_roe(u)
+        elif scheme=='GOD':
+            f = flux_god(u)
         else:
             print "Unknown scheme: ", scheme
             return
@@ -92,7 +105,8 @@ def solve(N, cfl, scheme, Tf):
 parser = argparse.ArgumentParser()
 parser.add_argument('-N', type=int, help='Number of cells', default=100)
 parser.add_argument('-cfl', type=float, help='CFL number', default=0.9)
-parser.add_argument('-scheme', choices=('LF','LW','ROE'), help='Scheme', default='LF')
+parser.add_argument('-scheme', choices=('LF','LW','ROE','GOD'), 
+                    help='Scheme', default='LF')
 parser.add_argument('-Tf', type=float, help='Final time', default=0.5)
 args = parser.parse_args()
 

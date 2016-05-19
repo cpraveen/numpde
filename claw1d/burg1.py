@@ -1,5 +1,6 @@
 """
 Solve u_t + f(u)_x = 0  for f(u) = u^2/2
+Schemes are written in finite difference form
 """
 import numpy as np
 import matplotlib.pyplot as plt
