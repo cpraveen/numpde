@@ -19,14 +19,15 @@ module comvar
    integer :: iupwind=1
 
    integer :: limtype
-   integer :: ford=0, muscl3=1, mmod=2
+   integer,parameter :: iford=0, imuscl3=1, immod=2, iweno5=3
 
-   integer :: no=0, yes=1
+   integer,parameter :: no=0, yes=1
 
    integer :: xperiod, yperiod
 
    contains
 
+!     wave speed in the advection equation
       subroutine wave_speed(x, y, speed)
       implicit none
       real :: x, y, speed(2)

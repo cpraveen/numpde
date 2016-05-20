@@ -13,7 +13,7 @@ program main
    ng = 3
 
    ! Default value, modified in initial condition function
-   final_time = 10.0
+   final_time = 2.0*M_PI
 
    itmax = 50000
    itsave= 100
@@ -25,8 +25,8 @@ program main
    ! options: iupwind
    fluxtype = iupwind
 
-   ! limiter: ford, muscl3, mmod
-   limtype = muscl3
+   ! limiter: iford, imuscl3, immod, iweno5
+   limtype = iweno5
 
    ! file id for saving solution
    fileid_sol = 0

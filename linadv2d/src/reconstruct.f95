@@ -6,22 +6,25 @@ subroutine reconstruct(conjm2, conjm1, conj, conjp1, conjp2, conl)
    real    :: conl
 
    integer :: i
-   real    :: kkk=1.0/3.0
    real    :: minmod
+   real,parameter :: kkk=1.0/3.0
+   real,parameter :: beta = 2.0
 
    ! reconstructed states
-   if(limtype == ford)then
+   if(limtype == iford)then
    ! first order
       conl = conj
-   else if(limtype == muscl3)then
+   else if(limtype == imuscl3)then
    !muscl scheme
       conl = conj   + 0.25*( (1.0-kkk)*(conj - conjm1) &
                                  + (1.0+kkk)*(conjp1 - conj) )
-   else if(limtype == mmod)then
+   else if(limtype == immod)then
    ! minmod limiter
-      conl = conj + 0.5*minmod( conj-conjm1, &
+      conl = conj + 0.5*minmod( beta*(conj-conjm1), &
                                 0.5*(conjp1-conjm1), &
-                                conjp1-conj )
+                                beta*(conjp1-conj) )
+   else if(limtype == iweno5)then
+      call weno5(conjm2, conjm1, conj, conjp1, conjp2, conl)
    endif
 
 end subroutine reconstruct
