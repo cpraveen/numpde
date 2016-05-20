@@ -2,7 +2,7 @@ subroutine numflux(lx, ly, speed, conl, conr, flux)
    use comvar
    implicit none
 
-   real :: lx, ly, speed, conl, conr, flux
+   real :: lx, ly, speed(2), conl, conr, flux
 
    real :: vn
 

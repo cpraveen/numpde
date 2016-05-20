@@ -7,6 +7,8 @@ subroutine init_cond(co1)
    real    :: x, y
    integer :: i, j
 
+   print*,'Setting initial condition'
+
    xmin = -1.0
    xmax =  1.0
    ymin = -1.0

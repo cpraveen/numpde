@@ -39,7 +39,6 @@ subroutine solveFVM(co0, co1, res)
 
       do rks=1,nrk
 
-
          res = 0.0
          
          ! x fluxes

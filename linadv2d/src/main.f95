@@ -44,9 +44,9 @@ program main
       ark(3) = 1.0/3.0
    endif
 
-   allocate( co0( 4*(nx+2*ng)*(ny+2*ng) ) )
-   allocate( co1( 4*(nx+2*ng)*(ny+2*ng) ) )
-   allocate( res(4*(nx+2)*(ny+2)) )
+   allocate( co0((nx+2*ng)*(ny+2*ng)) )
+   allocate( co1((nx+2*ng)*(ny+2*ng)) )
+   allocate( res((nx+2)*(ny+2)) )
 
    call solveFVM(co0, co1, res)
 
