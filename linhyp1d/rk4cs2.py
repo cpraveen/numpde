@@ -6,10 +6,7 @@ RK4 for time integration for du/dt = r(u)
 import numpy as np
 import matplotlib.pyplot as plt
 import argparse
-
-# Initial condition
-def f(x):
-    return np.sin(2*np.pi*x)
+from ic import *
 
 # Returns -u_x using central difference
 def rhs(h, u):
@@ -20,7 +17,7 @@ def rhs(h, u):
     r[-1] = r[0]
     return r
 
-def solve(N, cfl, Tf):
+def solve(N, cfl, Tf, uinit):
     xmin, xmax = 0.0, 1.0
     a          = 1.0
 
@@ -28,7 +25,7 @@ def solve(N, cfl, Tf):
     dt= cfl * h / np.abs(a)
 
     x = np.linspace(xmin, xmax, N+1)
-    u = f(x)
+    u = uinit(x)
 
     fig = plt.figure()
     ax = fig.add_subplot(111)
@@ -49,7 +46,7 @@ def solve(N, cfl, Tf):
         u += (dt/6)*(k0 + 2*k1 + 2*k2 + k3)
         t += dt; it += 1
         line1.set_ydata(u)
-        line2.set_ydata(f(x-a*t))
+        line2.set_ydata(uinit(x-a*t))
         plt.draw(); plt.pause(0.1)
     plt.show()
 
@@ -58,7 +55,11 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-N', type=int, help='Number of cells', default=100)
 parser.add_argument('-cfl', type=float, help='CFL number', default=0.9)
 parser.add_argument('-Tf', type=float, help='Final time', default=1.0)
+parser.add_argument('-ic', choices=('smooth','hat'), help='Init cond', default='smooth')
 args = parser.parse_args()
 
 # Run the solver
-solve(args.N, args.cfl, args.Tf)
+if args.ic == "smooth":
+    solve(args.N, args.cfl, args.Tf, smooth)
+else:
+    solve(args.N, args.cfl, args.Tf, hat)

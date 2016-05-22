@@ -7,24 +7,12 @@ euler or ssprk3
 import numpy as np
 import matplotlib.pyplot as plt
 import argparse
+from ic import *
 
 # Coefficients of 3-stage SSPRK
 ark = [0.0, 3.0/4.0, 1.0/3.0]
 a = 1.0
 beta = 2.0 # used in minmod scheme
-
-def smooth(x):
-    return np.sin(2*np.pi*x)
-
-def hat(x):
-    u = np.empty_like(x)
-    for i in range(len(x)):
-        xx = np.abs(x[i] - int(x[i])) # xx in [0,1]
-        if np.abs(xx-0.5) < 0.25:
-            u[i] = 1.0
-        else:
-            u[i] = 0.0
-    return u
 
 def minmod(a,b,c):
     if a*b > 0 and b*c > 0:
