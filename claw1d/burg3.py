@@ -7,35 +7,35 @@ import matplotlib.pyplot as plt
 import argparse
 from numfluxes import *
 
-ul, ur = 1.2, 0.4
-s      = 0.5*(ul + ur)
+def smooth(x):
+    return np.sin(2*np.pi*x)
 
-def uexact(t,x):
+def rare(x):
     u = np.zeros(len(x))
     for i in range(len(x)):
-        if x[i] < 0.25 + s*t:
-            u[i] = ul
+        if x[i] < 0.5:
+            u[i] = -0.5
         else:
-            u[i] = ur
+            u[i] = 1.0
     return u
 
-def solve(N, cfl, scheme, Tf):
+def solve(N, cfl, scheme, Tf, uinit):
     xmin, xmax = 0.0, 1.0
 
     x = np.linspace(xmin, xmax, N)
     h = (xmax - xmin)/(N-1)
-    u = uexact(0.0, x)
+    u = uinit(x)
     dt= cfl * h / np.max(u)
     lam = dt/h
 
     fig = plt.figure()
     ax = fig.add_subplot(111)
     line1, = ax.plot(x, u, 'o')
-    line2, = ax.plot(x, u, 'r')
+    #line2, = ax.plot(x, u, 'r')
     ax.set_xlabel('x'); ax.set_ylabel('u')
-    plt.legend(('Numerical','Exact'))
+    #plt.legend(('Numerical','Exact'))
     plt.title('N='+str(N)+', CFL='+str(cfl)+', Scheme='+scheme)
-    plt.axis([0.0, 1.0, 0.0, 1.4])
+    #plt.axis([0.0, 1.0, 0.0, 1.4])
     plt.draw(); plt.pause(0.1)
     wait = raw_input("Press enter to continue ")
 
@@ -55,7 +55,7 @@ def solve(N, cfl, scheme, Tf):
         u[1:-1] -= lam * (f[2:-1] - f[1:-2])
         t += dt; it += 1
         line1.set_ydata(u)
-        line2.set_ydata(uexact(t,x))
+        #line2.set_ydata(uexact(t,x))
         plt.draw(); plt.pause(0.1)
     plt.show()
 
@@ -65,8 +65,13 @@ parser.add_argument('-N', type=int, help='Number of cells', default=100)
 parser.add_argument('-cfl', type=float, help='CFL number', default=0.9)
 parser.add_argument('-scheme', choices=('LF','LW','ROE','GOD'), 
                     help='Scheme', default='LF')
-parser.add_argument('-Tf', type=float, help='Final time', default=0.5)
+parser.add_argument('-ic', choices=('smooth','rare'), 
+                    help='Initial condition', default='smooth')
+parser.add_argument('-Tf', type=float, help='Final time', default=1.0)
 args = parser.parse_args()
 
 # Run the solver
-solve(args.N, args.cfl, args.scheme, args.Tf)
+if args.ic == "smooth":
+    solve(args.N, args.cfl, args.scheme, args.Tf, smooth)
+else:
+    solve(args.N, args.cfl, args.scheme, args.Tf, rare)
