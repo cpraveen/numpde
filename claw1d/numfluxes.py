@@ -18,6 +18,16 @@ def flux_lf(lam,u):
         nf[i] = 0.5*(f[i-1] + f[i]) - 0.5*(u[i] - u[i-1])/lam
     return nf
 
+# Local Lax-Friedrich flux
+def flux_llf(u):
+    n  = len(u)
+    f  = flux(u)
+    nf = np.zeros(n+1)
+    for i in range(1,n):
+        a     = np.abs([u[i-1], u[i]]).max()
+        nf[i] = 0.5*(f[i-1] + f[i]) - 0.5*a*(u[i] - u[i-1])
+    return nf
+
 # Lax-Wendroff flux
 def flux_lw(lam,u):
     n  = len(u)
