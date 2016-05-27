@@ -46,6 +46,8 @@ def solve(N, cfl, scheme, Tf, uinit):
             f = flux_lw(lam, u)
         elif scheme=='ROE':
             f = flux_roe(u)
+        elif scheme=='EROE':
+            f = flux_eroe(u)
         elif scheme=='GOD':
             f = flux_god(u)
         else:
@@ -61,7 +63,7 @@ def solve(N, cfl, scheme, Tf, uinit):
 parser = argparse.ArgumentParser()
 parser.add_argument('-N', type=int, help='Number of cells', default=100)
 parser.add_argument('-cfl', type=float, help='CFL number', default=0.9)
-parser.add_argument('-scheme', choices=('LF','LLF','LW','ROE','GOD'), 
+parser.add_argument('-scheme', choices=('LF','LLF','LW','ROE','EROE','GOD'), 
                     help='Scheme', default='LF')
 parser.add_argument('-ic', choices=('smooth','rare'), 
                     help='Initial condition', default='smooth')

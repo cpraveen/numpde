@@ -48,6 +48,18 @@ def flux_roe(u):
         nf[i] = 0.5*(f[i-1] + f[i]) - 0.5*a*(u[i] - u[i-1])
     return nf
 
+# Roe flux with entropy fic
+def flux_eroe(u):
+    n  = len(u)
+    f  = flux(u)
+    nf = np.zeros(n+1)
+    for i in range(1,n):
+        delta = 0.5*np.abs(u[i]-u[i-1]) if u[i-1] < u[i] else 0.0
+        a     = np.abs(0.5*(u[i-1]+u[i]))
+        a     = delta if a < delta else a
+        nf[i] = 0.5*(f[i-1] + f[i]) - 0.5*a*(u[i] - u[i-1])
+    return nf
+
 # Godunov flux
 def flux_god(u):
     n  = len(u)
