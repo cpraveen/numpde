@@ -8,31 +8,12 @@ program main
 
    integer :: fid
 
-   nx = 100
-   ny = 100
-   ng = 3
-
-   ! Default value, modified in initial condition function
-   final_time = 2.0*M_PI
-
-   itmax = 50000
-   itsave= 100
-
-   ! periodicity conditions
-   xperiod = yes
-   yperiod = yes
-
-   ! options: iupwind
-   fluxtype = iupwind
-
-   ! limiter: iford, imuscl3, immod, iweno5
-   limtype = iweno5
+   call read_input
 
    ! file id for saving solution
    fileid_sol = 0
 
-   cfl = 0.4
-
+   ng     = 3
    nrk    = 3
 
    if(nrk.eq.2)then

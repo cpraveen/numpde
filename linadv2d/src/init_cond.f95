@@ -9,6 +9,12 @@ subroutine init_cond(co1)
 
    print*,'Setting initial condition'
 
+   final_time = 2.0*M_PI
+
+   ! periodicity conditions
+   xperiod = yes
+   yperiod = yes
+
    xmin = -1.0
    xmax =  1.0
    ymin = -1.0
