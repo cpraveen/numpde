@@ -14,6 +14,8 @@ subroutine read_input
    read(10,*) cfl
    read(10,*) testcase
 
+   print*,'nx, ny =', nx, ny
+   print*,'cfl    =', cfl
    print*,'Flux type is ', fluxtype_s
    if(fluxtype_s == "upwind")then
       fluxtype = iupwind

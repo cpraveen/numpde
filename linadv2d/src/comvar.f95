@@ -16,10 +16,12 @@ module comvar
    integer :: fileid_sol
 
    integer :: fluxtype
-   integer :: iupwind=1
+   integer :: iupwind=1,imda=2
 
    integer :: limtype
    integer,parameter :: iford=0, imuscl3=1, immod=2, iweno5=3
+
+   integer :: testcase
 
    integer,parameter :: no=0, yes=1
 
