@@ -96,5 +96,6 @@ subroutine solveFVM(co0, co1, res)
 
    enddo ! time iteration loop
 
+   call error(time, co1)
 
 end subroutine solveFVM
