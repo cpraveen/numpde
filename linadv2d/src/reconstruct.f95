@@ -25,6 +25,8 @@ subroutine reconstruct(conjm2, conjm1, conj, conjp1, conjp2, conl)
                                 beta*(conjp1-conj) )
    else if(limtype == iweno5)then
       call weno5(conjm2, conjm1, conj, conjp1, conjp2, conl)
+   else if(limtype == imp5)then
+      call mp5(conjm2, conjm1, conj, conjp1, conjp2, conl)
    endif
 
 end subroutine reconstruct

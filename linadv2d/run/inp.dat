@@ -3,6 +3,6 @@
 50000   itmax
 10      itsave
 upwind  fluxtype: upwind, mda
-weno5   limtype:  first, muscl3, minmod, weno5
+mp5     limtype:  first, muscl3, minmod, weno5, mp5
 0.5     cfl
 1       testcase

@@ -19,7 +19,7 @@ module comvar
    integer :: iupwind=1,imda=2
 
    integer :: limtype
-   integer,parameter :: iford=0, imuscl3=1, immod=2, iweno5=3
+   integer,parameter :: iford=0, imuscl3=1, immod=2, iweno5=3, imp5=4
 
    integer :: testcase
 

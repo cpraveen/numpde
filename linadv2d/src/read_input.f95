@@ -35,6 +35,8 @@ subroutine read_input
       limtype = immod
    else if(limtype_s == "weno5")then
       limtype = iweno5
+   else if(limtype_s == "mp5")then
+      limtype = imp5
    else
       print*,'Unknown limtype =', limtype_s
       stop
