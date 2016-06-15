@@ -2,6 +2,13 @@ import os
 import numpy as np
 from matplotlib import pyplot as plt
 
+# path to executable
+exe = '../src/advect'
+# check that executable is present
+if os.path.isfile(exe)==False:
+    print "Could not find ", exe
+    exit()
+
 N = [50, 100, 150, 200]
 itmax = 50000
 itsave = 100
@@ -26,7 +33,7 @@ for n in N:
     f.close()
 
     # run solver
-    os.system("../src/advect > out")
+    os.system(exe+" > out")
     os.system("tail -n1 out")
     os.system("tail -n1 out >> err.dat")
 
