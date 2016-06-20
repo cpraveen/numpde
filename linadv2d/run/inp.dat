@@ -1,8 +1,9 @@
-100     nx
-100     ny
-50000   itmax
-10      itsave
-upwind  fluxtype: upwind, mda
-mp5     limtype:  first, muscl3, minmod, weno5, mp5
-0.5     cfl
-1       testcase
+150
+150
+50000
+100
+LVQ
+weno5
+method6
+0.5
+1

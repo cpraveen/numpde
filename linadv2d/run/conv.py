@@ -9,11 +9,12 @@ if os.path.isfile(exe)==False:
     print "Could not find ", exe
     exit()
 
-N = [50, 100, 150, 200]
+N = [40, 60, 80, 100, 120, 150]
 itmax = 50000
 itsave = 100
-fluxtype = "upwind"
+fluxtype = "LVQ"
 limtype  = "weno5"
+method = "method6"
 cfl = 0.5
 testcase = 1
 
@@ -28,6 +29,7 @@ for n in N:
     f.write(str(itsave)+'\n')
     f.write(fluxtype+'\n')
     f.write(limtype+'\n')
+    f.write(method+'\n')
     f.write(str(cfl)+'\n')
     f.write(str(testcase)+'\n')
     f.close()
@@ -39,11 +41,13 @@ for n in N:
 
 # read error from file
 data = np.loadtxt('err.dat')
-plt.loglog(data[:,0],data[:,4],'o-', linewidth=2)
-plt.loglog(data[:,0],data[:,5],'*--',linewidth=2)
-plt.loglog(data[:,0],data[:,6],'s-.',linewidth=2)
-plt.xlabel('N')
+plt.autoscale(tight=False)
+plt.loglog(data[:,2],data[:,4],'o-', linewidth=2)
+plt.loglog(data[:,2],data[:,5],'*--',linewidth=2)
+plt.loglog(data[:,2],data[:,6],'s-.',linewidth=2)
+plt.loglog(data[:,2],data[:,2]**3,'-',linewidth=2)
+plt.xlabel('h')
 plt.ylabel('Error')
-plt.legend(('L1','L2','Linf'))
-plt.savefig('error.pdf')
+plt.legend(('L1','L2','Linf','slope_3'))
+plt.savefig('error_m6.pdf')
 plt.show()
