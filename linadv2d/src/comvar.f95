@@ -16,7 +16,7 @@ module comvar
    integer :: fileid_sol
 
    integer :: fluxtype
-   integer :: iupwind=1,imda=2
+   integer :: iupwind=1,imda=2,LVQ=6
 
    integer :: limtype
    integer,parameter :: iford=0, imuscl3=1, immod=2, iweno5=3, imp5=4
@@ -26,6 +26,8 @@ module comvar
    integer,parameter :: no=0, yes=1
 
    integer :: xperiod, yperiod
+   integer :: mthd
+   integer,parameter :: method1=1, method2=2, method3=3, method4=4, method5=5, method6=6
 
    contains
 
@@ -35,7 +37,7 @@ module comvar
       real :: x, y, speed(2)
 
       speed(1) = -y
-      speed(2) =  x
+      speed(2) = x
       end subroutine wave_speed
 
 end module comvar
