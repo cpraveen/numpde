@@ -13,6 +13,7 @@ program main
    ! file id for saving solution
    fileid_sol = 0
 
+   ! Specify LVQ method
    ng     = 3 ! number of ghost cells
    nrk    = 3 ! number of rk stages, only 2 or 3 is valid
 
@@ -32,15 +33,16 @@ program main
    allocate( co1((nx+2*ng)*(ny+2*ng)) )
    allocate( res((nx+2)*(ny+2)) )
 
-   if(fluxtype==iupwind)then
+   print*,fluxtype
+   if(fluxtype==LVQ)then
+      call solveLVQ(co0, co1, res)
+   elseif(fluxtype==iupwind)then
       call solveFVM(co0, co1, res)
-   else if(fluxtype==imda)then
+   elseif(fluxtype==imda)then
       print*,'MDA not implemented'
       stop
    else
       print*,'Unknown fluxtype'
       stop
    endif
-
-
 end program main

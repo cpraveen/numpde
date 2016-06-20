@@ -2,7 +2,7 @@ subroutine error(t, co)
    use comvar
    implicit none
 
-   real    :: t
+   real    :: t, x, y
    real    :: co(-ng+1:nx+ng, -ng+1:ny+ng)
 
    integer :: i, j
