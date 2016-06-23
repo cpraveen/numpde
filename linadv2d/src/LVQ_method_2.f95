@@ -3,13 +3,15 @@
 
       implicit none
       integer:: i,j,ii,jj
-      real   :: R
-      real, intent (inout)  :: Fx(-ng+1:nx+ng, -ng+1:ny+ng),Gy(-ng+1:nx+ng, -ng+1:ny+ng)
+      real   :: R, lambda
+      real, intent (inout)  :: Fx(-ng+1:nx+ng, -ng+1:ny+ng)
+      real, intent (inout)  :: Gy(-ng+1:nx+ng, -ng+1:ny+ng)
       real, intent (in)  :: co(-ng+1:nx+ng, -ng+1:ny+ng)
       real :: u, v, xf, yf, speed(2)
 
       call LVQ_method_1(co,Fx,Gy)
-      
+
+      lambda = dt/dx
       do i=1,nx+1
         do j=1,ny
            xf = xmin + (i-1)*dx
@@ -29,7 +31,7 @@
            else
              jj = j
            endif
-           Gy(ii,jj)   = Gy(ii,jj) - 0.5*(dt/dx)*u*v*R
+           Gy(ii,jj)   = Gy(ii,jj) - 0.5*lambda*u*v*R
         enddo
       enddo
 
@@ -54,7 +56,7 @@
           else
              ii = i
           endif
-          Fx(ii,jj)   = Fx(ii,jj) - 0.5*(dt/dx)*u*v*R
+          Fx(ii,jj)   = Fx(ii,jj) - 0.5*lambda*u*v*R
         enddo
       enddo
 
