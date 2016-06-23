@@ -40,4 +40,6 @@ program main
       print*,'Unknown fluxtype'
       stop
    endif
+   
+   
 end program main
