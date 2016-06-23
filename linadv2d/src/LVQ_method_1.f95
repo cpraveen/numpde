@@ -1,4 +1,4 @@
-      subroutine LVQ_method_2(co,Fx,Gy)
+      subroutine LVQ_method_1(co,Fx,Gy)
       use comvar
 
       implicit none
