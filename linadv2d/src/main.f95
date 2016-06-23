@@ -35,8 +35,7 @@ program main
    if(fluxtype==iupwind)then
       call solveFVM(co0, co1, res)
    else if(fluxtype==imda)then
-      print*,'MDA not implemented'
-      stop
+      call solveLVQ(co0, co1, res)
    else
       print*,'Unknown fluxtype'
       stop

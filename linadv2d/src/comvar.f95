@@ -26,6 +26,8 @@ module comvar
    integer,parameter :: no=0, yes=1
 
    integer :: xperiod, yperiod
+   integer :: mthd
+   integer,parameter :: method1=1, method2=2, method3=3, method4=4, method5=5, method6=6
 
    contains
 

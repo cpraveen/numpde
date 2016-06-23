@@ -4,5 +4,6 @@
 10      itsave
 upwind  fluxtype: upwind, mda
 mp5     limtype:  first, muscl3, minmod, weno5, mp5
+method6 LeVeque's methods, method1, method2, till method6
 0.5     cfl
 1       testcase
