@@ -18,9 +18,7 @@ subroutine read_input
    print*,'nx, ny =', nx, ny
    print*,'cfl    =', cfl
    print*,'Flux type is ', fluxtype_s
-   if(fluxtype_s == "LVQ")then
-      fluxtype = LVQ
-   else if(fluxtype_s == "upwind")then
+   if(fluxtype_s == "upwind")then
       fluxtype = iupwind
    else if(fluxtype_s == "mda")then
       fluxtype = imda
