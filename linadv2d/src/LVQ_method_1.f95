@@ -1,9 +1,10 @@
-      subroutine LVQ_method_1(co,Fx,Gy)
+       subroutine LVQ_method_2(co,Fx,Gy)
       use comvar
 
       implicit none
       integer:: i,j,ii,jj
-      real, intent (inout)  :: Fx(-ng+1:nx+ng, -ng+1:ny+ng),Gy(-ng+1:nx+ng, -ng+1:ny+ng)
+      real, intent (inout)  :: Fx(-ng+1:nx+ng, -ng+1:ny+ng)
+      real, intent (inout)  :: Gy(-ng+1:nx+ng, -ng+1:ny+ng)
       real, intent (in)  :: co(-ng+1:nx+ng, -ng+1:ny+ng)
       real :: u, v, xf, yf, speed(2)
 
@@ -21,7 +22,7 @@
            else
               ii = i
            endif
-           Fx(i,j)   = Fx(i,j) + u*co(ii,j)
+           Fx(i,j) = Fx(i,j) + u*co(ii,j)
         enddo
       enddo
 
@@ -39,8 +40,7 @@
            else
               jj = j
            endif
-           Gy(i,j)   = Gy(i,j) + v*co(i,jj) 
+           Gy(i,j) = Gy(i,j) + v*co(i,jj)
         enddo
       enddo
-
       end subroutine LVQ_method_1
