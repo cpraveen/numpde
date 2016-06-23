@@ -6,7 +6,7 @@ subroutine solveLVQ(co0,co1,res)
 
    real :: co0(-ng+1:nx+ng, -ng+1:ny+ng)
    real :: co1(-ng+1:nx+ng, -ng+1:ny+ng)
-   real :: res(0:nx+1,0:ny+1)
+   real :: res(0:nx+1, 0:ny+1)
 
    integer :: it, i, j, rks
    real    :: xf, yf
@@ -35,9 +35,9 @@ subroutine solveLVQ(co0,co1,res)
          dt = final_time - time
          tostop = .true.
       endif
-
+      lambda = dt/dx
       co0 = co1
-      F = 0.0; G = 0.0; res = 0.0
+      res = 0.0; F = 0.0; G = 0.0
  
       if(mthd == method1) call LVQ_method_1(co0,F,G)
       if(mthd == method2) call LVQ_method_2(co0,F,G)
@@ -50,7 +50,7 @@ subroutine solveLVQ(co0,co1,res)
       do i=1,nx
         do j=1,ny
            res(i,j) = (F(i+1,j) - F(i,j) + G(i,j+1) - G(i,j))
-           co1(i,j) = co0(i,j) - (dt/dx)*res(i,j)
+           co1(i,j) = co0(i,j) - lambda*res(i,j)
         enddo
       enddo
       call periodic(co1)
