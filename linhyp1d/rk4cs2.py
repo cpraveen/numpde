@@ -11,10 +11,9 @@ from ic import *
 # Returns -u_x using central difference
 def rhs(h, u):
     r = np.empty_like(u)
-    r[0] = -0.5*(u[1] - u[-2]) / h
-    for i in range(1,len(u)-1):
-        r[i] = -0.5*(u[i+1] - u[i-1]) / h
-    r[-1] = r[0]
+    r[0]    = -(0.5/h)*(u[1] - u[-2])    # first point
+    r[1:-1] = -(0.5/h)*(u[2:] - u[0:-2]) # second to last but one
+    r[-1]   = r[0]                       # last is same as first
     return r
 
 def solve(N, cfl, Tf, uinit):
