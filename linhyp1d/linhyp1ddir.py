@@ -36,7 +36,8 @@ def solve(N, cfl, Tf):
         unew[0] = f(xmin-a*t)
         # Interior points, use Lax-Wendroff
         for i in range(1,len(u)-1):
-            unew[i] = u[i] - 0.5*nu*(u[i+1]-u[i-1]) + 0.5*nu**2*(u[i-1]-2*u[i]+u[i+1])
+            unew[i] = u[i] - 0.5*nu*(u[i+1]-u[i-1]) \
+                      + 0.5*nu**2*(u[i-1]-2*u[i]+u[i+1])
         # Last point, use FTBS
         unew[-1] = (1-nu)*u[-1] + nu*u[-2]
         u[:] = unew

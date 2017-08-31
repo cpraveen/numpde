@@ -14,7 +14,8 @@ def update_lw(nu, u):
     unew = np.empty_like(u)
     unew[0] = u[0] - 0.5*nu*(u[1]-u[-2]) + 0.5*nu**2*(u[-2]-2*u[0]+u[1])
     for i in range(1,len(u)-1):
-        unew[i] = u[i] - 0.5*nu*(u[i+1]-u[i-1]) + 0.5*nu**2*(u[i-1]-2*u[i]+u[i+1])
+        unew[i] = u[i] - 0.5*nu*(u[i+1]-u[i-1]) \
+                  + 0.5*nu**2*(u[i-1]-2*u[i]+u[i+1])
     unew[-1] = unew[0]
     return unew
 
@@ -57,7 +58,7 @@ parser.add_argument('-ic', choices=('smooth','hat'), help='Init cond', default='
 args = parser.parse_args()
 
 # Run the solver for different number of grid points
-emax, e1, e2 = np.empty(len(args.N)), np.empty(len(args.N)), np.empty(len(args.N))
+emax,e1,e2 = np.empty(len(args.N)),np.empty(len(args.N)),np.empty(len(args.N))
 i    = 0
 for N in args.N:
     print "Running for cells = ", N
