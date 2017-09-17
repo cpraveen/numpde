@@ -5,8 +5,8 @@ def smooth(x):
 
 def hat(x):
     u = np.empty_like(x)
-    for i in range(len(x)):
-        xx = np.abs(x[i] - int(x[i])) # xx in [0,1]
+    for i,xx in enumerate(x):
+        xx = np.abs(xx - int(xx)) # xx in [0,1]
         if np.abs(xx-0.5) < 0.25:
             u[i] = 1.0
         else:

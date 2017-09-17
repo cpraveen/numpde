@@ -8,39 +8,35 @@ from ic import *
 
 def update_ftbs(nu, u):
     unew = np.empty_like(u)
-    for i in range(1,len(u)):
-        unew[i] = (1-nu)*u[i] + nu*u[i-1]
+    unew[1:] = (1-nu)*u[1:] + nu*u[0:-1]
     unew[0] = unew[-1]
     return unew
 
 def update_ftfs(nu, u):
     unew = np.empty_like(u)
-    for i in range(0,len(u)-1):
-        unew[i] = (1+nu)*u[i] - nu*u[i+1]
+    unew[0:-1] = (1+nu)*u[0:-1] - nu*u[1:]
     unew[-1] = unew[0]
     return unew
 
 def update_ftcs(nu, u):
     unew = np.empty_like(u)
     unew[0] = u[0] + 0.5*nu*(u[-2] - u[1])
-    for i in range(1,len(u)-1):
-        unew[i] = u[i] + 0.5*nu*(u[i-1] - u[i+1])
+    unew[1:-1] = u[1:-1] + 0.5*nu*(u[0:-2] - u[2:])
     unew[-1] = unew[0]
     return unew
 
 def update_lf(nu, u):
     unew = np.empty_like(u)
     unew[0] = 0.5*(u[-1] + u[1]) + 0.5*nu*(u[-2] - u[1])
-    for i in range(1,len(u)-1):
-        unew[i] = 0.5*(u[i-1] + u[i+1]) + 0.5*nu*(u[i-1] - u[i+1])
+    unew[1:-1] = 0.5*(u[0:-2] + u[2:]) + 0.5*nu*(u[0:-2] - u[2:])
     unew[-1] = unew[0]
     return unew
 
 def update_lw(nu, u):
     unew = np.empty_like(u)
     unew[0] = u[0] - 0.5*nu*(u[1]-u[-2]) + 0.5*nu**2*(u[-2]-2*u[0]+u[1])
-    for i in range(1,len(u)-1):
-        unew[i] = u[i] - 0.5*nu*(u[i+1]-u[i-1]) + 0.5*nu**2*(u[i-1]-2*u[i]+u[i+1])
+    unew[1:-1] = u[1:-1] - 0.5*nu*(u[2:] - u[0:-2]) \
+                 + 0.5*nu**2*(u[0:-2] - 2*u[1:-1] + u[2:])
     unew[-1] = unew[0]
     return unew
 
