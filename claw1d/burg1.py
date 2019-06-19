@@ -68,7 +68,7 @@ def solve(N, cfl, scheme, Tf):
     plt.title('N='+str(N)+', CFL='+str(cfl)+', Scheme='+scheme)
     plt.axis([0.0, 1.0, 0.0, 1.4])
     plt.draw(); plt.pause(0.1)
-    wait = raw_input("Press enter to continue ")
+    wait = input("Press enter to continue ")
 
     t, it = 0.0, 0
     while t < Tf:
@@ -79,7 +79,7 @@ def solve(N, cfl, scheme, Tf):
         elif scheme=='LW':
             u = update_lw(lam, u)
         else:
-            print "Unknown scheme: ", scheme
+            print("Unknown scheme: ", scheme)
             return
         t += dt; it += 1
         line1.set_ydata(u)

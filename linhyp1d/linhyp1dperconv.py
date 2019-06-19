@@ -35,7 +35,7 @@ def solve(N, cfl, scheme, Tf, uinit):
         elif scheme=='LW':
             u = update_lw(nu, u)
         else:
-            print "Unknown scheme: ", scheme
+            print("Unknown scheme: ", scheme)
             return
         t += dt; it += 1
 
@@ -59,7 +59,7 @@ args = parser.parse_args()
 emax,e1,e2 = np.empty(len(args.N)),np.empty(len(args.N)),np.empty(len(args.N))
 i    = 0
 for N in args.N:
-    print "Running for cells = ", N
+    print("Running for cells = ", N)
     if args.ic == "smooth":
         emax[i],e1[i],e2[i] = solve(N, args.cfl, args.scheme, args.Tf, smooth)
     else:
@@ -67,12 +67,12 @@ for N in args.N:
     i += 1
 
 # Compute convergence rate
-print "  N        L1        rate         L2         rate         max        rate"
+print("  N        L1        rate         L2         rate         max        rate")
 for i in range(1,len(emax)):
     pmax = np.log(emax[i-1]/emax[i])/np.log(2.0)
     p1 = np.log(e1[i-1]/e1[i])/np.log(2.0)
     p2 = np.log(e2[i-1]/e2[i])/np.log(2.0)
-    print "%3d  %e  %f  %e  %f  %e  %f" % (args.N[i], e1[i], p1, e2[i], p2, emax[i], pmax)
+    print("%3d  %e  %f  %e  %f  %e  %f" % (args.N[i], e1[i], p1, e2[i], p2, emax[i], pmax))
 
 # Plot error convergence
 plt.loglog(args.N, e1  , '*-')
