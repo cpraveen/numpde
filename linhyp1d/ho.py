@@ -130,7 +130,7 @@ def solve(N, cfl, rscheme, Tf, uinit, nrk):
     plt.title('N='+str(N)+', CFL='+str(cfl)+', Scheme='+rscheme)
     plt.axis([0.0, 1.0, u.min()-0.1, u.max()+0.1])
     plt.grid(True); plt.draw(); plt.pause(0.1)
-    wait = raw_input("Press enter to continue ")
+    wait = input("Press enter to continue ")
 
     t, it = 0.0, 0
     while t < Tf:
