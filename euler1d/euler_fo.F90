@@ -170,6 +170,7 @@ subroutine savesol(nc, xc, u)
    integer :: i, fid
    real    :: v(nvar)
 
+   fid = 10
    open(fid, file='sol.txt')
    do i=1,nc
       call con2prim(u(:,i), v)
