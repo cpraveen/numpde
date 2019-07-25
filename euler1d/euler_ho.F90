@@ -3,7 +3,7 @@ module constants
    integer,parameter :: nvar = 3
    real,parameter :: gam = 1.4
    integer,parameter :: ilxf = 1
-   integer,parameter :: ifirst = 1, iminmod = 2
+   integer,parameter :: ifirst = 1, iminmod = 2, iwenojs = 3, iwenoz = 4
    integer :: iflux, irecon
    integer :: ncel, nbeg, nend
 end module constants
@@ -191,6 +191,65 @@ subroutine reconstruct_minmod(n, ujm1, uj, ujp1, u)
 
 end subroutine reconstruct_minmod
 
+subroutine reconstruct_wenojs(n, ujm2, ujm1, uj, ujp1, ujp2, u)
+   implicit none
+   integer,intent(in) :: n
+   real,intent(in)    :: ujm2(n), ujm1(n), uj(n), ujp1(n), ujp2(n)
+   real,intent(inout) :: u(n)
+   ! Local variables
+   real,parameter :: eps = 1.0e-6
+   real,parameter :: gamma1=1.0/10.0, gamma2=3.0/5.0, gamma3=3.0/10.0
+   real,dimension(n) :: beta1, beta2, beta3, w1, w2, w3, u1, u2, u3
+
+   beta1 = (13.0/12.0)*(ujm2 - 2.0*ujm1 + uj)**2 + &
+           (1.0/4.0)*(ujm2 - 4.0*ujm1 + 3.0*uj)**2
+   beta2 = (13.0/12.0)*(ujm1 - 2.0*uj + ujp1)**2 + &
+           (1.0/4.0)*(ujm1 - ujp1)**2
+   beta3 = (13.0/12.0)*(uj - 2.0*ujp1 + ujp2)**2 + &
+           (1.0/4.0)*(3.0*uj - 4.0*ujp1 + ujp2)**2
+
+   w1 = gamma1 / (eps+beta1)**2
+   w2 = gamma2 / (eps+beta2)**2
+   w3 = gamma3 / (eps+beta3)**2
+
+   u1 = (1.0/3.0)*ujm2 - (7.0/6.0)*ujm1 + (11.0/6.0)*uj
+   u2 = -(1.0/6.0)*ujm1 + (5.0/6.0)*uj + (1.0/3.0)*ujp1
+   u3 = (1.0/3.0)*uj + (5.0/6.0)*ujp1 - (1.0/6.0)*ujp2
+
+   u = (w1 * u1 + w2 * u2 + w3 * u3)/(w1 + w2 + w3)
+
+end subroutine reconstruct_wenojs
+
+subroutine reconstruct_wenoz(n, ujm2, ujm1, uj, ujp1, ujp2, u)
+   implicit none
+   integer,intent(in) :: n
+   real,intent(in)    :: ujm2(n), ujm1(n), uj(n), ujp1(n), ujp2(n)
+   real,intent(inout) :: u(n)
+   ! Local variables
+   real,parameter :: eps = 1.0e-6
+   real,parameter :: gamma1=1.0/10.0, gamma2=3.0/5.0, gamma3=3.0/10.0
+   real,dimension(n) :: beta1, beta2, beta3, tau, w1, w2, w3, u1, u2, u3
+
+   beta1 = (13.0/12.0)*(ujm2 - 2.0*ujm1 + uj)**2 + &
+           (1.0/4.0)*(ujm2 - 4.0*ujm1 + 3.0*uj)**2
+   beta2 = (13.0/12.0)*(ujm1 - 2.0*uj + ujp1)**2 + &
+           (1.0/4.0)*(ujm1 - ujp1)**2
+   beta3 = (13.0/12.0)*(uj - 2.0*ujp1 + ujp2)**2 + &
+           (1.0/4.0)*(3.0*uj - 4.0*ujp1 + ujp2)**2
+
+   tau = abs(beta1 - beta3)
+   w1 = gamma1 * (1.0 + (tau / (eps+beta1))**2)
+   w2 = gamma2 * (1.0 + (tau / (eps+beta2))**2)
+   w3 = gamma3 * (1.0 + (tau / (eps+beta3))**2)
+
+   u1 = (1.0/3.0)*ujm2 - (7.0/6.0)*ujm1 + (11.0/6.0)*uj
+   u2 = -(1.0/6.0)*ujm1 + (5.0/6.0)*uj + (1.0/3.0)*ujp1
+   u3 = (1.0/3.0)*uj + (5.0/6.0)*ujp1 - (1.0/6.0)*ujp2
+
+   u = (w1 * u1 + w2 * u2 + w3 * u3)/(w1 + w2 + w3)
+
+end subroutine reconstruct_wenoz
+
 ! Reconstruct left state at interface between j and j+1
 subroutine reconstruct(ujm2, ujm1, uj, ujp1, ujp2, u)
    use constants
@@ -202,6 +261,10 @@ subroutine reconstruct(ujm2, ujm1, uj, ujp1, ujp2, u)
       u = uj
    else if(irecon == iminmod)then
       call reconstruct_minmod(nvar, ujm1, uj, ujp1, u)
+   else if(irecon == iwenojs)then
+      call reconstruct_wenojs(nvar, ujm2, ujm1, uj, ujp1, ujp2, u)
+   else if(irecon == iwenoz)then
+      call reconstruct_wenoz(nvar, ujm2, ujm1, uj, ujp1, ujp2, u)
    else
       stop 'Unknown value of irecon'
    endif
@@ -266,7 +329,7 @@ program main
    ncel   = 200
    Tf     = 0.2
    iflux  = ilxf
-   irecon = iminmod
+   irecon = iwenoz
 
    ! 3 ghost cells on each side, needed for WENO
    nbeg = -2

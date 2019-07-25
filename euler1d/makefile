@@ -1,5 +1,5 @@
 FC = gfortran
-FFLAGS = -march=native -O3 -Wall
+FFLAGS = -march=native -O3 -fdefault-real-8 -Wall
 
 TARGETS = euler_fo euler_ho
 
