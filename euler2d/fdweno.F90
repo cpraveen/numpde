@@ -395,7 +395,7 @@ subroutine compute_residual(u, res)
 
          if(ichar == 1)then
             vm = 0.5*(v(:,i,j) + v(:,i,j+1))
-            call eigenvector_matrix_x(vm, Ry, Ly)
+            call eigenvector_matrix_y(vm, Ry, Ly)
             fim2 = matmul(Ly, fim2)
             fim1 = matmul(Ly, fim1)
             fi   = matmul(Ly, fi)
