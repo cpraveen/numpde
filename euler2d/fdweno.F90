@@ -3,7 +3,7 @@ module constants
    integer,parameter :: nvar = 4
    real,parameter :: gam = 1.4
    integer,parameter :: ifirst = 1, iminmod = 2, iwenojs = 3, iwenoz = 4
-   integer :: irecon
+   integer :: irecon, ichar
    integer :: nx, ny, nx1, nx2, ny1, ny2
    real    :: xmin, xmax, ymin, ymax, dx, dy
 end module constants
@@ -78,6 +78,70 @@ subroutine euler_fluxes(v, fx, fy)
    fy(3) = v(4) + v(1)*v(3)**2
    fy(4) = (E + v(4))*v(3)
 end subroutine euler_fluxes
+
+! Matrix of right and left eigenvectors for x flux
+subroutine eigenvector_matrix_x(prim, Rx, Lx)
+   use constants, only : nvar, gam
+   implicit none
+   real,intent(in) :: prim(nvar)
+   real,intent(inout) :: Rx(nvar,nvar), Lx(nvar,nvar)
+   ! Local variables
+   real :: g1, rho, u, v, q2, p, c2, c, beta, phi2, h
+
+   g1   = gam - 1.0
+   rho  = prim(1)
+   u    = prim(2)
+   v    = prim(3)
+   q2   = u*u + v*v
+   p    = prim(4)
+   c2   = gam * p / rho
+   c    = sqrt(c2)
+   beta = 0.5/c2
+   phi2 = 0.5*g1*q2
+   h    = c2/g1 + 0.5*q2
+
+   Rx(1,1) = 1;      Rx(1,2) = 0;  Rx(1,3) = 1;     Rx(1,4) = 1;
+   Rx(2,1) = u;      Rx(2,2) = 0;  Rx(2,3) = u+c;   Rx(2,4) = u-c;
+   Rx(3,1) = v;      Rx(3,2) = -1; Rx(3,3) = v;     Rx(3,4) = v;
+   Rx(4,1) = 0.5*q2; Rx(4,2) = -v; Rx(4,3) = h+c*u; Rx(4,4) = h-c*u;
+
+   Lx(1,1) = 1-phi2/c2;       Lx(1,2) = g1*u/c2;       Lx(1,3) = g1*v/c2;    Lx(1,4) = -g1/c2;
+   Lx(2,1) = v;               Lx(2,2) = 0;             Lx(2,3) = -1;         Lx(2,4) = 0;
+   Lx(3,1) = beta*(phi2-c*u); Lx(3,2) = beta*(c-g1*u); Lx(3,3) = -beta*g1*v; Lx(3,4) = beta*g1;
+   Lx(4,1) = beta*(phi2+c*u); Lx(4,2) =-beta*(c+g1*u); Lx(4,3) = -beta*g1*v; Lx(4,4) = beta*g1;
+end subroutine eigenvector_matrix_x
+
+! Matrix of right and left eigenvectors for x flux
+subroutine eigenvector_matrix_y(prim, Ry, Ly)
+   use constants, only : nvar, gam
+   implicit none
+   real,intent(in) :: prim(nvar)
+   real,intent(inout) :: Ry(nvar,nvar), Ly(nvar,nvar)
+   ! Local variables
+   real :: g1, rho, u, v, q2, p, c2, c, beta, phi2, h
+
+   g1   = gam - 1.0
+   rho  = prim(1)
+   u    = prim(2)
+   v    = prim(3)
+   q2   = u*u + v*v
+   p    = prim(4)
+   c2   = gam * p / rho
+   c    = sqrt(c2)
+   beta = 0.5/c2
+   phi2 = 0.5*g1*q2
+   h    = c2/g1 + 0.5*q2
+
+   Ry(1,1) = 1;      Ry(1,2) = 0;  Ry(1,3) = 1;     Ry(1,4) = 1;
+   Ry(2,1) = u;      Ry(2,2) = 1;  Ry(2,3) = u;     Ry(2,4) = u;
+   Ry(3,1) = v;      Ry(3,2) = 0;  Ry(3,3) = v+c;   Ry(3,4) = v-c;
+   Ry(4,1) = 0.5*q2; Ry(4,2) = u;  Ry(4,3) = h+c*v; Ry(4,4) = h-c*v;
+
+   Ly(1,1) = 1-phi2/c2;       Ly(1,2) = g1*u/c2;   Ly(1,3) = g1*v/ c2;       Ly(1,4) = -g1/c2;
+   Ly(2,1) = -u;              Ly(2,2) = 1;         Ly(2,3) =  0;             Ly(2,4) = 0;
+   Ly(3,1) = beta*(phi2-c*v); Ly(3,2) =-beta*g1*u; Ly(3,3) = beta*(c-g1* v); Ly(3,4) = beta*g1;
+   Ly(4,1) = beta*(phi2+c*v); Ly(4,2) =-beta*g1*u; Ly(4,3) =-beta*(c+g1* v); Ly(4,4) = beta*g1;
+end subroutine eigenvector_matrix_y
 
 ! Initial condition as a function of x
 subroutine initial_condition(x, y, u)
@@ -247,6 +311,7 @@ subroutine compute_residual(u, res)
    integer :: i, j
    real    :: fim2(nvar), fim1(nvar), fi(nvar), fip1(nvar), fip2(nvar), fip3(nvar)
    real    :: lamx1, lamx2, lamx, lamy1, lamy2, lamy
+   real    :: vm(nvar), Rx(nvar,nvar), Lx(nvar,nvar), Ry(nvar,nvar), Ly(nvar,nvar)
    real    :: fm(nvar), fp(nvar), flux(nvar)
 
    do j=ny1,ny2
@@ -273,6 +338,16 @@ subroutine compute_residual(u, res)
          fip1 = 0.5*(fx(:,i+1,j) + lamx * u(:,i+1,j))
          fip2 = 0.5*(fx(:,i+2,j) + lamx * u(:,i+2,j))
 
+         if(ichar == 1)then
+            vm = 0.5*(v(:,i,j) + v(:,i+1,j))
+            call eigenvector_matrix_x(vm, Rx, Lx)
+            fim2 = matmul(Lx, fim2)
+            fim1 = matmul(Lx, fim1)
+            fi   = matmul(Lx, fi)
+            fip1 = matmul(Lx, fip1)
+            fip2 = matmul(Lx, fip2)
+         endif
+
          call reconstruct(fim2, fim1, fi, fip1, fip2, fp)
 
          ! Negative flux
@@ -282,11 +357,24 @@ subroutine compute_residual(u, res)
          fip2 = 0.5*(fx(:,i+2,j) - lamx * u(:,i+2,j))
          fip3 = 0.5*(fx(:,i+3,j) - lamx * u(:,i+3,j))
 
+         if(ichar == 1)then
+            fim1 = matmul(Lx, fim1)
+            fi   = matmul(Lx, fi)
+            fip1 = matmul(Lx, fip1)
+            fip2 = matmul(Lx, fip2)
+            fip3 = matmul(Lx, fip3)
+         endif
+
          call reconstruct(fip3, fip2, fip1, fi, fim1, fm)
 
-         flux = (fp + fm)*dy
-         res(:,i  ,j) = res(:,i  ,j) + flux
-         res(:,i+1,j) = res(:,i+1,j) - flux
+         if(ichar == 1)then
+            flux = matmul(Rx, fp+fm)
+         else
+            flux = fp + fm
+         endif
+
+         res(:,i  ,j) = res(:,i  ,j) + flux * dy
+         res(:,i+1,j) = res(:,i+1,j) - flux * dy
       enddo
    enddo
 
@@ -305,6 +393,16 @@ subroutine compute_residual(u, res)
          fip1 = 0.5*(fy(:,i,j+1) + lamy * u(:,i,j+1))
          fip2 = 0.5*(fy(:,i,j+2) + lamy * u(:,i,j+2))
 
+         if(ichar == 1)then
+            vm = 0.5*(v(:,i,j) + v(:,i,j+1))
+            call eigenvector_matrix_x(vm, Ry, Ly)
+            fim2 = matmul(Ly, fim2)
+            fim1 = matmul(Ly, fim1)
+            fi   = matmul(Ly, fi)
+            fip1 = matmul(Ly, fip1)
+            fip2 = matmul(Ly, fip2)
+         endif
+
          call reconstruct(fim2, fim1, fi, fip1, fip2, fp)
 
          ! Negative flux
@@ -314,11 +412,24 @@ subroutine compute_residual(u, res)
          fip2 = 0.5*(fy(:,i,j+2) - lamy * u(:,i,j+2))
          fip3 = 0.5*(fy(:,i,j+3) - lamy * u(:,i,j+3))
 
+         if(ichar == 1)then
+            fim1 = matmul(Ly, fim1)
+            fi   = matmul(Ly, fi)
+            fip1 = matmul(Ly, fip1)
+            fip2 = matmul(Ly, fip2)
+            fip3 = matmul(Ly, fip3)
+         endif
+
          call reconstruct(fip3, fip2, fip1, fi, fim1, fm)
 
-         flux = (fp + fm)*dx
-         res(:,i,j  ) = res(:,i,j  ) + flux
-         res(:,i,j+1) = res(:,i,j+1) - flux
+         if(ichar == 1)then
+            flux = matmul(Ry, fp+fm)
+         else
+            flux = fp + fm
+         endif
+
+         res(:,i,j  ) = res(:,i,j  ) + flux * dx
+         res(:,i,j+1) = res(:,i,j+1) - flux * dx
       enddo
    enddo
 
@@ -396,6 +507,7 @@ program main
    nx     = 100
    ny     = 100
    irecon = iwenoz
+   ichar  = 0
 
    ! 3 ghost cells on each side, needed for WENO
    nx1 = -2
