@@ -149,10 +149,10 @@ subroutine compute_residual(nc, u, res)
    res(:,1) = res(:,1) - flux
 
    ! Intermediate faces
-   do i=2,nc
-      call num_flux(u(:,i-1), u(:,i), flux)
-      res(:,i-1) = res(:,i-1) + flux
-      res(:,i)   = res(:,i)   - flux
+   do i=1,nc-1
+      call num_flux(u(:,i), u(:,i+1), flux)
+      res(:,i  ) = res(:,i  ) + flux
+      res(:,i+1) = res(:,i+1)   - flux
    enddo
 
    ! Last face

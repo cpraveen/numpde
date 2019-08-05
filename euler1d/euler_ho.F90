@@ -1,16 +1,18 @@
 module constants
    implicit none
    integer,parameter :: nvar = 3
-   real,parameter :: gam = 1.4
    integer,parameter :: ilxf = 1
    integer,parameter :: ifirst = 1, iminmod = 2, iwenojs = 3, iwenoz = 4
    integer :: iflux, irecon
    integer :: ncel, nbeg, nend
 end module constants
 
+include 'sod.F90'
+
 ! Convert primitive variables to conserved variables
 subroutine prim2con(v,u)
    use constants
+   use TestData, only : gam
    implicit none
    real,intent(in)    :: v(nvar)
    real,intent(inout) :: u(nvar)
@@ -23,6 +25,7 @@ end subroutine prim2con
 ! Convert primitive variables to conserved variables
 subroutine con2prim(u, v)
    use constants
+   use TestData, only : gam
    implicit none
    real,intent(in)    :: u(nvar)
    real,intent(inout) :: v(nvar)
@@ -35,6 +38,7 @@ end subroutine con2prim
 ! Maximum absolute speed for euler = |vel| + sound_speed
 subroutine max_speed(v, s)
    use constants
+   use TestData, only : gam
    implicit none
    real,intent(in) :: v(nvar)
    real,intent(inout) :: s
@@ -44,6 +48,7 @@ end subroutine max_speed
 
 subroutine euler_flux(v, flux)
    use constants
+   use TestData, only : gam
    implicit none
    real,intent(in)    :: v(nvar)
    real,intent(inout) :: flux(nvar)
@@ -55,28 +60,6 @@ subroutine euler_flux(v, flux)
    E       = v(3)/(gam-1.0) + 0.5*v(1)*v(2)**2
    flux(3) = (E + v(3))*v(2)
 end subroutine euler_flux
-
-! Initial condition as a function of x
-subroutine initial_condition(x, u)
-   use constants
-   implicit none
-   real,intent(in)    :: x
-   real,intent(inout) :: u(nvar)
-   ! Local variables
-   real :: v(nvar)
-
-   if(x < 0.5)then
-      v(1) = 1.0
-      v(2) = 0.0
-      v(3) = 1.0
-   else
-      v(1) = 0.125
-      v(2) = 0.0
-      v(3) = 0.1
-   endif
-
-   call prim2con(v, u)
-end subroutine initial_condition
 
 ! Compute numerical flux
 subroutine lxf_flux(ul, ur, nflux)
@@ -285,13 +268,13 @@ subroutine compute_residual(u, res)
    res = 0.0
 
    ! All faces
-   do i=1,ncel+1
-      ! Face is between i-1 and i
-      call reconstruct(u(:,i-3), u(:,i-2), u(:,i-1), u(:,i), u(:,i+1), ul)
-      call reconstruct(u(:,i+2), u(:,i+1), u(:,i), u(:,i-1), u(:,i-2), ur)
+   do i=0,ncel
+      ! Face is between i and i+1
+      call reconstruct(u(:,i-2), u(:,i-1), u(:,i), u(:,i+1), u(:,i+2), ul)
+      call reconstruct(u(:,i+3), u(:,i+2), u(:,i+1), u(:,i), u(:,i-1), ur)
       call num_flux(ul, ur, flux)
-      res(:,i-1) = res(:,i-1) + flux
-      res(:,i)   = res(:,i)   - flux
+      res(:,i  ) = res(:,i  ) + flux
+      res(:,i+1) = res(:,i+1) - flux
    enddo
 
 end subroutine compute_residual
@@ -318,16 +301,15 @@ end subroutine savesol
 
 program main
    use constants
+   use TestData
    implicit none
-   real,parameter    :: xmin = 0.0, xmax = 1.0
    real,allocatable  :: u0(:,:), u(:,:), res(:,:), xc(:)
-   real              :: cfl, dx, dt, t, Tf
+   real              :: cfl, dx, dt, t
    integer           :: i, iter
    real,external     :: compute_dt
 
    cfl    = 0.95
    ncel   = 200
-   Tf     = 0.2
    iflux  = ilxf
    irecon = iwenoz
 
