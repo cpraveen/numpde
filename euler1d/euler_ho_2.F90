@@ -1,15 +1,18 @@
 module constants
    implicit none
    integer,parameter :: nvar = 3
-   integer,parameter :: ilxf = 1
+   integer,parameter :: ilxf = 1, iroe = 2, ihll = 3, ihllc = 4
    integer,parameter :: ifirst = 1, iminmod = 2, iwenojs = 3, iwenoz = 4
    integer,parameter :: iNeumann = 1,  iWall = 2
    integer :: iflux, irecon
    integer :: ncel, nbeg, nend
 end module constants
 
+! Include one file for test case definition
 !include 'sod.F90'
 include 'shuosher.F90'
+
+include 'num_flux.F90'
 
 ! Convert primitive variables to conserved variables
 subroutine prim2con(v,u)
@@ -94,6 +97,12 @@ subroutine num_flux(ul, ur, nflux)
 
    if(iflux == ilxf)then
       call lxf_flux(ul, ur, nflux)
+   else if(iflux == iroe)then
+      call roe_flux(ul, ur, nflux)
+   else if(iflux == ihll)then
+      call hll_flux(ul, ur, nflux)
+   else if(iflux == ihllc)then
+      call hllc_flux(ul, ur, nflux)
    else
       stop 'Unknown value of iflux'
    endif

@@ -2,6 +2,7 @@
 ! ul, ur : conserved variables
 subroutine roe_flux(ul, ur, nflux)
    use constants
+   use TestData, only : gam
    implicit none
    real,intent(in)    :: ul(nvar), ur(nvar)
    real,intent(inout) :: nflux(nvar)
@@ -55,6 +56,7 @@ end subroutine roe_flux
 ! vl, vr : primitive variables
 subroutine hll_speed(vl, vr, sl, sr)
    use constants
+   use TestData, only : gam
    implicit none
    real,intent(in)    :: vl(nvar), vr(nvar)
    real,intent(inout) :: sl, sr
