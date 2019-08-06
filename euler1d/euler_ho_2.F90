@@ -4,7 +4,7 @@ module constants
    integer,parameter :: ilxf = 1, iroe = 2, ihll = 3, ihllc = 4
    integer,parameter :: ifirst = 1, iminmod = 2, iwenojs = 3, iwenoz = 4
    integer,parameter :: iNeumann = 1,  iWall = 2
-   integer :: iflux, irecon
+   integer :: iflux, irecon, ichar
    integer :: ncel, nbeg, nend
 end module constants
 
@@ -279,20 +279,76 @@ subroutine reconstruct(ujm2, ujm1, uj, ujp1, ujp2, u)
    implicit none
    real,dimension(nvar),intent(in) :: ujm2, ujm1, uj, ujp1, ujp2
    real,dimension(nvar),intent(inout) :: u
+   real, dimension(nvar) :: wjm2, wjm1, wj, wjp1, wjp2
+   real :: R(nvar,nvar), L(nvar,nvar), v(nvar)
+
+   if(ichar == 1)then
+      call Eig_Vec(uj, ujp1, L, R)
+      wjm2 = matmul(L, ujm2)
+      wjm1 = matmul(L, ujm1)
+      wj   = matmul(L, uj)
+      wjp1 = matmul(L, ujp1)
+      wjp2 = matmul(L, ujp2)
+   else
+      wjm2 = ujm2
+      wjm1 = ujm1
+      wj   = uj
+      wjp1 = ujp1
+      wjp2 = ujp2
+   endif
 
    if(irecon == ifirst)then
-      u = uj
+      v = wj
    else if(irecon == iminmod)then
-      call reconstruct_minmod(nvar, ujm1, uj, ujp1, u)
+      call reconstruct_minmod(nvar, wjm1, wj, wjp1, v)
    else if(irecon == iwenojs)then
-      call reconstruct_wenojs(nvar, ujm2, ujm1, uj, ujp1, ujp2, u)
+      call reconstruct_wenojs(nvar, wjm2, wjm1, wj, wjp1, wjp2, v)
    else if(irecon == iwenoz)then
-      call reconstruct_wenoz(nvar, ujm2, ujm1, uj, ujp1, ujp2, u)
+      call reconstruct_wenoz(nvar, wjm2, wjm1, wj, wjp1, wjp2, v)
    else
       stop 'Unknown value of irecon'
    endif
 
+   if(ichar == 1)then
+      u = matmul(R, v)
+   else
+      u = v
+   endif
+
 end subroutine reconstruct
+
+subroutine Eig_Vec(ul, ur, L, R)
+   use constants
+   use TestData
+   implicit none
+   real :: ul(nvar), ur(nvar), u(nvar) 
+   real :: R(nvar,nvar), L(nvar,nvar)
+   real :: H, v(nvar), a, M
+   
+   u = 0.5*(ul+ur)
+   call con2prim(u, v)
+   H = (u(3)+v(3))/u(1)
+   a = sqrt(gam*v(3)/v(1))
+
+   R(1,1) = 1.0;      R(1,2) = 1.0;         R(1,3) = 1.0
+   R(2,1) = v(2)-a;   R(2,2) = v(2);        R(2,3) = v(2)+a
+   R(3,1) = H-v(2)*a; R(3,2) = 0.5*v(2)**2; R(3,3) = H+v(2)*a
+   
+   M      = v(2)/a
+
+   L(1,1) = 0.25*(gam-1.0)*M**2 + 0.5*M
+   L(1,2) = -0.5*(gam-1.0)*M/a - 0.5/a
+   L(1,3) = 0.5*(gam-1.0)/a**2
+
+   L(2,1) = 1.0 - 0.5*(gam-1.0)*M**2
+   L(2,2) = (gam-1.0)*M/a
+   L(2,3) = -(gam-1.0)/a**2
+
+   L(3,1) = 0.25*(gam-1.0)*M**2 - 0.5*M
+   L(3,2) = -0.5*(gam-1.0)*M/a + 0.5/a
+   L(3,3) = 0.5*(gam-1.0)/a**2
+
+end subroutine Eig_Vec
 
 ! Compute finite volume residual R
 ! dx*du/dt + R = 0
