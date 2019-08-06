@@ -1,3 +1,5 @@
+! Numerical flux of Roe
+! ul, ur : conserved variables
 subroutine roe_flux(ul, ur, nflux)
    use constants
    implicit none
@@ -49,24 +51,24 @@ subroutine roe_flux(ul, ur, nflux)
            - 0.5*(alpha(1)*abs(lam(1))*r1 + alpha(2)*abs(lam(2))*r2 + alpha(3)*abs(lam(3))*r3)
 end subroutine roe_flux
 
-subroutine hll_speed(ul, ur, sl, sr)
+! Minimum and maximum wave speed estimates for Riemann data
+! vl, vr : primitive variables
+subroutine hll_speed(vl, vr, sl, sr)
    use constants
    implicit none
-   real,intent(in)    :: ul(nvar), ur(nvar)
+   real,intent(in)    :: vl(nvar), vr(nvar)
    real,intent(inout) :: sl, sr
    ! Local variables
-   real :: vl(nvar), vr(nvar), HL, HR, laml, lamr 
-   real ::  u, H, a, upa, uma, RT
-
-   call con2prim(ul, vl)
-   call con2prim(ur, vr)
+   real :: HL, HR, laml, lamr 
+   real :: u, H, a, upa, uma, RT
    
-   HL   = (ul(3) + vl(3))/vl(1)
+   HL   = gam*vl(3)/((gam-1.0)*vl(1)) + 0.5*vl(2)**2
    laml = abs(vl(2)) - sqrt(gam*vl(3)/vl(1))
    
-   HR   = (ur(3) + vr(3))/vr(1)
+   HR   = gam*vr(3)/((gam-1.0)*vr(1)) + 0.5*vr(2)**2
    lamr = abs(vr(2)) + sqrt(gam*vr(3)/vr(1))
 
+   ! Roe average speed
    RT  = sqrt(vr(1)/vl(1))
    u   = (vl(2) + RT*vr(2))/(1.0+RT)
    H   = (HL + RT*HR)/(1.0+RT)
@@ -79,6 +81,8 @@ subroutine hll_speed(ul, ur, sl, sr)
    
 end subroutine hll_speed
 
+! Numerical flux from HLL solver
+! ul, ur : conserved variables
 subroutine hll_flux(ul, ur, nflux)
    use constants
    implicit none
@@ -90,7 +94,7 @@ subroutine hll_flux(ul, ur, nflux)
    call con2prim(ul, vl)
    call con2prim(ur, vr)
 
-   call hll_speed(ul, ur, sl, sr)
+   call hll_speed(vl, vr, sl, sr)
    
    if(sl > 0.0) then
       call euler_flux(vl, nflux)
@@ -99,50 +103,48 @@ subroutine hll_flux(ul, ur, nflux)
    else 
       call euler_flux(vl, fl)
       call euler_flux(vr, fr)
-      nflux = (1.0/(sr-sl)) * ( sr*fl - sl*fr + sl*sr*(ur - ul))
+      nflux = (1.0/(sr-sl)) * (sr*fl - sl*fr + sl*sr*(ur - ul))
    endif
 end subroutine hll_flux
 
+! Numerical flux from HLLC solver
+! ul, ur : conserved variables
 subroutine hllc_flux(ul, ur, nflux)
    use constants
    implicit none
    real,intent(in)    :: ul(nvar), ur(nvar)
    real,intent(inout) :: nflux(nvar)
    ! Local variables
-   real :: vl(nvar), vr(nvar), sl, sr, fl(nvar), fr(nvar)
-   real :: us(nvar), vs(nvar), fa(nvar), sm, sa, ua(nvar), va(nvar), usa(nvar)
+   real :: vl(nvar), vr(nvar), sl, sr, fl(nvar), fr(nvar), ps
+   real :: us(nvar), sm
 
    call con2prim(ul, vl)
    call con2prim(ur, vr)
 
-   call hll_speed(ul, ur, sl, sr)
+   call hll_speed(vl, vr, sl, sr)
    
    if(sl > 0.0)then ! supersonic to right
       call euler_flux(vl, nflux)
    else if(sr < 0.0)then ! supersonic to left
       call euler_flux(vr, nflux)
    else ! subsonic case
-      call euler_flux(vl, fl)
-      call euler_flux(vr, fr)
-      ! HLL state
-      us = (sr*ur - sl*ul - (fr - fl))/(sr - sl)
-      call con2prim(us, vs)
-      sm = vs(2)
+      ! u*
+      sm =  (ur(2)*(sr-vr(2)) - ul(2)*(sl - vl(2))-(vr(3)-vl(3))) &
+          / (vr(1)*(sr -vr(2))- vl(1)*(sl - vl(2)))
+      ! p*
+      ps = vl(3) + vl(1)*(sl - vl(2))*(sm - vl(2))
       if(0.0 <= sm)then
-         fa = fl
-         ua = ul
-         sa = sl
+         call euler_flux(vl, fl)
+         us(1) = ul(1) * (sl - vl(2))/(sl - sm)
+         us(2) = us(1)*sm
+         us(3) = ((sl-vl(2))*ul(3) + ps*sm - vl(3)*vl(2)) / (sl - sm)
+         nflux = fl + sl*(us - ul)
       else
-         fa = fr
-         ua = ur
-         sa = sr
+         call euler_flux(vr, fr)
+         us(1) = ur(1) * (sr - vr(2))/(sr - sm)
+         us(2) = us(1)*sm
+         us(3) = ((sr-vr(2))*ur(3) + ps*sm - vr(3)*vr(2)) / (sr - sm)
+         nflux = fr + sr*(us - ur)
       endif
-
-      call con2prim(ua, va)
-      usa(1) = (sa - va(2))/(sa - sm) * ua(1)
-      usa(2) = usa(1)*sm
-      usa(3) = ((sa-va(2))*ua(3) + vs(3)*sm - va(3)*va(2)) / (sa - sm)
-
-      nflux = fa + sa*(usa - ua)
    endif
 end subroutine hllc_flux
