@@ -408,6 +408,7 @@ program main
    ncel   = 200
    iflux  = ilxf
    irecon = iwenoz
+   ichar  = 0
 
    ! 3 ghost cells on each side, needed for WENO
    nbeg = -2
