@@ -1,8 +1,10 @@
 module TestData
+   use constants
    implicit none
    real,parameter :: xmin = 0.0, xmax = 1.0
    real,parameter :: gam = 1.4
    real,parameter :: Tf = 0.2
+   integer,parameter :: leftbc = iNeumann, rightbc = iNeumann
 end module TestData
 
 ! Initial condition as a function of x

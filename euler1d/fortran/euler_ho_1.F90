@@ -3,6 +3,7 @@ module constants
    integer,parameter :: nvar = 3
    integer,parameter :: ilxf = 1
    integer,parameter :: ifirst = 1, iminmod = 2, iwenojs = 3, iwenoz = 4
+   integer,parameter :: iNeumann = 1,  iWall = 2
    integer :: iflux, irecon
    integer :: ncel, nbeg, nend
 end module constants
