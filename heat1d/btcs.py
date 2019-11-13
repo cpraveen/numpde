@@ -28,7 +28,7 @@ def solve(N, lam, Tf):
     plt.legend(('Exact','Numerical'))
     plt.title('N='+str(N)+', $\lambda$='+str(lam))
     plt.draw(); plt.pause(0.1)
-    wait = raw_input("Press enter to continue ")
+    wait = input("Press enter to continue ")
 
     # Construct tridiagonal matrix and compute its LU decomposition
     a = (1.0+2.0*lam)*np.ones(N-2)
@@ -40,7 +40,7 @@ def solve(N, lam, Tf):
     while t < Tf:
         u[1:-1] = tdma2(a, b, c, u[1:-1])
         t += dt; it += 1
-        print "t = ", t
+        print("t = ", t)
 
         line1.set_ydata(uexact(x,t))
         line2.set_ydata(u)

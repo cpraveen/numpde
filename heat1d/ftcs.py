@@ -27,13 +27,13 @@ def solve(N, lam, Tf):
     plt.legend(('Exact','Numerical'))
     plt.title('N='+str(N)+', $\lambda$='+str(lam))
     plt.draw(); plt.pause(0.1)
-    wait = raw_input("Press enter to continue ")
+    wait = input("Press enter to continue ")
 
     t, it = 0.0, 0
     while t < Tf:
         u[1:-1] = lam*u[0:-2] + (1-2*lam)*u[1:-1] + lam*u[2:]
         t += dt; it += 1
-        print "t = ", t
+        print("t = ", t)
 
         line1.set_ydata(uexact(x,t))
         line2.set_ydata(u)
