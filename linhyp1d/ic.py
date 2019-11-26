@@ -12,3 +12,7 @@ def hat(x):
         else:
             u[i] = 0.0
     return u
+
+def sine(x):
+    return 1.0 + np.sin(2*np.pi*x) + np.sin(20*np.pi*x)
+

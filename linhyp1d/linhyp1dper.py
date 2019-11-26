@@ -86,14 +86,16 @@ def solve(N, cfl, scheme, Tf, uinit):
 # Get arguments
 parser = argparse.ArgumentParser()
 parser.add_argument('-N', type=int, help='Number of cells', default=100)
-parser.add_argument('-cfl', type=float, help='CFL number', default=0.9)
+parser.add_argument('-cfl', type=float, help='CFL number', default=0.98)
 parser.add_argument('-scheme', choices=('FTBS','FTFS','FTCS','LF','LW'), help='Scheme', default='FTBS')
 parser.add_argument('-Tf', type=float, help='Final time', default=1.0)
-parser.add_argument('-ic', choices=('smooth','hat'), help='Init cond', default='smooth')
+parser.add_argument('-ic', choices=('smooth','hat','sine'), help='Init cond', default='smooth')
 args = parser.parse_args()
 
 # Run the solver
 if args.ic == "smooth":
     solve(args.N, args.cfl, args.scheme, args.Tf, smooth)
-else:
+elif args.ic == "hat":
     solve(args.N, args.cfl, args.scheme, args.Tf, hat)
+elif args.ic == "sine":
+    solve(args.N, args.cfl, args.scheme, args.Tf, sine)
