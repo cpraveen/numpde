@@ -25,10 +25,11 @@ def solve(N, cfl, Tf):
     line1, = ax.plot(x, u, 'r')
     line2, = ax.plot(x, u, 'b')
     ax.set_xlabel('x'); ax.set_ylabel('u')
+    plt.grid(True)
     plt.legend(('Numerical','Exact'))
     plt.title('N='+str(N)+', CFL='+str(cfl))
     plt.draw(); plt.pause(0.1)
-    wait = raw_input("Press enter to continue ")
+    wait = input("Press enter to continue ")
 
     t, it = 0.0, 0
     while t < Tf:
