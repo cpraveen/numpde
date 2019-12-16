@@ -7,6 +7,15 @@ import matplotlib.pyplot as plt
 import argparse
 from numfluxes import *
 
+def shock(x):
+    u = np.zeros(len(x))
+    for i in range(len(x)):
+        if x[i] < 0.25:
+            u[i] = 2.0
+        else:
+            u[i] = 1.0
+    return u
+
 def smooth(x):
     return np.sin(2*np.pi*x)
 
@@ -18,6 +27,9 @@ def rare(x):
         else:
             u[i] = 1.0
     return u
+
+def expo(x):
+    return 1.0 + np.exp(-100*(x-0.25)**2)
 
 def solve(N, cfl, scheme, Tf, uinit):
     xmin, xmax = 0.0, 1.0
@@ -65,7 +77,7 @@ parser.add_argument('-N', type=int, help='Number of cells', default=100)
 parser.add_argument('-cfl', type=float, help='CFL number', default=0.9)
 parser.add_argument('-scheme', choices=('LF','LLF','LW','ROE','EROE','GOD'), 
                     help='Scheme', default='LF')
-parser.add_argument('-ic', choices=('smooth','rare'), 
+parser.add_argument('-ic', choices=('smooth','shock','rare','expo'), 
                     help='Initial condition', default='smooth')
 parser.add_argument('-Tf', type=float, help='Final time', default=1.0)
 args = parser.parse_args()
@@ -73,5 +85,9 @@ args = parser.parse_args()
 # Run the solver
 if args.ic == "smooth":
     solve(args.N, args.cfl, args.scheme, args.Tf, smooth)
-else:
+elif args.ic == "expo":
+    solve(args.N, args.cfl, args.scheme, args.Tf, expo)
+elif args.ic == "shock":
+    solve(args.N, args.cfl, args.scheme, args.Tf, shock)
+elif args.ic == "rare":
     solve(args.N, args.cfl, args.scheme, args.Tf, rare)
