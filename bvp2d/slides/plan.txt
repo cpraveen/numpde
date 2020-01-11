@@ -1,0 +1,6 @@
+lap1d : 1d laplace equation
+
+oil_reservoir_1d: 
+DG
+
+laplace: using deal.II functions, no class or function

@@ -1,0 +1,20 @@
+\frametitle{Assignment}
+
+\begin{itemize}
+
+\item What happens if a row does not have any non-zero entries ? Try with an example.
+
+\item Create sparse matrix by directly entering values: This should automatically create {\tt row\_ptr}, {\tt col\_ind} and {\tt val} data. Assume the values are entered {\em row-wise only}.
+\begin{lstlisting}
+SparseMatrix<double> A(4); // 4 x 4 sparse matrix
+A.set(0,0,10);
+A.set(0,3,7);
+A.set(1,1,1);
+etc..
+A.set(3,3,1);
+A.close();
+\end{lstlisting}
+After this point, we cannot change the sparsity structure of the matrix.
+\item Read up about conjugate gradient method.
+\end{itemize}
+

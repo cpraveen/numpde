@@ -1,0 +1,72 @@
+--------------------------------------------------------------------------------
+step-1
+--------------------------------------------------------------------------------
+In built grid generation: hypercube and hyperball
+Looping over cells
+Marking cells for refinement
+Refine grid
+Save grid in eps format
+
+Extras:
+Make grid in unit square
+Do uniform refinement 5 times
+Refine all cells within a radius of 0.25, do it 5 times
+Save grid in eps format
+
+--------------------------------------------------------------------------------
+step-2
+--------------------------------------------------------------------------------
+Create mesh for hypershell
+Refine it
+Create fe(1) space and dof handler
+Create sparsity pattern
+Print sparsity pattern to file
+Renumber dofs using Cuthill-McKee algorithm
+
+--------------------------------------------------------------------------------
+step-3
+--------------------------------------------------------------------------------
+Problem
+   -Laplace(u) = 1 with u=0 on boundary
+
+Basic structure of fem code
+  make grid
+  setup system
+  assemble
+  solve
+  save solution
+
+Extras:
+Try all "Possibilities of extensions" in the example.
+Write function compute_mean_value() and call it after solve().
+
+--------------------------------------------------------------------------------
+step-4
+--------------------------------------------------------------------------------
+Problem
+   Laplace equation with dirichlet bc
+
+dim template
+Function class: right hand side, boundary values
+run in 2d and 3d
+
+Extras:
+Try other linear solvers, also trilinos
+
+--------------------------------------------------------------------------------
+step-5
+--------------------------------------------------------------------------------
+Problem
+   Laplace equation with dirichlet bc
+
+read ucd grid from file
+spatially varying diffusion coefficient
+uniform refinement
+use of preconditioner
+
+Extras:
+
+--------------------------------------------------------------------------------
+Misc
+--------------------------------------------------------------------------------
+Study effect of quadrature formula on error convergence
