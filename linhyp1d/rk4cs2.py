@@ -16,6 +16,7 @@ def rhs(h, u):
     r[-1]   = r[0]                       # last is same as first
     return r
 
+# Grid has N+1 points with x[0] = x[N]
 def solve(N, cfl, Tf, uinit):
     xmin, xmax = 0.0, 1.0
     a          = 1.0
