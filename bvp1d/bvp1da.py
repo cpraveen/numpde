@@ -28,10 +28,10 @@ b = h**2 * f(x[1:-1])
 b[0]  += u[0]
 b[-1] += u[-1]
 u[1:-1] = tdma(2*ones(n-2),-ones(n-2),-ones(n-2),b)
-print "Max error = ", abs(uexact(x)-u).max()
+print("Max error = ", abs(uexact(x)-u).max())
 
 xe = linspace(xmin, xmax, 100); ue = uexact(xe)
-plt.plot(xe,ue,x,u,'o-')
+plt.plot(xe,ue,x,u,'o')
 plt.legend(('Exact solution','Numerical solution'))
 plt.xlabel('x')
 plt.ylabel('u')

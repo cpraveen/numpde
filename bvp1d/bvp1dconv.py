@@ -38,10 +38,10 @@ for n in [20,40,80,160,320]:
     h.append(h1); err.append(err1)
 
 # Compute convergence rate in L2 norm
-print "h = %e   err = %e" % (h[0], err[0])
+print("h = %e   err = %e" % (h[0], err[0]))
 for i in range(1,len(h)):
     p = log(err[i-1]/err[i])/log(2)
-    print "h = %e   err = %e  rate = %f" % (h[i], err[i], p)
+    print("h = %e   err = %e  rate = %f" % (h[i], err[i], p))
 
 # Plot error norm vs h
 plt.loglog(h, err, 'o-')
