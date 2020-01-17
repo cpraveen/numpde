@@ -5,6 +5,7 @@ where A = diag(b,a,c)
 """
 from numpy import zeros
 
+# We modify the a,b arrays
 def tdma(a,b,c,f):
     n = len(f)
     # construct LU decomposition

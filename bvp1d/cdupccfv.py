@@ -15,7 +15,11 @@ args = parser.parse_args()
 N, Pe = args.N, args.Pe
 
 a, b = 0.0, 1.0
+
+# Grid with N cells
 h = (b-a)/N
+
+# Mesh Peclet number
 P = h * Pe
 
 # Construct diagonals of matrix
