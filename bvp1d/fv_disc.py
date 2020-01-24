@@ -61,7 +61,7 @@ def solve(n):
     plt.title('FD using '+str(n+1)+' points')
     plt.xlabel('x'); plt.ylabel('u')
     plt.legend(('Exact','FD'))
-    print "Close plot window to continue"
+    print("Close plot window to continue")
     plt.show()
     return h, abs(u-uexact(x)).max()
 
@@ -72,7 +72,7 @@ for n in [19,39,79,159,319]:
     h.append(h1); err.append(err1)
 
 # Compute convergence rate in L2 norm
-print "h = %e   err = %e" % (h[0], err[0])
+print("h = %e   err = %e" % (h[0], err[0]))
 for i in range(1,len(h)):
     p = log(err[i-1]/err[i])/log(2)
-    print "h = %e   err = %e  rate = %f" % (h[i], err[i], p)
+    print("h = %e   err = %e  rate = %f" % (h[i], err[i], p))
