@@ -1,10 +1,10 @@
 # 2-D BVP
 
-## Poisson eqn in unit square
+## Poisson eqn in unit square: poisson1.cc
 
 Compile the code
 ```
-$ make
+$ make poisson1
 ```
 This creates the executable ```poisson1```. Run it
 ```
@@ -20,3 +20,5 @@ Use your mouse to rotate the figure. You can also open the ```splot.eps``` file.
 gnuplot> load 'contour.gnu'
 ```
 and see the file ```contour.eps```.
+
+## Same example using Eigen: poisson2.cc

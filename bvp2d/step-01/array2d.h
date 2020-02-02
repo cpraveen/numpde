@@ -3,8 +3,6 @@
 
 #include <vector>
 
-using namespace std;
-
 class Array2D
 {
 public:
@@ -20,7 +18,7 @@ public:
    
 private:
    unsigned int nx, ny, n;
-   vector<double> u;
+   std::vector<double> u;
 };
 
 #endif

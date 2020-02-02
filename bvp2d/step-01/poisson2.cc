@@ -6,8 +6,9 @@
 #include <vector>
 #include <cmath>
 #include <fstream>
+#include <Eigen/Dense>
 
-#include "array2d.h"
+typedef Eigen::MatrixXd Array2D;
 
 using namespace std;
 
@@ -20,8 +21,8 @@ double rhs(const double x, const double y)
 // Computes L2 norm of residual
 double residual (const double h, const Array2D& u, const Array2D& b)
 {
-   const unsigned int nx = u.sizex();
-   const unsigned int ny = u.sizey();
+   const unsigned int nx = u.rows();
+   const unsigned int ny = u.cols();
    const double ihh = 1.0/(h*h);
    
    double res = 0.0;
@@ -54,7 +55,7 @@ int main()
       }
    
    // Initial guess is zero
-   u = 0.0;
+   u.setZero();
    double res0 = residual (h, u, b);
    double res  = res0;
    unsigned int iter = 0;
