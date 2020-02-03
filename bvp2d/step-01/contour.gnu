@@ -11,7 +11,7 @@ splot 'u.dat'
 unset table
 
 reset
-set term x11
+#set term x11
 unset key
 set palette rgbformulae 33,13,10
 set xran[0:1]
@@ -23,4 +23,4 @@ set term postscript enhanced color
 set out 'contour.eps'
 replot
 set out
-set term x11
+#set term x11

@@ -6,4 +6,4 @@ set term postscript enhanced color
 set out 'splot.eps'
 replot
 set out
-set term x11
+#set term x11
