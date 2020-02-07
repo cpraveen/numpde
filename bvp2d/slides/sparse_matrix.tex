@@ -168,7 +168,7 @@ We assume C/C++ style indexing, starting from 0.
 \end{center}
 
 \begin{center}
-\begin{tabular}{|c|c|c|c|c|c|c|c|c|c|}
+\begin{tabular}{|c|c|c||c|c||c|c|c||c|c|}
 \hline
                & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 \\
 \hline
@@ -189,8 +189,6 @@ Integer arrays: {\tt row\_ptr} and {\tt col\_ind}
 %-----------------------------------------------------------------------------------
 \begin{frame}
 \frametitle{Modified CSR format}
-In each row, the columns need not be stored in order. This allows us to store the diagonal element as the first element in each row. Very useful for iterative algorithms, since it allows us to access diagonal element without searching for the column.
-
 {\tt row\_ptr[i]} is starting index of $i$'th row and the values
 \[
 \textrm{\tt val[c]}, \quad c = \textrm{\tt row\_ptr[i]}, ..., {\tt row\_ptr[i+1]-1}
@@ -200,6 +198,9 @@ are the non-zero values in the $i$'th row. Their corresponding column indices ar
 \textrm{\tt col\_ind[c]}, \quad c = \textrm{\tt row\_ptr[i]}, ..., {\tt row\_ptr[i+1]-1}
 \]
 
+\vspace{5mm}
+
+In each row, the columns need not be stored in order. This allows us to store the diagonal element as the first element in each row. Very useful for iterative algorithms, since it allows us to access diagonal element without searching for the column.
 \end{frame}
 %-----------------------------------------------------------------------------------
 \begin{frame}[fragile]
