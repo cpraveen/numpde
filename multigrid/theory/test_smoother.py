@@ -32,7 +32,7 @@ wait = input("Press enter to continue ")
 # for weighted jacobi
 omega = 2.0/3.0
 
-for i in range(10):
+for i in range(10): # iteration loop
     if args.scheme == 'jacobi':
         v = wjacobi(h,v,f,omega,1)
     elif args.scheme == 'gs':

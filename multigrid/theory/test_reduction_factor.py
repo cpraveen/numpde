@@ -24,9 +24,9 @@ for k in range(1,n+1):
     vnorm_init[k] = np.linalg.norm(v[k,:])
 
 plt.figure()
-for i in range(10):
+for i in range(10): # iteration loop
     vnorm = np.zeros(n+2)
-    for k in range(1,n+1):
+    for k in range(1,n+1): # loop over eigenvectors
         if args.scheme == 'jacobi':
             v[k,:] = wjacobi(h,v[k,:],f,omega,1)
         elif args.scheme == 'gs':
@@ -40,5 +40,6 @@ for i in range(10):
 
 plt.grid(True)
 plt.xlabel('k, wave-number')
-plt.title('Scheme = '+args.scheme)
+plt.ylabel('$||G^j v_k||/||v_k||$')
+plt.title('Scheme = '+args.scheme+', n = '+str(n))
 plt.show()

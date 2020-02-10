@@ -19,8 +19,8 @@ h = 1.0/(n+1)
 omega = 2.0/3.0
 f = np.zeros(n+2)
 
-for i in range(10):
-    for k in range(1,n+1):
+for i in range(10): # iteration loop
+    for k in range(1,n+1): # loop over eigenvectors
         if args.scheme == 'jacobi':
             v[k,:] = wjacobi(h,v[k,:],f,omega,1)
         elif args.scheme == 'gs':
