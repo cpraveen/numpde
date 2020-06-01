@@ -40,9 +40,8 @@ def update_lw(nu, u):
     unew[-1] = unew[0]
     return unew
 
-def solve(N, cfl, scheme, Tf, uinit):
+def solve(a, N, cfl, scheme, Tf, uinit):
     xmin, xmax = 0.0, 1.0
-    a          = 1.0
 
     h = (xmax - xmin)/N
     dt= cfl * h / np.abs(a)
@@ -88,14 +87,15 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-N', type=int, help='Number of cells', default=100)
 parser.add_argument('-cfl', type=float, help='CFL number', default=0.98)
 parser.add_argument('-scheme', choices=('FTBS','FTFS','FTCS','LF','LW'), help='Scheme', default='FTBS')
+parser.add_argument('-a', type=float, help='Advection speed', default=1.0)
 parser.add_argument('-Tf', type=float, help='Final time', default=1.0)
 parser.add_argument('-ic', choices=('smooth','hat','sine'), help='Init cond', default='smooth')
 args = parser.parse_args()
 
 # Run the solver
 if args.ic == "smooth":
-    solve(args.N, args.cfl, args.scheme, args.Tf, smooth)
+    solve(args.a, args.N, args.cfl, args.scheme, args.Tf, smooth)
 elif args.ic == "hat":
-    solve(args.N, args.cfl, args.scheme, args.Tf, hat)
+    solve(args.a, args.N, args.cfl, args.scheme, args.Tf, hat)
 elif args.ic == "sine":
-    solve(args.N, args.cfl, args.scheme, args.Tf, sine)
+    solve(args.a, args.N, args.cfl, args.scheme, args.Tf, sine)
