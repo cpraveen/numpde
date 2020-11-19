@@ -12,11 +12,11 @@ kh = np.linspace(-np.pi, np.pi, 500)
 plt.figure()
 leg = ()
 for cfl in s:
-    g2 = 1 - 6*cfl + 26*cfl**2 - 8*cfl*(-1+4*cfl)*np.cos(kh) \
-            + 2*cfl*(-1+3*cfl)*np.cos(2*kh)
-    g2 = np.sqrt(g2)
-    plt.plot(kh,g2)
+    g = 1.0 - 1.5*cfl + 2.0*cfl*np.exp(-1j*kh) - 0.5*cfl*np.exp(-2j*kh)
+    g = np.abs(g)
+    plt.plot(kh,g)
     leg += ('CFL='+str(cfl),)
+    print('cfl, max amp =', cfl, g.max())
 
 plt.xlabel('Wave number $k h$')
 plt.ylabel('Amplification factor $|\gamma_k|$')
