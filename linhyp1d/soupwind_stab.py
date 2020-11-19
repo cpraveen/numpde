@@ -16,10 +16,10 @@ for cfl in s:
             + 2*cfl*(-1+3*cfl)*np.cos(2*kh)
     g2 = np.sqrt(g2)
     plt.plot(kh,g2)
-    leg += (str(cfl),)
+    leg += ('CFL='+str(cfl),)
 
-plt.xlabel('$k h$')
-plt.ylabel('$|\gamma_k|$')
+plt.xlabel('Wave number $k h$')
+plt.ylabel('Amplification factor $|\gamma_k|$')
 plt.legend(leg)
 plt.title('Second order upwind with forward Euler')
 plt.grid(True)

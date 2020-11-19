@@ -111,9 +111,7 @@ def compute_residual(u):
     return res
 
 # Solve the problem
-def solve(N, cfl, rscheme, Tf, uinit, nrk):
-    xmin, xmax = 0.0, 1.0
-
+def solve(N, cfl, rscheme, Tf, xmin, xmax, uinit, nrk):
     h = (xmax - xmin)/N
     dt= cfl * h / np.abs(a)
 
@@ -128,7 +126,7 @@ def solve(N, cfl, rscheme, Tf, uinit, nrk):
     ax.set_xlabel('x'); ax.set_ylabel('u')
     plt.legend(('Numerical','Exact'))
     plt.title('N='+str(N)+', CFL='+str(cfl)+', Scheme='+rscheme)
-    plt.axis([0.0, 1.0, u.min()-0.1, u.max()+0.1])
+    plt.axis([xmin, xmax, u.min()-0.1, u.max()+0.1])
     plt.grid(True); plt.draw(); plt.pause(0.1)
     wait = input("Press enter to continue ")
 
@@ -137,7 +135,7 @@ def solve(N, cfl, rscheme, Tf, uinit, nrk):
         uold[:] = u
         for rk in range(nrk):
             res = compute_residual(u)
-            u = ark[rk]*uold + (1-ark[rk])*(u - (dt/h)*res)
+            u = ark[rk]*uold + (1.0-ark[rk])*(u - (dt/h)*res)
         t += dt; it += 1
         line1.set_ydata(u)
         line2.set_ydata(uinit(x-a*t))
@@ -151,7 +149,7 @@ parser.add_argument('-cfl', type=float, help='CFL number', default=0.9)
 parser.add_argument('-scheme', choices=('FO','MMOD','WENO5','MP5'),
                     help='Scheme', default='FO')
 parser.add_argument('-Tf', type=float, help='Final time', default=1.0)
-parser.add_argument('-ic', choices=('smooth','hat'), help='Init cond', default='smooth')
+parser.add_argument('-ic', choices=('smooth','hat','mult'), help='Init cond', default='smooth')
 args = parser.parse_args()
 
 if args.scheme=="FO":
@@ -165,6 +163,11 @@ elif args.scheme=="MP5":
 
 # Run the solver
 if args.ic == "smooth":
-    solve(args.N, args.cfl, args.scheme, args.Tf, smooth, nrk)
-else:
-    solve(args.N, args.cfl, args.scheme, args.Tf, hat, nrk)
+    xmin, xmax = 0.0, 1.0
+    solve(args.N, args.cfl, args.scheme, args.Tf, xmin, xmax, smooth, nrk)
+elif args.ic == "hat":
+    xmin, xmax = 0.0, 1.0
+    solve(args.N, args.cfl, args.scheme, args.Tf, xmin, xmax, hat, nrk)
+elif args.ic == "mult":
+    xmin, xmax = -1.0, 1.0
+    solve(args.N, args.cfl, args.scheme, args.Tf, xmin, xmax, mult, nrk)
