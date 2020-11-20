@@ -35,6 +35,12 @@ def minmod4(a,b,c,d):
 def median(a,b,c):
     return a + minmod2(b-a, c-a)
 
+def vanleer(a,b):
+    if a*b <= 0.0:
+        return 0.0
+    else:
+        return 2.0*a*b/(a + b)
+
 # 5th order weno reconstruction. Gives left state at
 # interface b/w u0 and up1
 def weno5(um2,um1,u0,up1,up2):
@@ -85,6 +91,8 @@ def reconstruct(ujm2, ujm1, uj, ujp1, ujp2):
         return weno5(ujm2, ujm1, uj, ujp1, ujp2)
     elif scheme==3: # mp5
         return mp5(ujm2, ujm1, uj, ujp1, ujp2)
+    elif scheme==4: # van leer
+        return uj + 0.5 * vanleer(uj-ujm1, ujp1-uj)
 
 # Compute finite volume residual R in eqn h*du/dt + R = 0
 def compute_residual(u):
@@ -146,7 +154,7 @@ def solve(N, cfl, rscheme, Tf, xmin, xmax, uinit, nrk):
 parser = argparse.ArgumentParser()
 parser.add_argument('-N', type=int, help='Number of cells', default=100)
 parser.add_argument('-cfl', type=float, help='CFL number', default=0.9)
-parser.add_argument('-scheme', choices=('FO','MMOD','WENO5','MP5'),
+parser.add_argument('-scheme', choices=('FO','MMOD','VL','WENO5','MP5'),
                     help='Scheme', default='FO')
 parser.add_argument('-Tf', type=float, help='Final time', default=1.0)
 parser.add_argument('-ic', choices=('smooth','hat','mult'), help='Init cond', default='smooth')
@@ -160,6 +168,8 @@ elif args.scheme=="WENO5":
     scheme, nrk = 2, 3
 elif args.scheme=="MP5":
     scheme, nrk = 3, 3
+elif args.scheme == "VL":
+    scheme, nrk = 4, 3
 
 # Run the solver
 if args.ic == "smooth":
