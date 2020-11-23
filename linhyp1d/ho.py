@@ -13,7 +13,7 @@ from ic import *
 ark = [0.0, 3.0/4.0, 1.0/3.0]
 a = 1.0
 beta = 2.0 # used in minmod scheme
-IFO, IMMOD, IMC, IWENO5, IMP5, IVL = 1, 2, 3, 4, 5, 6
+IFO, IMMOD, IMC, IWENO5, IMP5, IVL, ISOUP = 1, 2, 3, 4, 5, 6, 7
 
 def minmod2(a,b):
     if a*b > 0:
@@ -86,6 +86,8 @@ def mp5(um2,um1,u0,up1,up2):
 def reconstruct(ujm2, ujm1, uj, ujp1, ujp2):
     if scheme == IFO: # first order
         return uj
+    elif scheme == ISOUP:  # second order upwind
+        return uj + 0.5 * (uj-ujm1)
     elif scheme == IMMOD:  # minmod
         return uj + 0.5 * minmod2(uj-ujm1, ujp1-uj)
     elif scheme == IMC: # MC limiter
@@ -157,7 +159,8 @@ def solve(N, cfl, rscheme, Tf, xmin, xmax, uinit, nrk):
 parser = argparse.ArgumentParser()
 parser.add_argument('-N', type=int, help='Number of cells', default=100)
 parser.add_argument('-cfl', type=float, help='CFL number', default=0.9)
-parser.add_argument('-scheme', choices=('FO','MMOD','MC','VL','WENO5','MP5'),
+parser.add_argument('-scheme', choices=('FO','SOUP','MMOD','MC','VL','WENO5',
+                                        'MP5'),
                     help='Scheme', default='FO')
 parser.add_argument('-Tf', type=float, help='Final time', default=1.0)
 parser.add_argument('-ic', choices=('smooth','hat','mult'), help='Init cond', default='smooth')
@@ -165,6 +168,8 @@ args = parser.parse_args()
 
 if args.scheme=="FO":
     scheme, nrk = IFO, 1
+elif args.scheme=="SOUP":
+    scheme, nrk = ISOUP, 3
 elif args.scheme=="MMOD":
     scheme, nrk = IMMOD, 3
 elif args.scheme == "MC":
