@@ -25,6 +25,7 @@ def update_ftcs(nu, u):
     unew[-1] = unew[0]
     return unew
 
+# Lax-Friedrich
 def update_lf(nu, u):
     unew = np.empty_like(u)
     unew[0] = 0.5*(u[-1] + u[1]) + 0.5*nu*(u[-2] - u[1])
@@ -32,12 +33,24 @@ def update_lf(nu, u):
     unew[-1] = unew[0]
     return unew
 
+# Lax-Wendroff
 def update_lw(nu, u):
     unew = np.empty_like(u)
     unew[0] = u[0] - 0.5*nu*(u[1]-u[-2]) + 0.5*nu**2*(u[-2]-2*u[0]+u[1])
     unew[1:-1] = u[1:-1] - 0.5*nu*(u[2:] - u[0:-2]) \
                  + 0.5*nu**2*(u[0:-2] - 2*u[1:-1] + u[2:])
     unew[-1] = unew[0]
+    return unew
+
+# Beam-Warming scheme
+def update_bw(nu, u):
+    unew = np.empty_like(u)
+    unew[0] = u[0] - nu*(1.5*u[0] - 2.0*u[-2] + 0.5*u[-3]) \
+                   + 0.5*nu**2*(u[-3] - 2.0*u[-2] + u[0])
+    unew[1] = u[1] - nu*(1.5*u[1] - 2.0*u[0] + 0.5*u[-2]) \
+                   + 0.5*nu**2*(u[-2] - 2.0*u[0] + u[1])
+    unew[2:] = u[2:] - nu*(1.5*u[2:] - 2.0*u[1:-1] + 0.5*u[0:-2]) \
+                     + 0.5*nu**2*(u[0:-2] - 2.0*u[1:-1] + u[2:])
     return unew
 
 def solve(a, N, cfl, scheme, Tf, uinit):
@@ -73,6 +86,8 @@ def solve(a, N, cfl, scheme, Tf, uinit):
             u = update_lf(nu, u)
         elif scheme=='LW':
             u = update_lw(nu, u)
+        elif scheme=='BW':
+            u = update_bw(nu, u)
         else:
             print("Unknown scheme: ", scheme)
             return
@@ -86,7 +101,8 @@ def solve(a, N, cfl, scheme, Tf, uinit):
 parser = argparse.ArgumentParser()
 parser.add_argument('-N', type=int, help='Number of cells', default=100)
 parser.add_argument('-cfl', type=float, help='CFL number', default=0.98)
-parser.add_argument('-scheme', choices=('FTBS','FTFS','FTCS','LF','LW'), help='Scheme', default='FTBS')
+parser.add_argument('-scheme', choices=('FTBS','FTFS','FTCS','LF','LW','BW'),
+                    help='Scheme', default='FTBS')
 parser.add_argument('-a', type=float, help='Advection speed', default=1.0)
 parser.add_argument('-Tf', type=float, help='Final time', default=1.0)
 parser.add_argument('-ic', choices=('smooth','hat','sine'), help='Init cond', default='smooth')
