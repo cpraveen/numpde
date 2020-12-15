@@ -6,7 +6,6 @@
 #include <vector>
 #include <cmath>
 #include <fstream>
-
 #include "array2d.h"
 
 using namespace std;
