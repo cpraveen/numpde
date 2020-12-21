@@ -1,3 +1,4 @@
+#include <iostream>
 #include "array2d.h"
 
 using namespace std;
@@ -19,11 +20,25 @@ ny (ny),
 n  (nx*ny),
 u  (nx*ny)
 {
+#if defined(DEBUG)
+   if(nx < 0 || ny < 0)
+   {
+      cout << "Dimensions cannot be negative" << endl;
+      exit(0);
+   }
+#endif
 }
 
 // Change size of array
 void Array2D::resize(const unsigned int nx1, const unsigned int ny1)
 {
+#if defined(DEBUG)
+   if(nx1 < 0 || ny1 < 0)
+   {
+      cout << "Dimensions cannot be negative" << endl;
+      exit(0);
+   }
+#endif
    nx = nx1;
    ny = ny1;
    n  = nx1 * ny1;
@@ -45,12 +60,28 @@ unsigned int Array2D::sizey() const
 // Return value at (i,j), this is read only
 double Array2D::operator() (const unsigned int i, const unsigned int j) const
 {
+#if defined(DEBUG)
+   if(i < 0 || i > nx-1 || j < 0 || j > ny-1)
+   {
+      cout << "Indices out of range" << endl;
+      cout << "i, j = " << i << ", " << j << endl;
+      exit(0);
+   }
+#endif
    return u[i + j*nx];
 }
 
 // Return reference to (i,j), this can modify the value
 double& Array2D::operator() (const unsigned int i, const unsigned int j)
 {
+#if defined(DEBUG)
+   if(i < 0 || i > nx-1 || j < 0 || j > ny-1)
+   {
+      cout << "Indices out of range" << endl;
+      cout << "i, j = " << i << ", " << j << endl;
+      exit(0);
+   }
+#endif
    return u[i + j*nx];
 }
 
@@ -65,6 +96,13 @@ Array2D& Array2D::operator= (const double scalar)
 // Copy array a into this one
 Array2D& Array2D::operator= (const Array2D& a)
 {
+#if defined(DEBUG)
+   if(nx != a.sizex() || ny != a.sizey())
+   {
+      cout << "Array sizes do not match" << endl;
+      exit(0);
+   }
+#endif
    u = a.u;
    return *this;
 }

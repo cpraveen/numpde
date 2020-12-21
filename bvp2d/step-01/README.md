@@ -21,6 +21,11 @@ gnuplot> load 'contour.gnu'
 ```
 and see the file `contour.eps`.
 
+To compile in debug which does some safety checks, compile like this
+```
+make poisson1 debug=yes
+```
+
 ## Same example using Eigen: poisson2.cc
 
 Use a file diff tool like opendiff (on macOS) or meld (on Linux) to see the differences between `poisson1.cc` and `poisson2.cc` files, or use diff in the terminal

@@ -5,6 +5,10 @@ EIGEN_DIR=/usr/local
 HDR = array2d.h
 TARGETS = poisson1 poisson2
 
+ifeq ($(debug),yes)
+	CXXFLAGS += -DDEBUG
+endif
+
 all: $(TARGETS)
 
 array2d.o: array2d.h array2d.cc
