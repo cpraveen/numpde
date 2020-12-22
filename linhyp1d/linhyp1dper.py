@@ -95,6 +95,14 @@ def solve(a, N, cfl, scheme, Tf, uinit):
         line1.set_ydata(u)
         line2.set_ydata(uinit(x-a*t))
         plt.draw(); plt.pause(0.1)
+    # Plot final solution with symbols
+    plt.figure()
+    plt.plot(x,u,'ro',label='Numerical')
+    plt.plot(x,uinit(x-a*t),'b-',label='Exact')
+    plt.title('N='+str(N)+', CFL='+str(cfl)+', Scheme='+scheme)
+    plt.xlabel('x'); plt.ylabel('u')
+    plt.legend(); plt.grid(True)
+    np.savetxt('sol.txt',np.column_stack([x,u,uinit(x-a*t)]))
     plt.show()
 
 # Get arguments
