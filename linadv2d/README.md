@@ -33,8 +33,8 @@ Run the code inside `run` directory
 Visualize solutions in Visit
 
 ## Convergence rate
-```
-Edit the python code `conv.py`
+
+Edit the python code `conv.py` to set scheme parameters
 
 Run the python code
 
