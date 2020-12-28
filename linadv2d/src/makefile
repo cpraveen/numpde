@@ -2,7 +2,7 @@
 #FFLAGS = -O3 -diag-disable vec -r8 -free -Tf
 
 FC = gfortran
-FFLAGS = -O3 -fdefault-real-8
+FFLAGS = -O3 -fdefault-real-8 -Wall
 
 TARGETS = advect
 

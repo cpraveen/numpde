@@ -3,7 +3,7 @@
 
       implicit none
       integer:: i, j, ii, jj
-      real   :: R, S, R2, lambda, lambdasq
+      real   :: S, R2, lambda, lambdasq
       real, intent (inout)  :: Fx(-ng+1:nx+ng, -ng+1:ny+ng),Gy(-ng+1:nx+ng, -ng+1:ny+ng)
       real, intent (in)  :: co(-ng+1:nx+ng, -ng+1:ny+ng)
       real :: u, v, xf, yf, speed(2)

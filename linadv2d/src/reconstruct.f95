@@ -5,7 +5,6 @@ subroutine reconstruct(conjm2, conjm1, conj, conjp1, conjp2, conl)
    real    :: conjm2, conjm1, conj, conjp1, conjp2
    real    :: conl
 
-   integer :: i
    real    :: minmod
    real,parameter :: kkk=1.0/3.0
    real,parameter :: beta = 2.0

@@ -1,7 +1,6 @@
 subroutine read_input
    use comvar
    implicit none
-   integer :: fid
    character(40) :: fluxtype_s, limtype_s, mthd_s
 
    open(10,file='inp.dat')

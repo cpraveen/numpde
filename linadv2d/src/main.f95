@@ -1,12 +1,7 @@
 program main
-
    use comvar
-
    implicit none
-
    real, dimension(:), allocatable :: co0, co1, res
-
-   integer :: fid
 
    call read_input
 
@@ -40,6 +35,5 @@ program main
       print*,'Unknown fluxtype'
       stop
    endif
-
 
 end program main

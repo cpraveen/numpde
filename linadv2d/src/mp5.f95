@@ -52,7 +52,7 @@ subroutine mp5(um2,um1,u0,up1,up2,u)
    real :: um2, um1, u0, up1, up2, u
    real, parameter :: eps = 1.0e-13, alpha = 4.0
    real :: ump, d0, dm1, dp1, dlm4, drm4, uul, uav, umd, ulc
-   real :: umin, umax, minmod2, minmod3, minmod4, median
+   real :: umin, umax, minmod2, minmod4, median
 
    u = (2.0*um2 - 13.0*um1 + 47.0*u0 + 27.0*up1 - 3.0*up2)/60.0
    ump = u0 + minmod2(up1-u0, alpha*(u0-um1))

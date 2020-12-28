@@ -25,6 +25,7 @@ subroutine error(t, co)
    enddo
    err_l2 = sqrt(err_l2)
 
+   write(*,*)'Error at time =', t
    write(*,'(2i5,5e14.6)') nx, ny, dx, dy, err_l1, err_l2, err_inf
 
 end subroutine error
