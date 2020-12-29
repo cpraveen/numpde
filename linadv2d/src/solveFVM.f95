@@ -1,9 +1,6 @@
 subroutine solveFVM(co0, co1, res)
-
    use comvar
-
    implicit none
-
    real :: co0(-ng+1:nx+ng, -ng+1:ny+ng)
    real :: co1(-ng+1:nx+ng, -ng+1:ny+ng)
    real :: res(0:nx+1,0:ny+1)
@@ -13,7 +10,6 @@ subroutine solveFVM(co0, co1, res)
    real    :: xflux, yflux, speed(2)
    real    :: time
    logical :: tostop
-
 
    ! set initial condition
    call init_cond(co1)
@@ -25,14 +21,12 @@ subroutine solveFVM(co0, co1, res)
    it     = 0
 
    do while(time < final_time .and. it < itmax)
-
       ! Exactly match final time
       tostop = .false.
       if(time + dt > final_time)then
          dt = final_time - time
          tostop = .true.
       endif
-
       lambda = dt/dx/dy
 
       co0(:,:) = co1(:,:)
@@ -41,7 +35,7 @@ subroutine solveFVM(co0, co1, res)
 
          res = 0.0
          
-         ! x fluxes
+         ! x fluxes: between (i,j) and (i+1,j)
          do i=0,nx
             do j=1,ny
                call reconstruct(co1(i-2,j), co1(i-1,j), co1(i,j), &
@@ -57,7 +51,7 @@ subroutine solveFVM(co0, co1, res)
             enddo
          enddo
          
-         ! y fluxes
+         ! y fluxes: between (i,j) and (i,j+1)
          do j=0,ny
             do i=1,nx
                call reconstruct(co1(i,j-2), co1(i,j-1), co1(i,j), &
@@ -86,7 +80,6 @@ subroutine solveFVM(co0, co1, res)
       enddo ! Rk stage loop
 
       it = it + 1
-
       time = time + dt
       write(*,'(I6,F10.2)')it,time
 

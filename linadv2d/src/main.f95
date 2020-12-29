@@ -27,10 +27,12 @@ program main
    allocate( co1((nx+2*ng)*(ny+2*ng)) )
    allocate( res((nx+2)*(ny+2)) )
 
-   if(fluxtype==iupwind)then
+   if(fluxtype == iupwind)then
       call solveFVM(co0, co1, res)
-   else if(fluxtype==imda)then
+   else if(fluxtype == imda)then
       call solveLVQ(co0, co1, res)
+   else if(fluxtype == ilw)then
+      call solveLW(co1, res)
    else
       print*,'Unknown fluxtype'
       stop

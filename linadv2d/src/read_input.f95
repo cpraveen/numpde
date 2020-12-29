@@ -21,6 +21,8 @@ subroutine read_input
       fluxtype = iupwind
    else if(fluxtype_s == "mda")then
       fluxtype = imda
+   else if(fluxtype_s == "lw")then
+      fluxtype = ilw
    else
       print*,'Unknown fluxtype =', fluxtype
       stop

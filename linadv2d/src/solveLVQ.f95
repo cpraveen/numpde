@@ -1,11 +1,8 @@
 ! See
 ! LeVeque: SIAM J. NUMER. ANAL., Vol. 33, No. 2, pp. 627-665, 1996
 subroutine solveLVQ(co0,co1,res)
-
    use comvar
-
    implicit none
-
    real :: co0(-ng+1:nx+ng, -ng+1:ny+ng)
    real :: co1(-ng+1:nx+ng, -ng+1:ny+ng)
    real :: res(0:nx+1, 0:ny+1)
@@ -31,7 +28,6 @@ subroutine solveLVQ(co0,co1,res)
    it     = 0
 
    do while(time < final_time .and. it < itmax)
-
       ! Exactly match final time
       tostop = .false.
       if(time + dt > final_time)then

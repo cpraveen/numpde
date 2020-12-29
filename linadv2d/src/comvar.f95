@@ -16,7 +16,7 @@ module comvar
    integer :: fileid_sol
 
    integer :: fluxtype
-   integer :: iupwind=1,imda=2
+   integer :: iupwind=1,imda=2,ilw=3
 
    integer :: limtype
    integer,parameter :: iford=0, imuscl3=1, immod=2, iweno5=3, imp5=4

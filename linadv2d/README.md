@@ -6,6 +6,9 @@ There are two methods implemented:
 
 * FVM with upwind flux, many limiters and RK time stepping
 * Multi-D upwind scheme of LeVeque
+* Lax-Wendroff scheme
+
+See the input file `run/inp.dat` for more parameters.
 
 The method of LeVeque is from
 
@@ -22,7 +25,7 @@ make
 
 This creates the executable `advect`
 
-Edit input file `inp.dat` in 'run' directory
+Edit input file `inp.dat` in `run` directory
 
 Run the code inside `run` directory
 
