@@ -5,5 +5,6 @@
 upwind  fluxtype: upwind, mda, lw
 mp5     limtype:  first, muscl3, minmod, weno5, mp5
 method6 LeVeque's methods: method1, method2, till method6
-0.5     cfl
+0.95    cfl
+-1.0    dt
 1       testcase

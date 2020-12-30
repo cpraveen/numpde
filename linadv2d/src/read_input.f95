@@ -12,6 +12,7 @@ subroutine read_input
    read(10,*) limtype_s
    read(10,*) mthd_s
    read(10,*) cfl
+   read(10,*) dt
    read(10,*) testcase
 
    print*,'nx, ny =', nx, ny
