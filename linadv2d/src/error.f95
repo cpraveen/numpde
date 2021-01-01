@@ -23,7 +23,7 @@ subroutine error(t, co)
          err_inf= max(err_inf, du)
       enddo
    enddo
-   area   = nx * ny * dx * dy
+   area   = nx * ny * dx * dy  ! area of domain
    err_l1 = err_l1/area
    err_l2 = sqrt(err_l2/area)
 

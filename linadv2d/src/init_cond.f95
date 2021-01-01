@@ -27,7 +27,7 @@ subroutine init_cond(co1)
       do i=1,nx
          x = xmin + (i-1)*dx + 0.5*dx
          y = ymin + (j-1)*dy + 0.5*dy
-         co1(i,j) = 1.0 + exp(-50.0*((x-0.5)**2 + y**2))
+         co1(i,j) = 1.0 + exp(-100.0*((x-0.5)**2 + y**2))
       enddo
    enddo
 
