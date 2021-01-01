@@ -81,7 +81,7 @@ subroutine solveFVM(co0, co1, res)
 
       it = it + 1
       time = time + dt
-      write(*,'(I6,F10.2)')it,time
+      write(*,'(I6,F12.6)')it,time
 
       if(mod(it,itsave)==0 .or. it==itmax .or. tostop)then
          call savesol(time, co1)

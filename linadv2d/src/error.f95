@@ -9,6 +9,7 @@ subroutine error(t, co)
    real    :: du, err_l1, err_l2, err_inf, area
    real    :: co0(-ng+1:nx+ng, -ng+1:ny+ng)
 
+   ! Exact solution if same as initial condition
    call init_cond(co0)
 
    err_l1  = 0.0
