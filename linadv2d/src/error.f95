@@ -6,7 +6,7 @@ subroutine error(t, co)
    real    :: co(-ng+1:nx+ng, -ng+1:ny+ng)
 
    integer :: i, j
-   real    :: du, err_l1, err_l2, err_inf
+   real    :: du, err_l1, err_l2, err_inf, area
    real    :: co0(-ng+1:nx+ng, -ng+1:ny+ng)
 
    call init_cond(co0)
@@ -23,9 +23,12 @@ subroutine error(t, co)
          err_inf= max(err_inf, du)
       enddo
    enddo
-   err_l2 = sqrt(err_l2)
+   area   = nx * ny * dx * dy
+   err_l1 = err_l1/area
+   err_l2 = sqrt(err_l2/area)
 
    write(*,*)'Error at time =', t
+   write(*,'(2x,"nx",3x,"ny",8x,"dx",12x,"dy",12x,"l1",12x,"l2",11x,"linf")')
    write(*,'(2i5,5e14.6)') nx, ny, dx, dy, err_l1, err_l2, err_inf
 
 end subroutine error
