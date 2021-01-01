@@ -21,4 +21,4 @@ comvar.mod: comvar.f95
 	$(FC) -c $(FFLAGS) $*.f95
 
 clean:
-	rm -f $(OBJ) $(TARGETS) *.mod *.plt
+	rm -f $(OBJ) $(TARGETS) *.mod
