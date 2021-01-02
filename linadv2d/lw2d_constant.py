@@ -15,7 +15,9 @@ q = np.sin(2*np.pi*X) * np.sin(2*np.pi*Y)
 
 plt.contour(X,Y,q)
 plt.xlabel('x'); plt.ylabel('y'); plt.axis('equal')
-plt.draw()
+plt.title('Initial condition')
+plt.draw(); plt.pause(1)
+wait = input("Press enter to continue ")
 
 dt = 0.72/(np.abs(u)/dx + np.abs(v)/dy)
 print('Grid size nx, ny = ', nx, ny)
@@ -42,11 +44,11 @@ while t < Tf:
           + 0.5*s2**2*(qijm1 - 2.0*q + qijp1)
     t += dt; it += 1
     print('it,t = ',it,t)
-    if it%10 == 0 or np.abs(t-Tf) < 1.0e-12:
+    if it%5 == 0 or np.abs(t-Tf) < 1.0e-12:
         plt.close()
         plt.contour(X,Y,q)
         plt.title('t = '+str(t))
         plt.xlabel('x'); plt.ylabel('y'); plt.axis('equal')
-        plt.draw(); plt.pause(1)
+        plt.draw(); plt.pause(0.1)
 
 plt.show()
