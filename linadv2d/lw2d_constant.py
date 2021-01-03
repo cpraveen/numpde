@@ -5,13 +5,14 @@ nx, ny = 100, 100
 xmin, xmax = -1.0, 1.0
 ymin, ymax = -1.0, 1.0
 u, v = 1.0, 1.0
-Tf = 2.0
+Tf = 2.0 # one time period
 
 dx, dy = (xmax - xmin)/nx, (ymax - ymin)/ny
 x = np.linspace(xmin+0.5*dx, xmax-0.5*dx, nx)
 y = np.linspace(ymin+0.5*dy, ymax-0.5*dy, ny)
 X,Y = np.meshgrid(x,y)
 q = np.sin(2*np.pi*X) * np.sin(2*np.pi*Y)
+q0 = q.copy()
 
 plt.contour(X,Y,q)
 plt.xlabel('x'); plt.ylabel('y'); plt.axis('equal')
@@ -51,4 +52,10 @@ while t < Tf:
         plt.xlabel('x'); plt.ylabel('y'); plt.axis('equal')
         plt.draw(); plt.pause(0.1)
 
+# Compute error norm: initial condition is exact solution
+l1_err = np.sum(np.abs(q-q0)) / (nx*ny)
+l2_err = np.sqrt(np.sum((q-q0)**2 / (nx*ny)))
+li_err = np.abs(q-q0).max()
+print('dx,dy,l1,l2,linf error = %10.4e %10.4e %10.4e %10.4e %10.4e' % 
+      (dx,dy,l1_err,l2_err,li_err))
 plt.show()
