@@ -11,7 +11,7 @@ Tf = 2.0               # one time period
 dx, dy = (xmax - xmin)/nx, (ymax - ymin)/ny
 x = np.linspace(xmin+0.5*dx, xmax-0.5*dx, nx)
 y = np.linspace(ymin+0.5*dy, ymax-0.5*dy, ny)
-X,Y = np.meshgrid(x,y)
+Y,X = np.meshgrid(y,x)
 
 # set initial condition
 q = np.sin(2*np.pi*X) * np.sin(2*np.pi*Y)
