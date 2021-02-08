@@ -13,8 +13,8 @@ def fun(x):
 def dfun(x):
     return 1.0 - 3.0 * np.exp(-np.abs(x)**3) * x**2 * np.sign(x)
 
-npt = [50,100,200,400,800]
-errb = []; errf = []; errc = []; hh=[]
+npt = [51,101,201,401,801]
+errb, errf, errc, hh = [], [], [], []
 for n in npt:
     x = np.linspace(xmin,xmax,n)
     h = (xmax - xmin)/(n-1); hh.append(h)
@@ -28,11 +28,15 @@ for n in npt:
     # exact derivative
     dfe= dfun(x[1:-1])
     # errors
-    #plt.semilogy(x[1:-1], np.abs(dfe-dfc),'-o')
+    plt.semilogy(x[1:-1], np.abs(dfe-dfc), label=str(n))
     errb.append(np.abs(dfe - dfb).max())
     errf.append(np.abs(dfe - dff).max())
     errc.append(np.abs(dfe - dfc).max())
     
+plt.xlabel('x')
+plt.ylabel('Error of central difference scheme')
+plt.legend()
+
 # Compute convergence rates
 print("%5s %17s %10s %10s" % ('h','Backward','Forward','Central'))
 for i in range(1,len(hh)):
@@ -42,6 +46,7 @@ for i in range(1,len(hh)):
     print("%e   %f   %f   %f" % (hh[i],pb,pf,pc))
 
 # Plot error vs h
+plt.figure()
 plt.loglog(hh,errb,'o-',hh,errf,'*-',hh,errc,'s--')
 plt.xlabel('h')
 plt.ylabel('Maximum error')
