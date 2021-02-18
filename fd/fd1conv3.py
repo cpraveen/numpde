@@ -27,6 +27,7 @@ for n in npt:
     x[1:-1] += 0.1 * h * (2 * np.random.rand(n-2) - 1)
     dx = x[1:] - x[0:-1]; hh.append(dx.max())
     f = fun(x)
+    # Compute only at interior points
     # backward difference
     dfb = (f[1:-1] - f[0:-2])/(x[1:-1] - x[0:-2])
     # forward difference

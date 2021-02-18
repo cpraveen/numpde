@@ -12,12 +12,12 @@ plt.xlabel('$\\xi$')
 plt.legend()
 
 plt.figure()
-n = 10
-xi = np.linspace(0,1,n)
+n = 20
+xi = np.linspace(0.0,1.0,n)
 x = f(xi)
 plt.plot(xi,0*xi,'s',label='$\\xi$ space')
 plt.plot(x,1+0*x,'o',label='$x$ space')
 plt.legend()
 plt.title('Grid with '+str(n)+' points')
-
+plt.yticks([])
 plt.show()

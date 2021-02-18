@@ -23,6 +23,7 @@ for n in npt:
     x = np.linspace(xmin,xmax,n)
     h = (xmax - xmin)/(n-1); hh.append(h)
     f = fun(x)
+    # Compute only at interior points
     # backward difference
     dfb = (f[1:-1] - f[0:-2])/h
     # forward difference
