@@ -38,9 +38,15 @@ end
 h, err = zeros(0), zeros(0)
 for n in [20,40,80,160,320]
    h1, err1 = error(n)
-   @printf("h, err = %e %e\n", h1, err1)
    push!(h, h1)
    push!(err, err1)
+end
+
+# Compute convergence rate in L2 norm
+@printf("h = %e   err = %e\n", h[1], err[1])
+for i in 2:length(h)
+    p = log(err[i-1]/err[i])/log(2)
+    @printf("h = %e   err = %e  rate = %f\n", h[i], err[i], p)
 end
 
 loglog(h, err, "o-")
