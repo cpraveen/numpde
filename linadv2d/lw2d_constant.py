@@ -56,7 +56,7 @@ while t < Tf:
     t += dt; it += 1
     print('it,t = ',it,t)
     if it%5 == 0 or np.abs(t-Tf) < 1.0e-12:
-        plt.close()
+        plt.clf()
         plt.contour(X,Y,q)
         plt.title('t = '+str(t))
         plt.xlabel('x'); plt.ylabel('y'); plt.axis('equal')
@@ -64,7 +64,7 @@ while t < Tf:
 
 # Compute error norm: initial condition is exact solution
 l1_err = np.sum(np.abs(q-q0)) / (nx*ny)
-l2_err = np.sqrt(np.sum((q-q0)**2 / (nx*ny)))
+l2_err = np.sqrt(np.sum((q-q0)**2) / (nx*ny))
 li_err = np.abs(q-q0).max()
 print('dx,dy,l1,l2,linf error = %10.4e %10.4e %10.4e %10.4e %10.4e' % 
       (dx,dy,l1_err,l2_err,li_err))
