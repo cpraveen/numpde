@@ -17,9 +17,9 @@ for n in [50,100,200,400,800]
    dfc = (F[i.+1] - F[i.-1])./(x[i.+1] - x[i.-1]) # central difference
    dfe = df.(x[i])
    push!(dx,maximum(x[2:end].-x[1:end-1]))
-   push!(errb, maximum(abs.(dfb.-dfe)))
-   push!(errf, maximum(abs.(dff.-dfe)))
-   push!(errc, maximum(abs.(dfc.-dfe)))
+   push!(errb, maximum(abs.(dfb-dfe)))
+   push!(errf, maximum(abs.(dff-dfe)))
+   push!(errc, maximum(abs.(dfc-dfe)))
 end
 
 loglog(dx, errb, "o-", label="Backward")

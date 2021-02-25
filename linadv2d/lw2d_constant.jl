@@ -17,7 +17,7 @@ y = LinRange(ymin+0.5*dy, ymax-0.5*dy, ny)
 q = @. sin(2*pi*x) * sin(2*pi*y)
 
 # save copy of ic, we use it to compute error norm
-q0 = q
+q0 = copy(q)
 
 # plot initial condition
 contour(x,y,q)
@@ -33,6 +33,17 @@ println("Time step        = ", dt)
 
 s1, s2 = u*dt/dx, v*dt/dy
 
+# Generate stencil values using periodicity
+# These are lazy views, they do not make a copy.
+qim1j = CircShiftedArray(q,(1,0))
+qip1j = CircShiftedArray(q,(-1,0))
+qijm1 = CircShiftedArray(q,(0,1))
+qijp1 = CircShiftedArray(q,(0,-1))
+qim1jm1 = CircShiftedArray(q,(1,1))
+qim1jp1 = CircShiftedArray(q,(1,-1))
+qip1jm1 = CircShiftedArray(q,(-1,1))
+qip1jp1 = CircShiftedArray(q,(-1,-1))
+
 # Time loop
 t, it = 0.0, 0
 while t < Tf
@@ -40,17 +51,8 @@ while t < Tf
    if t+dt > Tf # adjust dt so we reach Tf exactly
        dt = Tf - t
    end
-   # generate stencil values using periodicity
-   qim1j = CircShiftedArray(q,(1,0))
-   qip1j = CircShiftedArray(q,(-1,0))
-   qijm1 = CircShiftedArray(q,(0,1))
-   qijp1 = CircShiftedArray(q,(0,-1))
-   qim1jm1 = CircShiftedArray(q,(1,1))
-   qim1jp1 = CircShiftedArray(q,(1,-1))
-   qip1jm1 = CircShiftedArray(q,(-1,1))
-   qip1jp1 = CircShiftedArray(q,(-1,-1))
-   # LW scheme
-   q = (q - 0.5 * s1 * (qip1j - qim1j) - 0.5 * s2 * (qijp1 - qijm1)
+   # LW scheme; use .= to update q in place
+   q .= (q - 0.5 * s1 * (qip1j - qim1j) - 0.5 * s2 * (qijp1 - qijm1)
          + 0.5 * s1^2 * (qim1j - 2.0*q + qip1j)
          + 0.25 * s1 * s2 * (qip1jp1 - qip1jm1 - qim1jp1 + qim1jm1)
          + 0.5 * s2^2 * (qijm1 - 2.0*q + qijp1))
