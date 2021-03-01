@@ -22,7 +22,7 @@ omega = zeros(nx,ny)
 
 omega[:,:] = @. sin(2 * π * X) * sin(2 * π * Y)
 
-res0, res, iter = solve_stream(psi, omega, h)
+res0, res, iter = solve_stream!(psi, omega, h)
 @printf("res0, res, iter = %e %e %d\n", res0, res, iter)
 figure(figsize=(5,5))
 contour(x, y, psi, 30)

@@ -39,7 +39,7 @@ end
 #------------------------------------------------------------------------------
 # Solve for stream function
 #------------------------------------------------------------------------------
-function solve_stream(psi, omega, h, RTOL=1.0e-6, ITMAX=1000)
+function solve_stream!(psi, omega, h, RTOL=1.0e-6, ITMAX=1000)
 
    nx, ny = size(psi)
    r = 2.0/(1.0 + π * h) # SOR factor
@@ -76,7 +76,7 @@ end
 # Compute velocity at interior points
 # Boundary point velocity are assumed not to change with time
 #------------------------------------------------------------------------------
-function compute_velocity(u, v, psi, h)
+function compute_velocity!(u, v, psi, h)
    nx, ny = size(u)
 
    for i=2:nx-1
@@ -90,7 +90,7 @@ end
 #------------------------------------------------------------------------------
 # Update vorticity to new time level
 #------------------------------------------------------------------------------
-function update_vort(omega, psi, u, v, h, dt, nu)
+function update_vort!(omega, psi, u, v, h, dt, nu)
    nx, ny = size(omega)
    w = copy(omega)
 
@@ -177,10 +177,10 @@ function solve(Re, n)
    t, iter = 0.0, 0
    figure(figsize=(6,6))
    while t < Tf && iter < ITMAX
-      res0, res, it = solve_stream(psi, omega, h)
+      res0, res, it = solve_stream!(psi, omega, h)
       @printf("stream: res0,res,it    = %12.4e %12.4e %4d\n",res0,res,it)
-      compute_velocity(u, v, psi, h)
-      update_vort(omega, psi, u, v, h, dt, nu)
+      compute_velocity!(u, v, psi, h)
+      update_vort!(omega, psi, u, v, h, dt, nu)
       t += dt; iter += 1
       @printf("vort  : iter,t,min,max = %4d %12.4e %12.4e %12.4e\n",
               iter,t,minimum(omega),maximum(omega))
@@ -189,14 +189,14 @@ function solve(Re, n)
       title("Vorticity")
       draw(); pause(0.1)
    end
-   compute_velocity(u, v, psi, h)
+   compute_velocity!(u, v, psi, h)
 
    return X, Y, psi, omega, u, v
 end
 
 #------------------------------------------------------------------------------
 export meshgrid
-export solve_stream
+export solve_stream!
 export solve
 #------------------------------------------------------------------------------
 
