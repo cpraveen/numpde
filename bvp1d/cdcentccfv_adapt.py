@@ -58,8 +58,8 @@ if args.grid == 'uniform':
 else:
     delta = 4.0/Pe  # Width of boundary layer
     x0, x1, x2 = a, b-delta, b
-    N0 = int(floor(2*N/3))
-    N1 = N - N0
+    N0 = int(floor(2*N/3))     # no. cells outside bl
+    N1 = N - N0                # no. cells inside  bl
 
     xf = zeros(N+1) # FV face locations
     xf[0:N0+1] = linspace(x0,x1,N0+1) # N0 cells in [x0,x1]

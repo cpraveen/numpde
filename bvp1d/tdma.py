@@ -2,6 +2,7 @@
 Solve using Thomas Tridiagonal algorithm
   A x = f
 where A = diag(b,a,c)
+a, b, c are arrays of same length, but b[0] and c[-1] are not used/required.
 """
 from numpy import zeros
 
