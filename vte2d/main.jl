@@ -30,5 +30,11 @@ plot(X[:,m], v[:,m], "s-")
 xlabel("x"); ylabel("v"); title("v(x,0.5)")
 grid(true)
 
+# Plot velocity vectors
+figure(figsize=(5,5))
+plot([0,1,1,0,0],[0,0,1,1,0],"b-",lw=0.5) # Domain
+quiver(X,Y,u,v)
+title("Velocity vectors")
+
 show()
 
