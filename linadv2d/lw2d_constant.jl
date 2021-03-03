@@ -37,7 +37,8 @@ function solve(nx, ny)
    t, it = 0.0, 0
    while t < Tf
       if t+dt > Tf # adjust dt so we reach Tf exactly
-          dt = Tf - t
+         dt = Tf - t
+         s1, s2 = u*dt/dx, v*dt/dy
       end
       # Generate stencil values using periodicity
       # These are lazy views, they do not make a copy.

@@ -39,6 +39,7 @@ t, it = 0.0, 0
 while t < Tf:
     if t+dt > Tf: # adjust dt so we reach Tf exactly
         dt = Tf - t
+        s1, s2 = u*dt/dx, v*dt/dy
     # generate stencil values using periodicity
     qim1j = np.roll(q,(1,0),(0,1))
     qip1j = np.roll(q,(-1,0),(0,1))
