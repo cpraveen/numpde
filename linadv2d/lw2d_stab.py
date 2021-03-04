@@ -2,7 +2,8 @@ import numpy as np
 from numpy import exp
 import matplotlib.pyplot as plt
 
-def amp_f(sigma_x,sigma_y,H1,H2):
+# Amplification factor of LW scheme
+def amp_f(sigma_x,sigma_y,h1,h2):
     result = 1.0 - 0.5*sigma_x*(exp(1j*h1) - exp(-1j*h1)) \
                  - 0.5*sigma_y*(exp(1j*h2) - exp(-1j*h2)) \
                  + 0.5*sigma_x**2*(exp(-1j*h1) - 2.0 + exp(1j*h1)) \
