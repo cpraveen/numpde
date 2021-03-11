@@ -14,6 +14,7 @@ def amp_f(sigma_x,sigma_y,h1,h2):
                                          + exp(-1j*h1)*exp(-1j*h2))
     return np.max(np.abs(result))
 
+print('This can take some time ...')
 sigma_x_range = np.linspace(-1.0,1.0,200)
 sigma_y_range = np.linspace(-1.0,1.0,200)
 h1 = np.linspace(0,2*np.pi,100)
@@ -24,8 +25,7 @@ A = [] # For all sigma_x for which (sigma_x,sigma_x) is a stable pair.
 for sigma_x in sigma_x_range:
     for sigma_y in sigma_y_range:
         if amp_f(sigma_x,sigma_y,h1,h2) - 1.0 < 1e-5:
-            X.append(sigma_x)
-            Y.append(sigma_y)
+            X.append(sigma_x); Y.append(sigma_y)
             if np.abs(sigma_x-sigma_y) < 1e-4: # Checking
                 A.append(sigma_x)
 print('Highest sigma for which (sigma,sigma) is stable pair is ', np.max(A))
