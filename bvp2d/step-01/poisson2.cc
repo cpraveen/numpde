@@ -40,6 +40,7 @@ double residual (const double h, const Array2D& u, const Array2D& b)
 // Main function
 int main()
 {
+   const double TOL = 1.0e-6;
    const unsigned int n = 50;
    const double h = 1.0/(n-1);
    
@@ -56,10 +57,11 @@ int main()
    
    // Initial guess is zero
    u.setZero();
-   double res0 = residual (h, u, b);
+
+   const double res0 = residual (h, u, b);
    double res  = res0;
    unsigned int iter = 0;
-   while (res > 1.0e-6*res0)
+   while (res > TOL*res0)
    {
       uold = u;
       
@@ -86,5 +88,4 @@ int main()
       sol << endl;
    }
    cout << "Saved solution into u.dat\n";
-
 }

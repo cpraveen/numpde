@@ -22,5 +22,13 @@ poisson1: poisson1.o array2d.o $(HDR)
 poisson2: poisson2.cc
 	$(CXX) $(CXXFLAGS) -o poisson2 poisson2.cc -I$(EIGEN_DIR)/include/eigen3
 
+help:
+	@echo "Usage:"
+	@echo "   make"
+	@echo "   make debug=yes"
+	@echo "   make poisson1"
+	@echo "   make poisson2  # Needs Eigen"
+	@echo "   make clean"
+
 clean:
 	rm -rf *.o $(TARGETS)
