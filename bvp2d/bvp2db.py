@@ -29,10 +29,10 @@ Y,X = meshgrid(y,x)
 # No of interior points
 mx, my = nx-2, ny-2
 
-Dx = (1.0/dx**2) * spdiags([-ones(mx),2.0*ones(mx),-ones(mx)],[-1,0,1],mx,mx)
-Dy = (1.0/dy**2) * spdiags([-ones(my),2.0*ones(my),-ones(my)],[-1,0,1],my,my)
+Dxx = (1.0/dx**2) * spdiags([ones(mx),-2.0*ones(mx),ones(mx)],[-1,0,1],mx,mx)
+Dyy = (1.0/dy**2) * spdiags([ones(my),-2.0*ones(my),ones(my)],[-1,0,1],my,my)
 Ix, Iy = eye(mx), eye(my)
-A = kron(Iy, Dx) + kron(Dy, Ix)
+A = - kron(Iy, Dxx) - kron(Dyy, Ix)
 
 # Exact solution
 uex = uexact(X,Y)
