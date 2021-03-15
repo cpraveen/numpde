@@ -31,9 +31,15 @@ double exact_solution(const double x)
 //------------------------------------------------------------------------------
 // Main program
 //------------------------------------------------------------------------------
-int main ()
+int main(int argc, char **argv)
 {
-   const unsigned int n = 10;
+   if(argc == 1)
+   {
+      cout << "Specify solver: jacobi, sor, ssor, cg\n";
+      exit(1);
+   }
+
+   const unsigned int n = 100;
    const double h = (xmax - xmin) / (n - 1);
 
    // Create 1-d mesh
@@ -70,8 +76,9 @@ int main ()
    A(1,0)     = 0;
    A(n-2,n-1) = 0;
 
-   cout << "A = \n" << A << endl;
-   cout << "f = \n" << f << endl;
+   // Print for debugging
+   //cout << "A = \n" << A << endl;
+   //cout << "f = \n" << f << endl;
 
    // Solution vector
    Vector<double> u(n);
@@ -80,16 +87,36 @@ int main ()
    u(n-1) = u1;
 
    // Create solver object
-   unsigned int max_iter = 1000;
-   double tol = 1.0e-6;
-   //JacobiSolver<double> solver (max_iter, tol);
-   //SORSolver<double> solver (max_iter, tol, 1.5);
-   SSORSolver<double> solver (max_iter, tol, 1.5);
-   //CGSolver<double> solver (max_iter, tol);
-   
-   // Solve the matrix problem
-   unsigned int iter = solver.solve (A, u, f);
+   const unsigned int max_iter = 1000;
+   const double tol = 1.0e-6;
 
+   unsigned int iter = 0;
+   if(string(argv[1]) == "jacobi")
+   {
+      JacobiSolver<double> solver (max_iter, tol);
+      iter = solver.solve (A, u, f);
+   }
+   else if(string(argv[1]) == "sor")
+   {
+      SORSolver<double> solver (max_iter, tol, 1.5);
+      iter = solver.solve (A, u, f);
+   }
+   else if(string(argv[1]) == "ssor")
+   {
+      SSORSolver<double> solver (max_iter, tol, 1.5);
+      iter = solver.solve (A, u, f);
+   }
+   else if(string(argv[1]) == "cg")
+   {
+      CGSolver<double> solver (max_iter, tol);
+      iter = solver.solve (A, u, f);
+   }
+   else
+   {
+      cout << "Unknown solver\n";
+      exit(1);
+   }
+   
    cout << "Number of iterations = " << iter << endl;
 
    // Save solution to file
