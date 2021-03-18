@@ -8,6 +8,7 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
+#include <cstdlib>
 
 #include "Vector.h"
 #include "sparse_matrix.h"
@@ -37,9 +38,20 @@ double rhs_value(const double x, const double y)
 //------------------------------------------------------------------------------
 // Main program
 //------------------------------------------------------------------------------
-int main ()
+int main(int argc, char **argv)
 {
-   const unsigned int nx = 50, ny = 50;
+   if (argc < 4)
+   {
+      cout << "Specify: nx, ny, solver (jacobi, sor, ssor, cg), max_iter\n";
+      cout << "Example: " << argv[0] << " 50 50 jacobi 5000\n";
+      exit(1);
+   }
+
+   const unsigned int nx = atoi(argv[1]), ny = atoi(argv[2]);
+   const string method = string(argv[3]);
+   unsigned int max_iter = 1000;
+   if(argc == 5) max_iter = atoi(argv[4]);
+
    const double dx = (xmax - xmin) / (nx - 1);
    const double dy = (ymax - ymin) / (ny - 1);
    const unsigned int n = nx*ny;
@@ -156,15 +168,33 @@ int main ()
    //cout << "f = \n" << f << endl;
 
    // Create solver object
-   unsigned int max_iter = 1000;
    double tol = 1.0e-6;
-   //JacobiSolver<double> solver (max_iter, tol);
-   //SORSolver<double> solver (max_iter, tol, 1.5);
-   //SSORSolver<double> solver (max_iter, tol, 1.5);
-   CGSolver<double> solver (max_iter, tol);
-   
-   // Solve the matrix problem
-   unsigned int iter = solver.solve (A, u, f);
+   unsigned int iter = 0;
+   if (method == "jacobi")
+   {
+      JacobiSolver<double> solver(max_iter, tol);
+      iter = solver.solve(A, u, f);
+   }
+   else if (method == "sor")
+   {
+      SORSolver<double> solver(max_iter, tol, 1.5);
+      iter = solver.solve(A, u, f);
+   }
+   else if (method == "ssor")
+   {
+      SSORSolver<double> solver(max_iter, tol, 1.5);
+      iter = solver.solve(A, u, f);
+   }
+   else if (method == "cg")
+   {
+      CGSolver<double> solver(max_iter, tol);
+      iter = solver.solve(A, u, f);
+   }
+   else
+   {
+      cout << "Unknown solver: " << method << "\n";
+      exit(1);
+   }
 
    cout << "Number of iterations = " << iter << endl;
 

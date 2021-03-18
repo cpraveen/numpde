@@ -8,6 +8,7 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
+#include <cstdlib>
 
 #include "Vector.h"
 #include "sparse_matrix.h"
@@ -35,14 +36,18 @@ int main(int argc, char **argv)
 {
    if(argc == 1)
    {
-      cout << "Specify solver: jacobi, sor, ssor, cg\n";
+      cout << "Specify: n, solver (jacobi, sor, ssor, cg), max_iter\n";
+      cout << "Example: " << argv[0] << " 100 jacobi 1000\n";
       exit(1);
    }
 
-   const unsigned int n = 100;
-   const double h = (xmax - xmin) / (n - 1);
+   const unsigned int n = atoi(argv[1]);
+   const string method = string(argv[2]);
+   unsigned int max_iter = 1000;
+   if(argc == 4) max_iter = atoi(argv[3]);
 
    // Create 1-d mesh
+   const double h = (xmax - xmin) / (n - 1);
    Vector<double> x(n);
    for(unsigned int i=0; i<n; ++i)
       x(i) = xmin + i*h;
@@ -87,33 +92,32 @@ int main(int argc, char **argv)
    u(n-1) = u1;
 
    // Create solver object
-   const unsigned int max_iter = 1000;
    const double tol = 1.0e-6;
 
    unsigned int iter = 0;
-   if(string(argv[1]) == "jacobi")
+   if(method == "jacobi")
    {
       JacobiSolver<double> solver (max_iter, tol);
       iter = solver.solve (A, u, f);
    }
-   else if(string(argv[1]) == "sor")
+   else if(method == "sor")
    {
       SORSolver<double> solver (max_iter, tol, 1.5);
       iter = solver.solve (A, u, f);
    }
-   else if(string(argv[1]) == "ssor")
+   else if(method == "ssor")
    {
       SSORSolver<double> solver (max_iter, tol, 1.5);
       iter = solver.solve (A, u, f);
    }
-   else if(string(argv[1]) == "cg")
+   else if(method == "cg")
    {
       CGSolver<double> solver (max_iter, tol);
       iter = solver.solve (A, u, f);
    }
    else
    {
-      cout << "Unknown solver\n";
+      cout << "Unknown solver: " << method << "\n";
       exit(1);
    }
    
