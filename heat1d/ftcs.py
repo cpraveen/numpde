@@ -26,18 +26,28 @@ def solve(N, lam, Tf):
     ax.set_xlabel('x'); ax.set_ylabel('u')
     plt.legend(('Exact','Numerical'))
     plt.title('N='+str(N)+', $\lambda$='+str(lam))
-    plt.draw(); plt.pause(0.1)
+    plt.grid(True); plt.draw(); plt.pause(0.1)
     wait = input("Press enter to continue ")
 
+    ts, es = [], []
     t, it = 0.0, 0
     while t < Tf:
         u[1:-1] = lam*u[0:-2] + (1-2*lam)*u[1:-1] + lam*u[2:]
         t += dt; it += 1
         print("t = ", t)
 
+        # Store error vs time
+        ts.append(t); es.append(abs(u - uexact(x,t)).max())
+
         line1.set_ydata(uexact(x,t))
         line2.set_ydata(u)
         plt.draw(); plt.pause(0.1)
+
+    # Plot error vs time
+    plt.figure()
+    plt.plot(ts,es)
+    plt.xlabel('t'); plt.ylabel('Error')
+    plt.grid(True)
     plt.show()
 
 # Get arguments

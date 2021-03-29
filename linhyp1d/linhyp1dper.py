@@ -6,18 +6,21 @@ import matplotlib.pyplot as plt
 import argparse
 from ic import *
 
+# FTBS
 def update_ftbs(nu, u):
     unew = np.empty_like(u)
     unew[1:] = (1-nu)*u[1:] + nu*u[0:-1]
     unew[0] = unew[-1]
     return unew
 
+# FTFS
 def update_ftfs(nu, u):
     unew = np.empty_like(u)
     unew[0:-1] = (1+nu)*u[0:-1] - nu*u[1:]
     unew[-1] = unew[0]
     return unew
 
+# FTCS
 def update_ftcs(nu, u):
     unew = np.empty_like(u)
     unew[0] = u[0] + 0.5*nu*(u[-2] - u[1])
@@ -53,6 +56,7 @@ def update_bw(nu, u):
                      + 0.5*nu**2*(u[0:-2] - 2.0*u[1:-1] + u[2:])
     return unew
 
+# Solve the problem
 def solve(a, N, cfl, scheme, Tf, uinit):
     xmin, xmax = 0.0, 1.0
 
@@ -105,6 +109,7 @@ def solve(a, N, cfl, scheme, Tf, uinit):
     np.savetxt('sol.txt',np.column_stack([x,u,uinit(x-a*t)]))
     plt.show()
 
+#------------------------------------------------------------------------------
 # Get arguments
 parser = argparse.ArgumentParser()
 parser.add_argument('-N', type=int, help='Number of cells', default=100)
