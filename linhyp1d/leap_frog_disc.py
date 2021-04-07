@@ -4,7 +4,6 @@ Solve u_t + u_x = 0 with periodic bc
 import numpy as np
 import matplotlib.pyplot as plt
 import argparse
-from ic import *
 
 # Backward difference
 def Dm(h,u):
@@ -41,16 +40,16 @@ def sw1(x):
 
 # truncated fourier series of sawtooth
 def sw2(x):
-    y = np.empty_like(x)
-    for w in range(1,21):
+    y = 0*x
+    for w in range(1, 31):
         y += np.sin(w*x) / w
     return y
 
 # truncated and smoothed fourier series of sawtooth
 def sw3(x):
-    y = np.empty_like(x)
+    y = 0*x
     for w in range(1, 31):
-        y += (1 - (w/30)**2) * np.sin(w*x) / w
+        y += (1.0 - (w/30.0)**2) * np.sin(w*x) / w
     return y
 
 # Following convention for periodicity
@@ -63,7 +62,7 @@ def solve(N, cfl, Tf, uinit):
 
     h = (xmax - xmin)/(N+1)
     dt = cfl * h / np.abs(a)
-    print('dt, h = ',dt,h)
+    print('dt, N, h = ',dt,N,h)
 
     x = np.linspace(xmin, xmax-h, N+1) # Note: last point does not reach xmax
     u2 = uinit(x)
@@ -75,6 +74,8 @@ def solve(N, cfl, Tf, uinit):
     v4 = u4 - a*dt*Q4(h,u4)
     v6 = u6 - a*dt*Q6(h,u6)
     t  = dt
+
+    # u2, v2, w2 = u^(n-1), u^n, u^(n+1)
 
     while t < Tf:
         # leap-frog
