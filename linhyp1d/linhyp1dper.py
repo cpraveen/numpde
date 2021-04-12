@@ -31,7 +31,7 @@ def update_ftcs(nu, u):
 # Lax-Friedrich
 def update_lf(nu, u):
     unew = np.empty_like(u)
-    unew[0] = 0.5*(u[-1] + u[1]) + 0.5*nu*(u[-2] - u[1])
+    unew[0] = 0.5*(u[-2] + u[1]) + 0.5*nu*(u[-2] - u[1])
     unew[1:-1] = 0.5*(u[0:-2] + u[2:]) + 0.5*nu*(u[0:-2] - u[2:])
     unew[-1] = unew[0]
     return unew
