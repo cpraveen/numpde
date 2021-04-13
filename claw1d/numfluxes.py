@@ -9,6 +9,15 @@ import numpy as np
 def flux(u):
     return 0.5*u*u
 
+# Central flux
+def flux_central(lam,u):
+    n  = len(u)
+    f  = flux(u)
+    nf = np.zeros(n+1)
+    for i in range(1,n):
+        nf[i] = 0.5*(f[i-1] + f[i])
+    return nf
+
 # Lax-Friedrich flux
 def flux_lf(lam,u):
     n  = len(u)

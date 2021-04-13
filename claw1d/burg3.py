@@ -19,6 +19,17 @@ def shock(x):
 def smooth(x):
     return np.sin(2*np.pi*x)
 
+# Rarefaction without sonic point
+def rare1(x):
+    u = np.zeros(len(x))
+    for i in range(len(x)):
+        if x[i] < 0.25:
+            u[i] = 0.5
+        else:
+            u[i] = 2.0
+    return u
+
+# Rarefaction with sonic point
 def rare(x):
     u = np.zeros(len(x))
     for i in range(len(x)):
@@ -30,6 +41,19 @@ def rare(x):
 
 def expo(x):
     return 1.0 + np.exp(-100*(x-0.25)**2)
+
+def slope(x):
+    x1, x2 = 0.2, 0.4
+    u1, u2 = 1.0, 0.5
+    u = np.zeros(len(x))
+    for i in range(len(x)):
+        if x[i] < x1:
+            u[i] = u1
+        elif x[i] > x2:
+            u[i] = u2
+        else:
+            u[i] = u1*(x[i] - x2)/(x1 - x2) + u2*(x[i] - x1)/(x2 - x1)
+    return u
 
 def solve(N, cfl, scheme, Tf, uinit):
     xmin, xmax = 0.0, 1.0
@@ -45,12 +69,14 @@ def solve(N, cfl, scheme, Tf, uinit):
     line1, = ax.plot(x, u, 'o')
     ax.set_xlabel('x'); ax.set_ylabel('u')
     plt.title('N='+str(N)+', CFL='+str(cfl)+', Scheme='+scheme)
-    plt.draw(); plt.pause(0.1)
+    plt.grid(True); plt.draw(); plt.pause(0.1)
     wait = input("Press enter to continue ")
 
     t, it = 0.0, 0
     while t < Tf:
-        if scheme=='LF':
+        if scheme=='C':
+            f = flux_central(lam, u)
+        elif scheme=='LF':
             f = flux_lf(lam, u)
         elif scheme=='LLF':
             f = flux_llf(u)
@@ -75,9 +101,11 @@ def solve(N, cfl, scheme, Tf, uinit):
 parser = argparse.ArgumentParser()
 parser.add_argument('-N', type=int, help='Number of cells', default=100)
 parser.add_argument('-cfl', type=float, help='CFL number', default=0.9)
-parser.add_argument('-scheme', choices=('LF','LLF','LW','ROE','EROE','GOD'), 
+parser.add_argument('-scheme',
+                    choices=('C','LF','LLF','LW','ROE','EROE','GOD'),
                     help='Scheme', default='LF')
-parser.add_argument('-ic', choices=('smooth','shock','rare','expo'), 
+parser.add_argument('-ic',
+                    choices=('smooth','shock','rare1','rare','expo','slope'),
                     help='Initial condition', default='smooth')
 parser.add_argument('-Tf', type=float, help='Final time', default=1.0)
 args = parser.parse_args()
@@ -89,5 +117,9 @@ elif args.ic == "expo":
     solve(args.N, args.cfl, args.scheme, args.Tf, expo)
 elif args.ic == "shock":
     solve(args.N, args.cfl, args.scheme, args.Tf, shock)
+elif args.ic == "rare1":
+    solve(args.N, args.cfl, args.scheme, args.Tf, rare1)
 elif args.ic == "rare":
     solve(args.N, args.cfl, args.scheme, args.Tf, rare)
+elif args.ic == "slope":
+    solve(args.N, args.cfl, args.scheme, args.Tf, slope)
