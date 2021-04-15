@@ -90,7 +90,7 @@ ts = np.linspace(0.0, Tf, nt)
 plt.figure()
 for t in ts:
     plt.clf()
-    plt.plot(x + u*t, u)
+    plt.plot(x + u*t, u, lw=2)
     plt.xlabel('x'); plt.ylabel('u')
     plt.title('t = '+str(round(t,3)))
     plt.grid(True)

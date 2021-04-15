@@ -61,7 +61,7 @@ u = uinit(x)
 
 fig = plt.figure()
 ax = fig.add_subplot(111)
-line, = ax.plot(x, uinit(x))
+line, = ax.plot(x, uinit(x), lw=2)
 ax.set_xlabel('x'); ax.set_ylabel('u')
 plt.title('t = 0.0'); plt.grid(True); 
 plt.draw(); plt.pause(1.0)
