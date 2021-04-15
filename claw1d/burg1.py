@@ -66,7 +66,7 @@ def solve(N, cfl, scheme, Tf):
     ax.set_xlabel('x'); ax.set_ylabel('u')
     plt.legend(('Numerical','Exact'))
     plt.title('N='+str(N)+', CFL='+str(cfl)+', Scheme='+scheme)
-    plt.axis([0.0, 1.0, 0.0, 1.4])
+    plt.axis([0.0, 1.0, 0.0, 1.4]); plt.grid(True)
     plt.draw(); plt.pause(0.1)
     wait = input("Press enter to continue ")
 
