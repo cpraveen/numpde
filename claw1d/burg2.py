@@ -35,7 +35,7 @@ def solve(N, cfl, scheme, Tf):
     ax.set_xlabel('x'); ax.set_ylabel('u')
     plt.legend(('Numerical','Exact'))
     plt.title('N='+str(N)+', CFL='+str(cfl)+', Scheme='+scheme)
-    plt.axis([0.0, 1.0, 0.0, 1.4])
+    plt.axis([0.0, 1.0, 0.0, 1.4]); plt.grid(True)
     plt.draw(); plt.pause(0.1)
     wait = input("Press enter to continue ")
 
@@ -59,6 +59,9 @@ def solve(N, cfl, scheme, Tf):
         line1.set_ydata(u)
         line2.set_ydata(uexact(t,x))
         plt.draw(); plt.pause(0.1)
+    fname = 'burg2_'+scheme+'.txt'
+    np.savetxt(fname, np.column_stack([x, u, uexact(t,x)]))
+    print('Saved file ', fname)
     plt.show()
 
 # Get arguments
