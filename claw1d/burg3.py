@@ -78,6 +78,8 @@ def solve(N, cfl, scheme, Tf, uinit):
             f = flux_central(lam, u)
         elif scheme=='LF':
             f = flux_lf(lam, u)
+        elif scheme=='GLF':
+            f = flux_glf(u)
         elif scheme=='LLF':
             f = flux_llf(u)
         elif scheme=='LW':
@@ -102,7 +104,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-N', type=int, help='Number of cells', default=100)
 parser.add_argument('-cfl', type=float, help='CFL number', default=0.9)
 parser.add_argument('-scheme',
-                    choices=('C','LF','LLF','LW','ROE','EROE','GOD'),
+                    choices=('C','LF','GLF','LLF','LW','ROE','EROE','GOD'),
                     help='Scheme', default='LF')
 parser.add_argument('-ic',
                     choices=('smooth','shock','rare1','rare','expo','slope'),

@@ -43,6 +43,8 @@ def solve(N, cfl, scheme, Tf):
     while t < Tf:
         if scheme=='LF':
             f = flux_lf(lam, u)
+        elif scheme=='GLF':
+            f = flux_glf(u)
         elif scheme=='LLF':
             f = flux_llf(u)
         elif scheme=='LW':
@@ -68,7 +70,7 @@ def solve(N, cfl, scheme, Tf):
 parser = argparse.ArgumentParser()
 parser.add_argument('-N', type=int, help='Number of cells', default=100)
 parser.add_argument('-cfl', type=float, help='CFL number', default=0.9)
-parser.add_argument('-scheme', choices=('LF','LLF','LW','ROE','GOD'), 
+parser.add_argument('-scheme', choices=('LF','GLF','LLF','LW','ROE','GOD'), 
                     help='Scheme', default='LF')
 parser.add_argument('-Tf', type=float, help='Final time', default=0.5)
 args = parser.parse_args()
