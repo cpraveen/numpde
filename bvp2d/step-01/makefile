@@ -1,6 +1,9 @@
+ifndef EIGEN_DIR
+$(error EIGEN_DIR is not set)
+endif
+
 CXX = c++
 CXXFLAGS = -O3 -Wall
-EIGEN_DIR=/usr/local
 
 HDR = array2d.h
 TARGETS = poisson1 poisson2
