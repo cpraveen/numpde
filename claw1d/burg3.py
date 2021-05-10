@@ -97,6 +97,9 @@ def solve(N, cfl, scheme, Tf, uinit):
         t += dt; it += 1
         line1.set_ydata(u)
         plt.draw(); plt.pause(0.1)
+    fname = 'burg3_'+scheme+'.txt'
+    np.savetxt(fname, np.column_stack([x, u]))
+    print('Saved file ', fname)
     plt.show()
 
 # Get arguments
