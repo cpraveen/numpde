@@ -1,5 +1,5 @@
 push!(LOAD_PATH,".")
-using VTE2d 
+using VTE2d
 using PyPlot
 
 # Reynolds number
@@ -17,6 +17,7 @@ title("Stream function")
 subplot(122)
 contour(X,Y,omega,20)
 title("Vorticity")
+savefig("stream_vort.svg")
 
 # Plot velocity along center line
 figure(figsize=(10,5))
@@ -29,12 +30,14 @@ subplot(122)
 plot(X[:,m], v[:,m], "s-")
 xlabel("x"); ylabel("v"); title("v(x,0.5)")
 grid(true)
+savefig("velocity1.svg")
 
 # Plot velocity vectors
 figure(figsize=(5,5))
 plot([0,1,1,0,0],[0,0,1,1,0],"b-",lw=0.5) # Domain
 quiver(X,Y,u,v)
 title("Velocity vectors")
+savefig("velocity2.svg")
 
 show()
 

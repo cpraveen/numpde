@@ -1,5 +1,5 @@
 push!(LOAD_PATH,".")
-using VTE2d 
+using VTE2d
 using Printf
 using PyPlot
 
@@ -26,4 +26,6 @@ res0, res, iter = solve_stream!(psi, omega, h)
 @printf("res0, res, iter = %e %e %d\n", res0, res, iter)
 figure(figsize=(5,5))
 contour(x, y, psi, 30)
+title("Stream function, grid = "*string(nx)*"x"*string(ny))
+savefig("test_stream.svg")
 show()
