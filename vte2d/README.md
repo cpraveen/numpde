@@ -10,7 +10,9 @@ julia test_stream.jl
 
 We obtain a plot like this
 
-<img align="center" src="output/test_stream.svg">
+<p align="center">
+<img src="output/test_stream.svg">
+</p>
 
 ## Lid-driven cavity
 
@@ -22,8 +24,14 @@ julia main.jl
 
 The solution at the end is shown below.
 
-<img align="center" src="output/stream_vort.svg">
+<p align="center">
+<img src="output/stream_vort.svg">
+</p>
 
-<img align="center" src="output/velocity1.svg">
+<p align="center">
+<img src="output/velocity1.svg">
+</p>
 
-<img align="center" src="output/velocity2.svg">
+<p align="center">
+<img src="output/velocity2.svg">
+</p>
