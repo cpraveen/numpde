@@ -12,9 +12,9 @@ make
 
 ## euler_ho_2
 
-Of the three codes, this has the more schemes. See the main function for available options.
+Of the three codes, this has the most variety of schemes. See the main function for available options. The test cases are defined in files `sod.F90` and `shuosher.F90`. You can add a new test case and include the file.
 
-Set the parameters in the main function, save, compile and run it
+Set the parameters in the main function, save, compile and run it to solve Shu-Osher test case.
 
 ```bash
 make euler_ho_2
