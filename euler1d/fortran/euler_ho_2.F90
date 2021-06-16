@@ -265,6 +265,12 @@ subroutine reconstruct(ujm2, ujm1, uj, ujp1, ujp2, u)
    real, dimension(nvar) :: wjm2, wjm1, wj, wjp1, wjp2
    real :: R(nvar,nvar), L(nvar,nvar), v(nvar)
 
+   ! For first order, skip everything else
+   if(irecon == ifirst)then
+      u = uj
+      return
+   endif
+
    if(ichar == 1)then
       call Eig_Vec(uj, ujp1, L, R)
       wjm2 = matmul(L, ujm2)
@@ -280,9 +286,7 @@ subroutine reconstruct(ujm2, ujm1, uj, ujp1, ujp2, u)
       wjp2 = ujp2
    endif
 
-   if(irecon == ifirst)then
-      v = wj
-   else if(irecon == iminmod)then
+   if(irecon == iminmod)then
       call reconstruct_minmod(nvar, wjm1, wj, wjp1, v)
    else if(irecon == iwenojs)then
       call reconstruct_wenojs(nvar, wjm2, wjm1, wj, wjp1, wjp2, v)
