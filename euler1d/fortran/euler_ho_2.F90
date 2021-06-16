@@ -1,3 +1,8 @@
+! FVM for Euler 1d
+!    flux   = lxf, roe, hll, hllc
+!    recon  = first, minmod, wenojs, wenoz
+!    var    = cons and char limiting
+!    test   =  use include file
 module constants
    implicit none
    integer,parameter :: nvar = 3
@@ -65,28 +70,6 @@ subroutine euler_flux(v, flux)
    E       = v(3)/(gam-1.0) + 0.5*v(1)*v(2)**2
    flux(3) = (E + v(3))*v(2)
 end subroutine euler_flux
-
-! Compute numerical flux
-subroutine lxf_flux(ul, ur, nflux)
-   use constants
-   implicit none
-   real,intent(in)    :: ul(nvar), ur(nvar)
-   real,intent(inout) :: nflux(nvar)
-   ! Local variables
-   real :: vl(nvar), vr(nvar), sl, sr, fl(nvar), fr(nvar), lam
-
-   call con2prim(ul, vl)
-   call con2prim(ur, vr)
-
-   call max_speed(vl, sl)
-   call max_speed(vr, sr)
-   lam = max(sl, sr)
-
-   call euler_flux(vl, fl)
-   call euler_flux(vr, fr)
-
-   nflux = 0.5*(fl + fr) - 0.5*lam*(ur - ul)
-end subroutine lxf_flux
 
 ! Compute numerical flux
 subroutine num_flux(ul, ur, nflux)
@@ -321,10 +304,10 @@ subroutine Eig_Vec(ul, ur, L, R)
    use constants
    use TestData
    implicit none
-   real :: ul(nvar), ur(nvar), u(nvar) 
+   real :: ul(nvar), ur(nvar), u(nvar)
    real :: R(nvar,nvar), L(nvar,nvar)
    real :: H, v(nvar), a, M
-   
+
    u = 0.5*(ul+ur)
    call con2prim(u, v)
    H = (u(3)+v(3))/u(1)
@@ -333,7 +316,7 @@ subroutine Eig_Vec(ul, ur, L, R)
    R(1,1) = 1.0;      R(1,2) = 1.0;         R(1,3) = 1.0
    R(2,1) = v(2)-a;   R(2,2) = v(2);        R(2,3) = v(2)+a
    R(3,1) = H-v(2)*a; R(3,2) = 0.5*v(2)**2; R(3,3) = H+v(2)*a
-   
+
    M      = v(2)/a
 
    L(1,1) = 0.25*(gam-1.0)*M**2 + 0.5*M
@@ -405,10 +388,10 @@ program main
    real,external     :: compute_dt
 
    cfl    = 0.95
-   ncel   = 200
-   iflux  = ilxf
-   irecon = iwenoz
-   ichar  = 0
+   ncel   = 400     ! number of cells
+   iflux  = ihllc   ! ilxf, iroe, ihll, ihllc
+   irecon = iwenoz  ! ifirst, iminmod, iwenojs, iwenoz
+   ichar  = 1       ! 0 = cons limiting, 1 = char limiting
 
    ! 3 ghost cells on each side, needed for WENO
    nbeg = -2

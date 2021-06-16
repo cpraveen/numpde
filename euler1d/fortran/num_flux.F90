@@ -1,3 +1,25 @@
+! Compute Lax-Friedrich flux
+subroutine lxf_flux(ul, ur, nflux)
+   use constants
+   implicit none
+   real,intent(in)    :: ul(nvar), ur(nvar)
+   real,intent(inout) :: nflux(nvar)
+   ! Local variables
+   real :: vl(nvar), vr(nvar), sl, sr, fl(nvar), fr(nvar), lam
+
+   call con2prim(ul, vl)
+   call con2prim(ur, vr)
+
+   call max_speed(vl, sl)
+   call max_speed(vr, sr)
+   lam = max(sl, sr)
+
+   call euler_flux(vl, fl)
+   call euler_flux(vr, fr)
+
+   nflux = 0.5*(fl + fr) - 0.5*lam*(ur - ul)
+end subroutine lxf_flux
+
 ! Numerical flux of Roe
 ! ul, ur : conserved variables
 subroutine roe_flux(ul, ur, nflux)
@@ -15,7 +37,7 @@ subroutine roe_flux(ul, ur, nflux)
    call con2prim(ur, vr)
 
    HL = (ul(3) + vl(3))/vl(1)
-   HR = (ur(3) + vr(3))/vr(1)  
+   HR = (ur(3) + vr(3))/vr(1)
 
    ! Roe averages
    RT  = sqrt(vr(1)/vl(1))
@@ -28,11 +50,11 @@ subroutine roe_flux(ul, ur, nflux)
    lam(3) = u + a
 
    du = ur - ul
-   
+
    alpha(2) = (gam - 1.0) * ((H-u**2)*du(1) + u*du(2) - du(3)) / a**2
    alpha(1) = 0.5 * ((u+a)*du(1) - du(2) - a*alpha(2)) / a
-   alpha(3) = du(1) - alpha(1) - alpha(2) 
- 
+   alpha(3) = du(1) - alpha(1) - alpha(2)
+
    r1(1) = 1.0
    r1(2) = u - a
    r1(3) = H - u*a
@@ -61,12 +83,12 @@ subroutine hll_speed(vl, vr, sl, sr)
    real,intent(in)    :: vl(nvar), vr(nvar)
    real,intent(inout) :: sl, sr
    ! Local variables
-   real :: HL, HR, laml, lamr 
+   real :: HL, HR, laml, lamr
    real :: u, H, a, upa, uma, RT
-   
+
    HL   = gam*vl(3)/((gam-1.0)*vl(1)) + 0.5*vl(2)**2
    laml = abs(vl(2)) - sqrt(gam*vl(3)/vl(1))
-   
+
    HR   = gam*vr(3)/((gam-1.0)*vr(1)) + 0.5*vr(2)**2
    lamr = abs(vr(2)) + sqrt(gam*vr(3)/vr(1))
 
@@ -80,7 +102,7 @@ subroutine hll_speed(vl, vr, sl, sr)
    upa = u + a
    sl  = min(laml, uma)
    sr  = max(lamr, upa)
-   
+
 end subroutine hll_speed
 
 ! Numerical flux from HLL solver
@@ -97,12 +119,12 @@ subroutine hll_flux(ul, ur, nflux)
    call con2prim(ur, vr)
 
    call hll_speed(vl, vr, sl, sr)
-   
+
    if(sl > 0.0) then
       call euler_flux(vl, nflux)
    else if (sr < 0.0) then
       call euler_flux(vr, nflux)
-   else 
+   else
       call euler_flux(vl, fl)
       call euler_flux(vr, fr)
       nflux = (1.0/(sr-sl)) * (sr*fl - sl*fr + sl*sr*(ur - ul))
@@ -124,7 +146,7 @@ subroutine hllc_flux(ul, ur, nflux)
    call con2prim(ur, vr)
 
    call hll_speed(vl, vr, sl, sr)
-   
+
    if(sl > 0.0)then ! supersonic to right
       call euler_flux(vl, nflux)
    else if(sr < 0.0)then ! supersonic to left

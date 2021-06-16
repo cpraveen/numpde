@@ -1,3 +1,7 @@
+! FVM for Euler 1d
+!    flux   = lxf
+!    recon  = first, minmod, wenojs, wenoz
+!    test   =  use include file
 module constants
    implicit none
    integer,parameter :: nvar = 3
@@ -8,6 +12,7 @@ module constants
    integer :: ncel, nbeg, nend
 end module constants
 
+! Include file to describe test case
 include 'sod.F90'
 
 ! Convert primitive variables to conserved variables
@@ -310,9 +315,9 @@ program main
    real,external     :: compute_dt
 
    cfl    = 0.95
-   ncel   = 200
-   iflux  = ilxf
-   irecon = iwenoz
+   ncel   = 200    ! number of cells
+   iflux  = ilxf   ! only lxf available in this code
+   irecon = iwenoz ! ifirst, iminmod, iwenojs, iwenoz
 
    ! 3 ghost cells on each side, needed for WENO
    nbeg = -2

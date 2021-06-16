@@ -4,7 +4,7 @@ module TestData
    real,parameter :: xmin = -5.0, xmax = 5.0
    real,parameter :: gam = 1.4
    real,parameter :: Tf = 1.8
-   integer,parameter ::leftbc = iNeumann, rightbc = iNeumann
+   integer,parameter :: leftbc = iNeumann, rightbc = iNeumann
 end module TestData
 
 ! Initial condition as a function of x

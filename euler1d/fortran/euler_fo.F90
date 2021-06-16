@@ -1,3 +1,7 @@
+! FVM for Euler 1d
+!    flux   = lxf
+!    recon  = first order
+!    test   = sod
 module constants
    implicit none
    integer,parameter :: nvar = 3
@@ -105,6 +109,8 @@ subroutine num_flux(ul, ur, nflux)
 
    if(iflux == ilxf)then
       call lxf_flux(ul, ur, nflux)
+   else
+      stop 'Only lxf_flux is available'
    endif
 
 end subroutine num_flux
@@ -152,7 +158,7 @@ subroutine compute_residual(nc, u, res)
    do i=1,nc-1
       call num_flux(u(:,i), u(:,i+1), flux)
       res(:,i  ) = res(:,i  ) + flux
-      res(:,i+1) = res(:,i+1)   - flux
+      res(:,i+1) = res(:,i+1) - flux
    enddo
 
    ! Last face
