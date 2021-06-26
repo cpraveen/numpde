@@ -24,7 +24,7 @@ nx, ny = 50, 50
 dx, dy = (xmax-xmin)/(nx-1), (ymax-ymin)/(ny-1)
 x = linspace(xmin,xmax,nx)
 y = linspace(ymin,ymax,ny)
-Y,X = meshgrid(y,x)
+X,Y = meshgrid(x,y,indexing='ij')
 
 # No of interior points
 mx, my = nx-2, ny-2
