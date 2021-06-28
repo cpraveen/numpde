@@ -5,6 +5,8 @@ TARGETS = euler_fo euler_ho_1 euler_ho_2
 
 all: ${TARGETS}
 
+euler_ho_2: num_flux.F90
+
 %: %.F90
 	${FC} ${FFLAGS} -o $@ $<
 

@@ -172,3 +172,51 @@ subroutine hllc_flux(ul, ur, nflux)
       endif
    endif
 end subroutine hllc_flux
+
+subroutine vanleer_flux(ul, ur, nflux)
+   use constants
+   use TestData, only : gam
+   implicit none
+   real,intent(in)    :: ul(nvar), ur(nvar)
+   real,intent(inout) :: nflux(nvar)
+   ! Local variables
+   real :: vl(nvar), vr(nvar), al, ar, ml, mr, cl, cr, fl(nvar), fr(nvar)
+
+   call con2prim(ul, vl)
+   call con2prim(ur, vr)
+
+   ! sound speed
+   al = sqrt(gam * vl(3) / vl(1))
+   ar = sqrt(gam * vr(3) / vr(1))
+
+   ! mach number
+   ml = vl(2) / al
+   mr = vr(2) / ar
+
+   ! Positive flux
+   if(ml > 1.0)then
+      call euler_flux(vl, fl)
+   else if(ml < -1.0)then
+      fl = 0.0
+   else
+      cl =  0.25 * vl(1) * al * (ml + 1.0)**2
+      fl(1) = cl
+      fl(2) = cl * ((gam - 1.0)*vl(2) + 2.0*al) / gam
+      fl(3) = 0.5 * cl * ((gam - 1.0)*vl(2) + 2.0*al)**2 / ((gam + 1.0)*(gam - 1.0))
+   endif
+
+   ! Negative flux
+   if(mr < -1.0)then
+      call euler_flux(vr, fr)
+   else if(mr > 1.0)then
+      fr = 0.0
+   else
+      cr = -0.25 * vr(1) * ar * (mr - 1.0)**2
+      fr(1) = cr
+      fr(2) = cr * ((gam - 1.0)*vr(2) - 2.0*ar) / gam
+      fr(3) = 0.5 * cr * ((gam - 1.0)*vr(2) - 2.0*ar)**2 / ((gam + 1.0)*(gam - 1.0))
+   endif
+
+   nflux = fl + fr
+
+end subroutine vanleer_flux

@@ -6,7 +6,7 @@
 module constants
    implicit none
    integer,parameter :: nvar = 3
-   integer,parameter :: ilxf = 1, iroe = 2, ihll = 3, ihllc = 4
+   integer,parameter :: ilxf = 1, iroe = 2, ihll = 3, ihllc = 4, ivl = 5
    integer,parameter :: ifirst = 1, iminmod = 2, iwenojs = 3, iwenoz = 4
    integer,parameter :: iNeumann = 1,  iWall = 2
    integer :: iflux, irecon, ichar
@@ -86,6 +86,8 @@ subroutine num_flux(ul, ur, nflux)
       call hll_flux(ul, ur, nflux)
    else if(iflux == ihllc)then
       call hllc_flux(ul, ur, nflux)
+   else if(iflux == ivl)then
+      call vanleer_flux(ul, ur, nflux)
    else
       stop 'Unknown value of iflux'
    endif
@@ -393,7 +395,7 @@ program main
 
    cfl    = 0.95
    ncel   = 400     ! number of cells
-   iflux  = ihllc   ! ilxf, iroe, ihll, ihllc
+   iflux  = ihllc   ! ilxf, iroe, ihll, ihllc, ivl
    irecon = iwenoz  ! ifirst, iminmod, iwenojs, iwenoz
    ichar  = 1       ! 0 = cons limiting, 1 = char limiting
 
