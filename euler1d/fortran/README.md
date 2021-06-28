@@ -32,12 +32,12 @@ open sol.pdf
 
 ## euler_ho_2
 
-Of the three codes, this has the most variety of schemes. See the main function for available options. The test cases are defined in files `sod.F90` and `shuosher.F90`. You can add a new test case and include the file.
+Of the three codes, this has the most variety of schemes. See the `input.txt` file for available options. The test cases are defined in files `sod.F90` and `shuosher.F90`. You can add a new test case and include the file.
 
-Set some parameters in `input.txt` file.
 
 ### Sod test case
-Set the parameters in the main function, save, compile and run it to solve Shu-Osher test case.
+
+Set some parameters in `input.txt` file.
 
 ```shell
 ./euler_sod
@@ -46,7 +46,8 @@ open sol.pdf
 ```
 
 ### Shu-Osher test case
-Set the parameters in the main function, save, compile and run it to solve Shu-Osher test case.
+
+Set some parameters in `input.txt` file.
 
 ```shell
 ./euler_shuosher
