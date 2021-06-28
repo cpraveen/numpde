@@ -11,11 +11,15 @@ module constants
    integer,parameter :: iNeumann = 1,  iWall = 2
    integer :: iflux, irecon, ichar
    integer :: ncel, nbeg, nend
+   real    :: cfl
 end module constants
 
 ! Include one file for test case definition
-!include 'sod.F90'
+#if defined(SOD)
+include 'sod.F90'
+#elif defined(SHUOSHER)
 include 'shuosher.F90'
+#endif
 
 include 'num_flux.F90'
 
@@ -384,20 +388,71 @@ subroutine savesol(xc, u)
 
 end subroutine savesol
 
+subroutine read_input()
+   use constants
+   integer :: fid = 10
+   character(len=20) :: flux, recon, var
+
+   open(fid,file='input.txt',status='old')
+   read(fid,*) cfl
+   read(fid,*) ncel
+   read(fid,*) recon
+   read(fid,*) var
+   read(fid,*) flux
+   close(fid)
+
+   if(flux == 'lxf')then
+      iflux = ilxf
+   else if(flux == 'roe')then
+      iflux = iroe
+   else if(flux == 'hll')then
+      iflux = ihll
+   else if(flux == 'hllc')then
+      iflux = ihllc
+   else if(flux == 'vl')then
+      iflux = ivl
+   else
+      stop 'Unknown flux in input.txt'
+   endif
+
+   if(recon == 'first')then
+      irecon = ifirst
+   else if(recon == 'minmod')then
+      irecon = iminmod
+   else if(recon == 'wenojs')then
+      irecon = iwenojs
+   else if(recon == 'wenoz')then
+      irecon = iwenoz
+   else
+      stop 'Unknown recon in input.txt'
+   endif
+
+   if(var == 'cons')then
+      ichar = 0
+   else if(var == 'char')then
+      ichar = 1
+   else
+      stop 'Unknosn var in input.txt'
+   endif
+
+   write(*,*) 'cfl      = ', cfl
+   write(*,*) 'no cells = ', ncel
+   write(*,*) 'flux     = ', trim(flux)
+   write(*,*) 'recon    = ', trim(recon)
+   write(*,*) 'lim var  = ', trim(var)
+
+end subroutine read_input
+
 program main
    use constants
    use TestData
    implicit none
    real,allocatable  :: u0(:,:), u(:,:), res(:,:), xc(:)
-   real              :: cfl, dx, dt, t
+   real              :: dx, dt, t
    integer           :: i, iter
    real,external     :: compute_dt
 
-   cfl    = 0.95
-   ncel   = 400     ! number of cells
-   iflux  = ihllc   ! ilxf, iroe, ihll, ihllc, ivl
-   irecon = iwenoz  ! ifirst, iminmod, iwenojs, iwenoz
-   ichar  = 1       ! 0 = cons limiting, 1 = char limiting
+   call read_input()
 
    ! 3 ghost cells on each side, needed for WENO
    nbeg = -2

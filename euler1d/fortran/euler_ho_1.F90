@@ -10,6 +10,7 @@ module constants
    integer,parameter :: iNeumann = 1,  iWall = 2
    integer :: iflux, irecon
    integer :: ncel, nbeg, nend
+   real    :: cfl
 end module constants
 
 ! Include file to describe test case
@@ -305,19 +306,46 @@ subroutine savesol(xc, u)
 
 end subroutine savesol
 
+subroutine read_input()
+   use constants
+   integer :: fid = 10
+   character(len=20) :: recon
+
+   open(fid,file='input.txt',status='old')
+   read(fid,*) cfl
+   read(fid,*) ncel
+   read(fid,*) recon
+   close(fid)
+
+   if(recon == 'first')then
+      irecon = ifirst
+   else if(recon == 'minmod')then
+      irecon = iminmod
+   else if(recon == 'wenojs')then
+      irecon = iwenojs
+   else if(recon == 'wenoz')then
+      irecon = iwenoz
+   else
+      stop 'Unknown recon in input.txt'
+   endif
+
+   write(*,*) 'cfl      = ', cfl
+   write(*,*) 'no cells = ', ncel
+   write(*,*) 'recon    = ', trim(recon)
+
+end subroutine read_input
+
 program main
    use constants
    use TestData
    implicit none
    real,allocatable  :: u0(:,:), u(:,:), res(:,:), xc(:)
-   real              :: cfl, dx, dt, t
+   real              :: dx, dt, t
    integer           :: i, iter
    real,external     :: compute_dt
 
-   cfl    = 0.95
-   ncel   = 200    ! number of cells
-   iflux  = ilxf   ! only lxf available in this code
-   irecon = iwenoz ! ifirst, iminmod, iwenojs, iwenoz
+   iflux = ilxf
+   call read_input()
 
    ! 3 ghost cells on each side, needed for WENO
    nbeg = -2

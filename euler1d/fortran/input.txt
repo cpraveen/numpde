@@ -1,0 +1,5 @@
+0.95      ! cfl
+400       ! no of cells
+wenoz     ! recon scheme: first, minmod, wenojs, wenoz
+cons      ! variable to limit: cons, char
+lxf       ! flux: lxf, roe, hll, hllc, vl
