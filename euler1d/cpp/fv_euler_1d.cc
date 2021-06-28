@@ -14,9 +14,17 @@ const double brks[] = {1.0, 1.0/4.0, 2.0/3.0};
 double GAMMA;
 double gas_const;
 
-enum SchemeOrder { first, second };
+enum class SchemeOrder { first, second };
+enum class Limiter { minmod, vanleer };
 
 using namespace std;
+
+struct Parameters
+{
+   int test_case;
+   SchemeOrder order;
+   Limiter limiter;
+};
 
 //------------------------------------------------------------------------------
 // Compute temperature given primitive variables
@@ -34,7 +42,7 @@ double minmod (const double& a,
                const double& c)
 {
    double result;
-   
+
    if (a*b > 0.0 && b*c > 0.0)
    {
       result  = min( min(fabs(a), fabs(b)), fabs(c) );
@@ -42,9 +50,9 @@ double minmod (const double& a,
    }
    else
       result = 0.0;
-   
+
    return result;
-   
+
 }
 
 //------------------------------------------------------------------------------
@@ -65,7 +73,8 @@ double vanleer (const double& a,
 //------------------------------------------------------------------------------
 // Reconstruct left state of right face
 //------------------------------------------------------------------------------
-vector<double> muscl (const vector<double>& ul,
+vector<double> muscl (const Limiter limiter,
+                      const vector<double>& ul,
                       const vector<double>& uc,
                       const vector<double>& ur)
 {
@@ -73,16 +82,18 @@ vector<double> muscl (const vector<double>& ul,
    vector<double> result (n);
    double dul, duc, dur;
    const double beta = 2.0;
-   
+
    for(unsigned int i=0; i<n; ++i)
    {
       dul = uc[i] - ul[i];
       dur = ur[i] - uc[i];
       duc = (ur[i] - ul[i])/2.0;
-      //result[i] = uc[i] + 0.5 * vanleer (dul, dur);
-      result[i] = uc[i] + 0.5 * minmod (beta*dul, duc, beta*dur);
+      if(limiter == Limiter::vanleer)
+         result[i] = uc[i] + 0.5 * vanleer (dul, dur);
+      else
+         result[i] = uc[i] + 0.5 * minmod (beta*dul, duc, beta*dur);
    }
-   
+
    return result;
 }
 
@@ -92,9 +103,9 @@ vector<double> muscl (const vector<double>& ul,
 class FVProblem
 {
    public:
-      FVProblem ();
+      FVProblem (const Parameters param);
       void run ();
-   
+
    private:
       void make_grid_and_dofs ();
       void initial_condition ();
@@ -112,8 +123,10 @@ class FVProblem
       void compute_residual ();
       void update_solution (const unsigned int rk);
       void output ();
-      
+
       SchemeOrder order;
+      Limiter     limiter;
+      int         test_case;
       double d_left, u_left, p_left;
       double d_right, u_right, p_right;
       vector<double> prim_left;
@@ -130,7 +143,7 @@ class FVProblem
       double final_time;
       vector<double> xc;
       vector<double> xf;
-   
+
       vector< vector<double> > primitive;
       vector< vector<double> > residual;
       vector< vector<double> > conserved;
@@ -140,12 +153,13 @@ class FVProblem
 //------------------------------------------------------------------------------
 // Constructor
 //------------------------------------------------------------------------------
-FVProblem::FVProblem ()
-{   
+FVProblem::FVProblem (const Parameters param)
+{
    n_var  = 3;
 
-   int test_case = 1;
-   order = second;
+   test_case = param.test_case;
+   order = param.order;
+   limiter = param.limiter;
 
    if(test_case == 1)
    {
@@ -162,10 +176,10 @@ FVProblem::FVProblem ()
 
       d_left  = 1.0;
       d_right = 0.125;
-   
+
       u_left  = 0.75;
       u_right = 0.0;
-   
+
       p_left  = 1.0;
       p_right = 0.1;
    }
@@ -176,11 +190,11 @@ FVProblem::FVProblem ()
    prim_left[0] = d_left;
    prim_left[1] = u_left;
    prim_left[2] = p_left;
-   
+
    prim_right[0] = d_right;
    prim_right[1] = u_right;
    prim_right[2] = p_right;
-   
+
 }
 
 //------------------------------------------------------------------------------
@@ -189,18 +203,18 @@ FVProblem::FVProblem ()
 void FVProblem::make_grid_and_dofs ()
 {
    cout << "Making grid and allocating memory ...\n";
-   
+
    n_face = n_cell + 1;
    dx = (xmax - xmin) / n_cell;
    xc.resize (n_cell);
    xf.resize (n_face);
-   
+
    // Make grid
    for(unsigned int i=0; i<n_face; ++i)
       xf[i] = xmin + i * dx;
    for(unsigned int i=0; i<n_cell; ++i)
       xc[i] = 0.5 * (xf[i] + xf[i+1]);
-   
+
    primitive.resize (n_cell, vector<double>(n_var));
    residual.resize (n_cell, vector<double>(n_var));
    conserved.resize (n_cell, vector<double>(n_var));
@@ -213,7 +227,7 @@ void FVProblem::make_grid_and_dofs ()
 void FVProblem::initial_condition ()
 {
    cout << "Setting initial conditions ...\n";
-   
+
    // Set initial condition
    for(unsigned int i=0; i<n_cell; ++i)
    {
@@ -240,7 +254,7 @@ void FVProblem::compute_dt ()
    dt = 1.0e20;
    for(unsigned int i=0; i<n_cell; ++i)
    {
-      double speed = fabs(primitive[i][1]) + 
+      double speed = fabs(primitive[i][1]) +
                      sqrt(GAMMA * primitive[i][2] / primitive[i][0]);
       dt = min (dt, dx/speed);
    }
@@ -257,7 +271,7 @@ void FVProblem::con_to_prim ()
    {
       primitive[i][0] = conserved[i][0];
       primitive[i][1] = conserved[i][1]/conserved[i][0];
-      primitive[i][2] = (GAMMA-1.0) * (conserved[i][2] - 
+      primitive[i][2] = (GAMMA-1.0) * (conserved[i][2] -
                            0.5 * pow(conserved[i][1], 2.0) / conserved[i][0]);
    }
 }
@@ -269,7 +283,7 @@ void FVProblem::reconstruct (const unsigned int face,
                              vector<double>& left,
                              vector<double>& right) const
 {
-   if(order == first)
+   if(order == SchemeOrder::first)
    {
       left  = primitive[face-1];
       right = primitive[face];
@@ -279,18 +293,18 @@ void FVProblem::reconstruct (const unsigned int face,
    if(face==1)
    {
       left = primitive[0];
-      right = muscl (primitive[2], primitive[1], primitive[0]);
+      right = muscl (limiter, primitive[2], primitive[1], primitive[0]);
    }
    else if(face==n_face-2)
    {
-      left  = muscl (primitive[n_cell-3], primitive[n_cell-2], 
+      left  = muscl (limiter, primitive[n_cell-3], primitive[n_cell-2],
                      primitive[n_cell-1]);
       right = primitive[n_cell-1];
    }
    else
    {
-      left  = muscl (primitive[face-2], primitive[face-1], primitive[face]);
-      right = muscl (primitive[face+1], primitive[face], primitive[face-1]);
+      left  = muscl (limiter, primitive[face-2], primitive[face-1], primitive[face]);
+      right = muscl (limiter, primitive[face+1], primitive[face], primitive[face-1]);
    }
 }
 
@@ -310,10 +324,10 @@ void FVProblem::kfvs_split_flux (const vector<double>& prim,
    B    = sign * 0.5 * exp(-s * s) / sqrt(beta * M_PI);
    E    = prim[2]/(GAMMA-1.0) + 0.5 * prim[0] * pow(prim[1], 2);
    fact = prim[1] * A + B;
-   
+
    // inviscid flux
    flux[0] = prim[0] * fact;
-   flux[1] = (prim[2] + prim[0] * pow(prim[1], 2)) * A + 
+   flux[1] = (prim[2] + prim[0] * pow(prim[1], 2)) * A +
              prim[0] * prim[1] * B;
    flux[2] = prim[1] * (E + prim[2]) * A +
              (E + 0.5 * prim[2]) * B;
@@ -328,14 +342,14 @@ void FVProblem::num_flux(const vector<double>& left,
 {
    vector<double> flux_pos(n_var);
    vector<double> flux_neg(n_var);
-   
+
    kfvs_split_flux (left,  +1, flux_pos);
    kfvs_split_flux (right, -1, flux_neg);
-   
+
    for(unsigned int i=0; i<n_var; ++i)
       flux[i] = flux_pos[i] + flux_neg[i];
-   
-  
+
+
 }
 
 //------------------------------------------------------------------------------
@@ -346,11 +360,11 @@ void FVProblem::compute_residual ()
    for(unsigned int i=0; i<n_cell; ++i)
       for(unsigned int j=0; j<n_var; ++j)
          residual[i][j] = 0.0;
-   
+
    vector<double> flux (n_var);
    vector<double> left (n_var);
    vector<double> right(n_var);
-   
+
    // Flux through left boundary
    num_flux (prim_left, primitive[0], flux);
    for(unsigned int j=0; j<n_var; ++j)
@@ -383,7 +397,7 @@ void FVProblem::update_solution (const unsigned int rk)
       for(unsigned int j=0; j<n_var; ++j)
          conserved[i][j] = arks[rk] * conserved_old[i][j] +
                         brks[rk] * (conserved[i][j] - (dt/dx) * residual[i][j]);
-   
+
 }
 
 //------------------------------------------------------------------------------
@@ -392,11 +406,11 @@ void FVProblem::update_solution (const unsigned int rk)
 void FVProblem::output ()
 {
    cout << "Saving solution to sol.dat\n";
-   
+
    ofstream fo("sol.dat");
    for(unsigned int i=0; i<n_cell; ++i)
-      fo << xc[i] << " " 
-         << primitive[i][0] << " " 
+      fo << xc[i] << " "
+         << primitive[i][0] << " "
          << primitive[i][1] << " "
          << primitive[i][2] << endl;
    fo.close ();
@@ -426,22 +440,69 @@ void FVProblem::run ()
       }
       time += dt;
       ++iter;
-      if(iter % 1000 == 0) 
+      if(iter % 1000 == 0)
       cout << "Iter = " << iter << " Time = " << time << endl;
       if(iter % 1000 == 0) output ();
    }
-   
+
    con_to_prim ();
    output ();
 }
 
 //------------------------------------------------------------------------------
+void  get_command_line(int argc, char *argv[],
+                       Parameters& param)
+{
+   if(argc == 1)
+   {
+      cout << "Not enough arguments\n";
+      cout << "  first order: " << argv[0] << " testcase\n";
+      cout << "  high order : " << argv[0] << " testcase  limiter\n";
+      exit(0);
+   }
+
+   param.test_case = stoi(argv[1]);
+   if(param.test_case != 1)
+   {
+      cout << "Unknown test case = " << param.test_case << endl;
+      exit(0);
+   }
+   else
+   {
+      cout << "Test case = " << param.test_case << endl;
+   }
+
+   if(argc == 2)
+   {
+      param.order = SchemeOrder::first;
+      cout << "First order scheme\n";
+   }
+   else if(argc == 3)
+   {
+      param.order = SchemeOrder::second;
+      cout << "Second order scheme\n";
+      string val = string(argv[2]);
+      if(val == "minmod")
+         param.limiter = Limiter::minmod;
+      else if(val == "vanleer")
+         param.limiter = Limiter::vanleer;
+      else
+      {
+         cout << "Unknown limiter = " << val << endl;
+         exit(0);
+      }
+   }
+}
+
+//------------------------------------------------------------------------------
 // This is where it all starts
 //------------------------------------------------------------------------------
-int main ()
+int main (int argc, char *argv[])
 {
-   FVProblem fv_problem;
+   Parameters param;
+   get_command_line(argc, argv, param);
+   FVProblem fv_problem(param);
    fv_problem.run ();
-   
+
    return 0;
 }
