@@ -3,8 +3,8 @@
 #include <vector>
 #include <cmath>
 
-#define SIGN(a) (((a)<0) ? -1:1)
-#define Cp  (GAMMA * gas_const / (GAMMA - 1.0))
+#define SIGN(a) (((a) < 0) ? -1 : 1)
+#define Cp      (GAMMA * gas_const / (GAMMA - 1.0))
 
 // Coefficients for RK3 scheme
 const double arks[] = {0.0, 3.0/4.0, 1.0/3.0};
@@ -19,6 +19,9 @@ enum class Limiter { minmod, vanleer };
 
 using namespace std;
 
+//------------------------------------------------------------------------------
+// To store some scheme and testcase parameters
+//------------------------------------------------------------------------------
 struct Parameters
 {
    int test_case;
@@ -41,9 +44,12 @@ double minmod (const double& a,
                const double& b,
                const double& c)
 {
-   double result;
+   int sa = SIGN(a);
+   int sb = SIGN(b);
+   int sc = SIGN(c);
 
-   if (a*b > 0.0 && b*c > 0.0)
+   double result;
+   if (sa == sb && sb == sc)
    {
       result  = min( min(fabs(a), fabs(b)), fabs(c) );
       result *= SIGN(a);
@@ -81,13 +87,15 @@ vector<double> muscl (const Limiter limiter,
    unsigned int n = ul.size();
    vector<double> result (n);
    double dul, duc, dur;
+   // beta = 1.0 is TVD, stronger limiter
+   // beta = 2.0 should give more accurate solution
    const double beta = 2.0;
 
    for(unsigned int i=0; i<n; ++i)
    {
       dul = uc[i] - ul[i];
       dur = ur[i] - uc[i];
-      duc = (ur[i] - ul[i])/2.0;
+      duc = 0.5 * (ur[i] - ul[i]);
       if(limiter == Limiter::vanleer)
          result[i] = uc[i] + 0.5 * vanleer (dul, dur);
       else
@@ -390,13 +398,15 @@ void FVProblem::compute_residual ()
 
 //------------------------------------------------------------------------------
 // Compute finite volume residual
+// Apply one stage of SSPRK3
 //------------------------------------------------------------------------------
 void FVProblem::update_solution (const unsigned int rk)
 {
+   const double lam = dt / dx;
    for(unsigned int i=0; i<n_cell; ++i)
       for(unsigned int j=0; j<n_var; ++j)
          conserved[i][j] = arks[rk] * conserved_old[i][j] +
-                        brks[rk] * (conserved[i][j] - (dt/dx) * residual[i][j]);
+                           brks[rk] * (conserved[i][j] - lam * residual[i][j]);
 
 }
 
@@ -412,7 +422,7 @@ void FVProblem::output ()
       fo << xc[i] << " "
          << primitive[i][0] << " "
          << primitive[i][1] << " "
-         << primitive[i][2] << endl;
+         << primitive[i][2] << "\n";
    fo.close ();
 }
 
@@ -458,18 +468,19 @@ void  get_command_line(int argc, char *argv[],
       cout << "Not enough arguments\n";
       cout << "  first order: " << argv[0] << " testcase\n";
       cout << "  high order : " << argv[0] << " testcase  limiter\n";
+      cout << "  Testcases  : sod\n";
+      cout << "  Limiters   : minmod, vanleer\n";
       exit(0);
    }
 
-   param.test_case = stoi(argv[1]);
-   if(param.test_case != 1)
+   if(string(argv[1]) == "sod")
    {
-      cout << "Unknown test case = " << param.test_case << endl;
-      exit(0);
+      param.test_case = 1;
    }
    else
    {
-      cout << "Test case = " << param.test_case << endl;
+      cout << "Unknown test case = " << argv[1] << endl;
+      exit(0);
    }
 
    if(argc == 2)
