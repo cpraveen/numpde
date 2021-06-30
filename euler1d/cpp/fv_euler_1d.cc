@@ -77,9 +77,12 @@ double vanleer (const double& a,
    return du;
 }
 //------------------------------------------------------------------------------
+//   |  ul  |  uc  |  ur  |
+//                 ^
+//                 |
 // Reconstruct left state of right face
 //------------------------------------------------------------------------------
-vector<double> muscl (const Limiter limiter,
+vector<double> muscl (const Limiter         limiter,
                       const vector<double>& ul,
                       const vector<double>& uc,
                       const vector<double>& ur)
@@ -152,10 +155,10 @@ class FVProblem
       vector<double> xc;
       vector<double> xf;
 
-      vector< vector<double> > primitive;
+      vector< vector<double> > primitive;     // density, velocity, pressure
       vector< vector<double> > residual;
-      vector< vector<double> > conserved;
-      vector< vector<double> > conserved_old;
+      vector< vector<double> > conserved;     // solution at time level n+1
+      vector< vector<double> > conserved_old; // solution at time level n
 };
 
 //------------------------------------------------------------------------------
@@ -288,8 +291,8 @@ void FVProblem::con_to_prim ()
 // Reconstruct left/right state at a face
 //------------------------------------------------------------------------------
 void FVProblem::reconstruct (const unsigned int face,
-                             vector<double>& left,
-                             vector<double>& right) const
+                             vector<double>&    left,
+                             vector<double>&    right) const
 {
    if(order == SchemeOrder::first)
    {
@@ -321,8 +324,8 @@ void FVProblem::reconstruct (const unsigned int face,
 // sign=-1 gives negative flux
 //------------------------------------------------------------------------------
 void FVProblem::kfvs_split_flux (const vector<double>& prim,
-                                 const int sign,
-                                 vector<double>& flux) const
+                                 const int             sign,
+                                 vector<double>&       flux) const
 {
    double beta, s, A, B, E, fact;
 

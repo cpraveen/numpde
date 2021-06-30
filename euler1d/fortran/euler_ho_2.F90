@@ -439,7 +439,7 @@ subroutine read_input()
    else if(var == 'char')then
       ichar = 1
    else
-      stop 'Unknosn var in input.txt'
+      stop 'Unknown var in input.txt'
    endif
 
    write(*,*) 'cfl      = ', cfl

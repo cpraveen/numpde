@@ -53,6 +53,7 @@ subroutine max_speed(v, s)
    s = abs(v(2)) + sqrt(gam*v(3)/v(1))
 end subroutine max_speed
 
+! Compute euler flux from primitive variables v
 subroutine euler_flux(v, flux)
    use constants
    use TestData, only : gam

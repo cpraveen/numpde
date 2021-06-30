@@ -11,7 +11,7 @@ module constants
 end module constants
 
 ! Convert primitive variables to conserved variables
-subroutine prim2con(v,u)
+subroutine prim2con(v, u)
    use constants
    implicit none
    real,intent(in)    :: v(nvar)
@@ -44,6 +44,7 @@ subroutine max_speed(v, s)
    s = abs(v(2)) + sqrt(gam*v(3)/v(1))
 end subroutine max_speed
 
+! Compute euler flux using primitive variables v
 subroutine euler_flux(v, flux)
    use constants
    implicit none
@@ -194,8 +195,8 @@ end subroutine savesol
 program main
    use constants
    implicit none
-   integer,parameter :: nc = 200
-   real,parameter    :: xmin = 0.0, xmax = 1.0
+   integer,parameter :: nc = 200               ! number of cells
+   real,parameter    :: xmin = 0.0, xmax = 1.0 ! domain
    real              :: u(nvar,nc), res(nvar,nc), xc(nc)
    real              :: dx, dt, t, Tf
    integer           :: i, iter
