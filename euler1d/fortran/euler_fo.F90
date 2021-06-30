@@ -18,8 +18,8 @@ subroutine prim2con(v,u)
    real,intent(inout) :: u(nvar)
 
    u(1) = v(1)
-   u(2) = v(1)*v(2)
-   u(3) = v(3)/(gam-1.0) + 0.5*v(1)*v(2)**2
+   u(2) = v(1) * v(2)
+   u(3) = v(3) / (gam - 1.0) + 0.5 * v(1) * v(2)**2
 end subroutine prim2con
 
 ! Convert primitive variables to conserved variables
@@ -31,9 +31,10 @@ subroutine con2prim(u, v)
 
    v(1) = u(1)
    v(2) = u(2) / u(1)
-   v(3) = (gam-1.0) * (u(3) - 0.5 * u(2)**2 / u(1))
+   v(3) = (gam - 1.0) * (u(3) - 0.5 * u(2)**2 / u(1))
 end subroutine con2prim
 
+! Largest eigenvalue in magnitude
 subroutine max_speed(v, s)
    use constants
    implicit none
@@ -51,12 +52,13 @@ subroutine euler_flux(v, flux)
    ! Local variables
    real :: E
 
-   flux(1) = v(1)*v(2)
-   flux(2) = v(3) + v(1)*v(2)**2
-   E       = v(3)/(gam-1.0) + 0.5*v(1)*v(2)**2
-   flux(3) = (E + v(3))*v(2)
+   flux(1) = v(1) * v(2)
+   flux(2) = v(3) + v(1) * v(2)**2
+   E       = v(3) / (gam - 1.0) + 0.5 * v(1) * v(2)**2
+   flux(3) = (E + v(3)) * v(2)
 end subroutine euler_flux
 
+! Sod shock tube case
 subroutine initial_condition(x, u)
    use constants
    implicit none
@@ -78,7 +80,7 @@ subroutine initial_condition(x, u)
    call prim2con(v, u)
 end subroutine initial_condition
 
-! Compute numerical flux
+! Compute numerical flux: Rusanov flux
 subroutine lxf_flux(ul, ur, nflux)
    use constants
    implicit none
@@ -154,7 +156,7 @@ subroutine compute_residual(nc, u, res)
    call num_flux(u(:,1), u(:,1), flux)
    res(:,1) = res(:,1) - flux
 
-   ! Intermediate faces
+   ! Intermediate faces: between i and i+1
    do i=1,nc-1
       call num_flux(u(:,i), u(:,i+1), flux)
       res(:,i  ) = res(:,i  ) + flux
@@ -167,6 +169,7 @@ subroutine compute_residual(nc, u, res)
 
 end subroutine compute_residual
 
+! Save solution to file
 subroutine savesol(nc, xc, u)
    use constants
    implicit none
@@ -187,6 +190,7 @@ subroutine savesol(nc, xc, u)
 
 end subroutine savesol
 
+! This is where program starts
 program main
    use constants
    implicit none

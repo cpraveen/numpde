@@ -25,8 +25,8 @@ subroutine prim2con(v,u)
    real,intent(inout) :: u(nvar)
 
    u(1) = v(1)
-   u(2) = v(1)*v(2)
-   u(3) = v(3)/(gam-1.0) + 0.5*v(1)*v(2)**2
+   u(2) = v(1) * v(2)
+   u(3) = v(3) / (gam - 1.0) + 0.5 * v(1) * v(2)**2
 end subroutine prim2con
 
 ! Convert primitive variables to conserved variables
@@ -39,7 +39,7 @@ subroutine con2prim(u, v)
 
    v(1) = u(1)
    v(2) = u(2) / u(1)
-   v(3) = (gam-1.0) * (u(3) - 0.5 * u(2)**2 / u(1))
+   v(3) = (gam - 1.0) * (u(3) - 0.5 * u(2)**2 / u(1))
 end subroutine con2prim
 
 ! Maximum absolute speed for euler = |vel| + sound_speed
@@ -62,13 +62,13 @@ subroutine euler_flux(v, flux)
    ! Local variables
    real :: E
 
-   flux(1) = v(1)*v(2)
-   flux(2) = v(3) + v(1)*v(2)**2
-   E       = v(3)/(gam-1.0) + 0.5*v(1)*v(2)**2
+   flux(1) = v(1) * v(2)
+   flux(2) = v(3) + v(1) * v(2)**2
+   E       = v(3) / (gam - 1.0) + 0.5 * v(1) * v(2)**2
    flux(3) = (E + v(3))*v(2)
 end subroutine euler_flux
 
-! Compute numerical flux
+! Compute numerical flux: Rusanov flux
 subroutine lxf_flux(ul, ur, nflux)
    use constants
    implicit none
@@ -169,7 +169,7 @@ subroutine reconstruct_minmod(n, ujm1, uj, ujp1, u)
    ! Local variables
    integer        :: c
    real           :: db, dc, df
-   real,parameter :: beta = 1.0
+   real,parameter :: beta = 1.0  ! beta in [1,2]
    real,external  :: minmod
 
    do c=1,n
@@ -181,6 +181,7 @@ subroutine reconstruct_minmod(n, ujm1, uj, ujp1, u)
 
 end subroutine reconstruct_minmod
 
+! Classical WENO of Jiang and Shu
 subroutine reconstruct_wenojs(n, ujm2, ujm1, uj, ujp1, ujp2, u)
    implicit none
    integer,intent(in) :: n
@@ -210,6 +211,7 @@ subroutine reconstruct_wenojs(n, ujm2, ujm1, uj, ujp1, ujp2, u)
 
 end subroutine reconstruct_wenojs
 
+! Improved WENO at extrema
 subroutine reconstruct_wenoz(n, ujm2, ujm1, uj, ujp1, ujp2, u)
    implicit none
    integer,intent(in) :: n
@@ -306,6 +308,7 @@ subroutine savesol(xc, u)
 
 end subroutine savesol
 
+! Read parameters from file input.txt
 subroutine read_input()
    use constants
    integer :: fid = 10
@@ -335,6 +338,7 @@ subroutine read_input()
 
 end subroutine read_input
 
+! This where execution starts
 program main
    use constants
    use TestData
@@ -377,18 +381,18 @@ program main
       dt = cfl * compute_dt(dx, u)
       if(t+dt > Tf) dt = Tf - t
 
-      ! Stage 1
+      ! Stage 1 of SSPRK3
       call compute_residual(u, res)
       u(:,1:ncel)    = u(:,1:ncel) - (dt/dx)*res(:,1:ncel)
       call fill_ghost(u)
 
-      ! Stage 2
+      ! Stage 2 of SSPRK3
       call compute_residual(u, res)
       u(:,1:ncel)    = (3.0/4.0)*u0(:,1:ncel) + &
                        (1.0/4.0)*(u(:,1:ncel) - (dt/dx)*res(:,1:ncel))
       call fill_ghost(u)
 
-      ! Stage 3
+      ! Stage 3 of SSPRK3
       call compute_residual(u, res)
       u(:,1:ncel)    = (1.0/3.0)*u0(:,1:ncel) + &
                        (2.0/3.0)*(u(:,1:ncel) - (dt/dx)*res(:,1:ncel))

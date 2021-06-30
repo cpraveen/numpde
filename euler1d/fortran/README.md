@@ -2,7 +2,7 @@
 
 * euler_fo: First order method, Lax-Friedrich flux
 * euler_ho_1: Higher order, Lax-Friedrich flux
-* euler_ho_2: Higher order, many fluxes
+* euler_ho_2: Higher order, many fluxes, conserved/characteristic limiting
 
 Compile using the makefile
 

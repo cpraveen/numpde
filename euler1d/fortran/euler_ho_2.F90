@@ -32,8 +32,8 @@ subroutine prim2con(v,u)
    real,intent(inout) :: u(nvar)
 
    u(1) = v(1)
-   u(2) = v(1)*v(2)
-   u(3) = v(3)/(gam-1.0) + 0.5*v(1)*v(2)**2
+   u(2) = v(1) * v(2)
+   u(3) = v(3) / (gam - 1.0) + 0.5 * v(1) * v(2)**2
 end subroutine prim2con
 
 ! Convert primitive variables to conserved variables
@@ -46,7 +46,7 @@ subroutine con2prim(u, v)
 
    v(1) = u(1)
    v(2) = u(2) / u(1)
-   v(3) = (gam-1.0) * (u(3) - 0.5 * u(2)**2 / u(1))
+   v(3) = (gam - 1.0) * (u(3) - 0.5 * u(2)**2 / u(1))
 end subroutine con2prim
 
 ! Maximum absolute speed for euler = |vel| + sound_speed
@@ -69,10 +69,10 @@ subroutine euler_flux(v, flux)
    ! Local variables
    real :: E
 
-   flux(1) = v(1)*v(2)
-   flux(2) = v(3) + v(1)*v(2)**2
-   E       = v(3)/(gam-1.0) + 0.5*v(1)*v(2)**2
-   flux(3) = (E + v(3))*v(2)
+   flux(1) = v(1) * v(2)
+   flux(2) = v(3) + v(1) * v(2)**2
+   E       = v(3) / (gam - 1.0) + 0.5 * v(1) * v(2)**2
+   flux(3) = (E + v(3)) * v(2)
 end subroutine euler_flux
 
 ! Compute numerical flux
@@ -203,6 +203,7 @@ subroutine reconstruct_minmod(n, ujm1, uj, ujp1, u)
 
 end subroutine reconstruct_minmod
 
+! Classical WENO of Jiang and Shu
 subroutine reconstruct_wenojs(n, ujm2, ujm1, uj, ujp1, ujp2, u)
    implicit none
    integer,intent(in) :: n
@@ -232,6 +233,7 @@ subroutine reconstruct_wenojs(n, ujm2, ujm1, uj, ujp1, ujp2, u)
 
 end subroutine reconstruct_wenojs
 
+! Improved WENO at extrema
 subroutine reconstruct_wenoz(n, ujm2, ujm1, uj, ujp1, ujp2, u)
    implicit none
    integer,intent(in) :: n
@@ -268,7 +270,7 @@ subroutine reconstruct(ujm2, ujm1, uj, ujp1, ujp2, u)
    implicit none
    real,dimension(nvar),intent(in) :: ujm2, ujm1, uj, ujp1, ujp2
    real,dimension(nvar),intent(inout) :: u
-   real, dimension(nvar) :: wjm2, wjm1, wj, wjp1, wjp2
+   real,dimension(nvar) :: wjm2, wjm1, wj, wjp1, wjp2
    real :: R(nvar,nvar), L(nvar,nvar), v(nvar)
 
    ! For first order, skip everything else
@@ -278,6 +280,7 @@ subroutine reconstruct(ujm2, ujm1, uj, ujp1, ujp2, u)
    endif
 
    if(ichar == 1)then
+      ! Convert to characteristic variables
       call Eig_Vec(uj, ujp1, L, R)
       wjm2 = matmul(L, ujm2)
       wjm1 = matmul(L, ujm1)
@@ -303,6 +306,7 @@ subroutine reconstruct(ujm2, ujm1, uj, ujp1, ujp2, u)
    endif
 
    if(ichar == 1)then
+      ! Convert back to conserved variables
       u = matmul(R, v)
    else
       u = v
@@ -310,6 +314,8 @@ subroutine reconstruct(ujm2, ujm1, uj, ujp1, ujp2, u)
 
 end subroutine reconstruct
 
+! Form matrix of left and right eigenvectors of flux jacobian
+! ul, ur = conserved variables
 subroutine Eig_Vec(ul, ur, L, R)
    use constants
    use TestData
@@ -318,10 +324,10 @@ subroutine Eig_Vec(ul, ur, L, R)
    real :: R(nvar,nvar), L(nvar,nvar)
    real :: H, v(nvar), a, M
 
-   u = 0.5*(ul+ur)
+   u = 0.5*(ul + ur)
    call con2prim(u, v)
-   H = (u(3)+v(3))/u(1)
-   a = sqrt(gam*v(3)/v(1))
+   H = (u(3) + v(3)) / u(1)
+   a = sqrt(gam * v(3) / v(1))
 
    R(1,1) = 1.0;      R(1,2) = 1.0;         R(1,3) = 1.0
    R(2,1) = v(2)-a;   R(2,2) = v(2);        R(2,3) = v(2)+a
@@ -388,6 +394,7 @@ subroutine savesol(xc, u)
 
 end subroutine savesol
 
+! Read parameters from file input.txt
 subroutine read_input()
    use constants
    integer :: fid = 10
@@ -443,6 +450,7 @@ subroutine read_input()
 
 end subroutine read_input
 
+! Main function where execution starts
 program main
    use constants
    use TestData
