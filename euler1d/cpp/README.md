@@ -9,7 +9,7 @@ make
 Run first order code
 
 ```shell
-./fv 1
+./fv sod
 gnuplot fvm.gnu
 open fvm.ps
 ```
@@ -17,7 +17,7 @@ open fvm.ps
 Run high order code: minmod limiter
 
 ```shell
-./fv 1 minmod
+./fv sod minmod
 gnuplot fvm.gnu
 open fvm.ps
 ```
@@ -25,7 +25,7 @@ open fvm.ps
 Run high order code: vanleer limiter
 
 ```shell
-./fv 1 vanleer
+./fv sod vanleer
 gnuplot fvm.gnu
 open fvm.ps
 ```

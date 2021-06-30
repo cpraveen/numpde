@@ -1,8 +1,8 @@
 CFLAGS = -std=c++11 -O3 -Wall
 
-TARGET: fv
+TARGET = fv
 
-al: $(TARGET)
+all: $(TARGET)
 
 fv: fv_euler_1d.cc
 	$(CXX) $(CFLAGS) -o fv fv_euler_1d.cc
