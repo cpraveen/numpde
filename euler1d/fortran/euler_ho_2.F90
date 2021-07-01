@@ -82,19 +82,20 @@ subroutine num_flux(ul, ur, nflux)
    real,intent(in)    :: ul(nvar), ur(nvar)
    real,intent(inout) :: nflux(nvar)
 
-   if(iflux == ilxf)then
-      call lxf_flux(ul, ur, nflux)
-   else if(iflux == iroe)then
-      call roe_flux(ul, ur, nflux)
-   else if(iflux == ihll)then
-      call hll_flux(ul, ur, nflux)
-   else if(iflux == ihllc)then
-      call hllc_flux(ul, ur, nflux)
-   else if(iflux == ivl)then
-      call vanleer_flux(ul, ur, nflux)
-   else
-      stop 'Unknown value of iflux'
-   endif
+   select case(iflux)
+      case(ilxf)
+         call lxf_flux(ul, ur, nflux)
+      case(iroe)
+         call roe_flux(ul, ur, nflux)
+      case(ihll)
+         call hll_flux(ul, ur, nflux)
+      case(ihllc)
+         call hllc_flux(ul, ur, nflux)
+      case(ivl)
+         call vanleer_flux(ul, ur, nflux)
+      case default
+         stop 'Unknown value of iflux'
+   end select
 
 end subroutine num_flux
 
