@@ -1,7 +1,3 @@
-ifndef EIGEN_DIR
-$(error EIGEN_DIR is not set)
-endif
-
 CXX = c++
 CXXFLAGS = -O3 -Wall
 
@@ -23,6 +19,9 @@ poisson1: poisson1.o array2d.o $(HDR)
 	$(CXX) -o poisson1 poisson1.o array2d.o
 
 poisson2: poisson2.cc
+	ifndef EIGEN_DIR
+	$(error EIGEN_DIR is not set)
+	endif
 	$(CXX) $(CXXFLAGS) -o poisson2 poisson2.cc -I$(EIGEN_DIR)/include/eigen3
 
 help:
