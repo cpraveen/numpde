@@ -11,11 +11,36 @@ public:
    void resize (const unsigned int nx, const unsigned int ny);
    unsigned int sizex() const;
    unsigned int sizey() const;
-   double  operator()(const unsigned int i, const unsigned int j) const;
-   double& operator()(const unsigned int i, const unsigned int j);
+
+   inline const double&  operator()(const unsigned int i, const unsigned int j) const
+   {
+      #if defined(DEBUG)
+      if (i < 0 || i > nx - 1 || j < 0 || j > ny - 1)
+      {
+         cout << "Indices out of range" << endl;
+         cout << "i, j = " << i << ", " << j << endl;
+         exit(0);
+      }
+      #endif
+      return u[i + j * nx];
+   }
+
+   inline double& operator()(const unsigned int i, const unsigned int j)
+   {
+      #if defined(DEBUG)
+      if (i < 0 || i > nx - 1 || j < 0 || j > ny - 1)
+      {
+         cout << "Indices out of range" << endl;
+         cout << "i, j = " << i << ", " << j << endl;
+         exit(0);
+      }
+      #endif
+      return u[i + j * nx];
+   }
+
    Array2D& operator= (const double scalar);
    Array2D& operator= (const Array2D& u);
-   
+
 private:
    unsigned int nx, ny, n;
    std::vector<double> u;

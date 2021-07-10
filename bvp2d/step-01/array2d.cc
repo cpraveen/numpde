@@ -57,34 +57,6 @@ unsigned int Array2D::sizey() const
    return ny;
 }
 
-// Return value at (i,j), this is read only
-double Array2D::operator() (const unsigned int i, const unsigned int j) const
-{
-#if defined(DEBUG)
-   if(i < 0 || i > nx-1 || j < 0 || j > ny-1)
-   {
-      cout << "Indices out of range" << endl;
-      cout << "i, j = " << i << ", " << j << endl;
-      exit(0);
-   }
-#endif
-   return u[i + j*nx];
-}
-
-// Return reference to (i,j), this can modify the value
-double& Array2D::operator() (const unsigned int i, const unsigned int j)
-{
-#if defined(DEBUG)
-   if(i < 0 || i > nx-1 || j < 0 || j > ny-1)
-   {
-      cout << "Indices out of range" << endl;
-      cout << "i, j = " << i << ", " << j << endl;
-      exit(0);
-   }
-#endif
-   return u[i + j*nx];
-}
-
 // Set all elements to scalar value
 Array2D& Array2D::operator= (const double scalar)
 {
