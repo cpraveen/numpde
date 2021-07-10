@@ -22,7 +22,7 @@ public:
          exit(0);
       }
       #endif
-      return u[i + j * nx];
+      return u[i * ny + j];
    }
 
    inline double& operator()(const unsigned int i, const unsigned int j)
@@ -35,7 +35,7 @@ public:
          exit(0);
       }
       #endif
-      return u[i + j * nx];
+      return u[i * ny + j];
    }
 
    Array2D& operator= (const double scalar);
