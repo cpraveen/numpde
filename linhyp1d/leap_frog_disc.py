@@ -52,6 +52,13 @@ def sw3(x):
         y += (1.0 - (w/30.0)**2) * np.sin(w*x) / w
     return y
 
+# truncated and smoothed fourier series of sawtooth
+def sw4(x):
+    y = 0*x
+    for w in range(1, 31):
+        y += (1.0 - (w/30.0)**4) * np.sin(w*x) / w
+    return y
+
 # Following convention for periodicity
 # Grid points = N+1
 # h = (xmax - xmin)/(N+1)
@@ -91,10 +98,14 @@ def solve(N, cfl, Tf, uinit):
     plt.figure(figsize=(15,5))
     plt.subplot(131)
     plt.plot(x,w2); plt.title('Q2')
+    plt.xlabel('x')
+    plt.ylabel('v')
     plt.subplot(132)
     plt.plot(x,w4); plt.title('Q4')
+    plt.xlabel('x')
     plt.subplot(133)
     plt.plot(x,w6); plt.title('Q6')
+    plt.xlabel('x')
     plt.show()
 
 # Get arguments
@@ -102,7 +113,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-N', type=int, help='Number of points', default=128)
 parser.add_argument('-cfl', type=float, help='CFL number', default=0.01)
 parser.add_argument('-Tf', type=float, help='Final time', default=np.pi)
-parser.add_argument('-ic', choices=('sw1', 'sw2', 'sw3'),
+parser.add_argument('-ic', choices=('sw1', 'sw2', 'sw3', 'sw4'),
                     help='Init cond', default='sw1')
 args = parser.parse_args()
 
@@ -113,3 +124,5 @@ elif args.ic == "sw2":
     solve(args.N, args.cfl, args.Tf, sw2)
 elif args.ic == "sw3":
     solve(args.N, args.cfl, args.Tf, sw3)
+elif args.ic == "sw4":
+    solve(args.N, args.cfl, args.Tf, sw4)

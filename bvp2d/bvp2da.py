@@ -26,6 +26,9 @@ x = linspace(xmin,xmax,nx)
 y = linspace(ymin,ymax,ny)
 X,Y = meshgrid(x,y,indexing='ij')
 
+print("Grid size = ", nx, "x", ny)
+print("dx, dy    = ", dx, dy)
+
 # No of interior points
 mx, my = nx-2, ny-2
 

@@ -7,6 +7,12 @@
 %------------------------------------------------------------------------------
 function lin_hyp_1d_disc(N, cfl, scheme)
 
+if nargin ~= 3
+  fprintf(1,'Needs arguments: N, cfl, scheme\n')
+  help lin_hyp_1d_disc
+  return
+end
+
 xmin = 0;
 xmax = 1;
 a    = 1;
