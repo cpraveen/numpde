@@ -43,7 +43,7 @@ uex = uexact(X,Y)
 # RHS vector
 b = f(X[1:-1,1:-1], Y[1:-1,1:-1])
 
-# Add boundary values
+# Add boundary values to RHS vector
 b[ 0, :] += uex[   0,1:-1] / dx**2
 b[-1, :] += uex[  -1,1:-1] / dx**2
 b[ :, 0] += uex[1:-1,   0] / dy**2
@@ -57,6 +57,7 @@ sol = spsolve(A,b)
 # Reshape to array
 u = uex.copy() # Fill boundary values
 u[1:-1,1:-1] = reshape(sol,(mx,my),order='F')
+print('Max error = ', abs(u-uex).max())
 
 # Contour plot solution
 plt.figure(figsize=(5,5))

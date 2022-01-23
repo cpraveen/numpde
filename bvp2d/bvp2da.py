@@ -47,6 +47,7 @@ sol = spsolve(A,b)
 # Reshape to array
 u = zeros((nx,ny)) # Already contains boundary condition
 u[1:-1,1:-1] = reshape(sol,(mx,my),order='F')
+print('Max error = ', abs(u-uexact(X,Y)).max())
 
 # Contour plot solution
 plt.figure(figsize=(5,5))
