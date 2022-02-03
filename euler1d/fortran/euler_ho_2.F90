@@ -19,6 +19,8 @@ end module constants
 include 'sod.F90'
 #elif defined(SHUOSHER)
 include 'shuosher.F90'
+#elif defined(TORO5)
+include 'toro5.F90'
 #endif
 
 include 'num_flux.F90'
