@@ -36,7 +36,7 @@ end
 
 # Compute error norm for different meshes
 h, err = zeros(0), zeros(0)
-for n in [20,40,80,160,320]
+for n in [20,40,80,160,320,640,1280]
    h1, err1 = error(n)
    push!(h, h1)
    push!(err, err1)
