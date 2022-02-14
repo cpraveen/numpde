@@ -42,8 +42,16 @@ function solve(n,method)
    du = ones(m-1)
    A = Tridiagonal(dl, dm, du)
    u[1:end-1] = A \ b
-   err = maximum(abs.(uexact.(x)-u))
-   return h, x, u, err
+   ue = uexact.(x)
+   du = ue - u
+   err_max = maximum(abs.(du))
+   # solution norm
+   err_l2  = 0.5*h*du[1]^2 + h*sum(du[2:end-1].^2) + 0.5*h*du[end]^2
+   err_l2  = sqrt(err_l2)
+   # derivative norm
+   deriv   = (du[2:end] - du[1:end-1])/h
+   err_h1  = sqrt(h * sum(deriv.^2))
+   return h, x, u, err_max, sqrt(err_l2^2 + err_h1^2)
 end
 
 function compare(n)
@@ -51,8 +59,8 @@ function compare(n)
    xe = LinRange(xmin, xmax, 100)
    ue = uexact.(xe)
 
-   h1, x1, u1, err1 = solve(n,1)
-   h2, x2, u2, err2 = solve(n,2)
+   h1, x1, u1, err1_max, err1_l2 = solve(n,1)
+   h2, x2, u2, err2_max, err2_l2 = solve(n,2)
    figure()
    plot(x1,u1,"o",label="Method=1")
    plot(x2,u2,"s",label="Method=2")
@@ -63,31 +71,43 @@ end
 
 function convergence(method)
    # Compute error norm for different meshes
-   h, err = zeros(0), zeros(0)
+   h, err_max, err_l2 = zeros(0), zeros(0), zeros(0)
    for n in [20,40,80,160,320]
-      h1, x1, u1, err1 = solve(n,method)
+      h1, x1, u1, err1_max, err1_l2 = solve(n,method)
       push!(h, h1)
-      push!(err, err1)
+      push!(err_max, err1_max)
+      push!(err_l2,  err1_l2)
    end
 
    # Compute convergence rate in L2 norm
    println("------ Method = $method ------ ")
-   @printf("h = %e   err = %e\n", h[1], err[1])
+   #@printf("h = %e   err = %e\n", h[1], err_max[1])
+   @printf("%20s max norm %20s Sobolev norm\n", " "," ")
    for i in 2:length(h)
-      p = log(err[i-1]/err[i])/log(2)
-      @printf("h = %e   err = %e  rate = %f\n", h[i], err[i], p)
+      pmax = log(err_max[i-1]/err_max[i])/log(2)
+      pl2  = log(err_l2[i-1]/err_l2[i])/log(2)
+      @printf("h= %e  err= %e  rate= %4.2f  err= %e  rate= %4.2f\n", 
+              h[i], err_max[i], pmax, err_l2[i], pl2)
    end
-   return h, err
+   return h, err_max, err_l2
 end
 
 compare(20)
-h1, err1 = convergence(1)
-h2, err2 = convergence(2)
+h1, err1_max, err1_l2 = convergence(1)
+h2, err2_max, err2_l2 = convergence(2)
 
 figure()
-loglog(h1, err1, "o-", label="Method=1")
-loglog(h2, err2, "s-", label="Method=2")
+loglog(h1, err1_max, "o-", label="Method=1")
+loglog(h2, err2_max, "s-", label="Method=2")
 xlabel("h")
-ylabel("Error norm")
+ylabel("Max error norm")
 legend()
+
+figure()
+loglog(h1, err1_l2, "o-", label="Method=1")
+loglog(h2, err2_l2, "s-", label="Method=2")
+xlabel("h")
+ylabel("Sobolev error norm")
+legend()
+
 show()
