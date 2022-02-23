@@ -24,7 +24,7 @@ Ay = spdiags([-0.5*ry*ey, (1+ry)*ey, -0.5*ry*ey], -1:1, My-2, My-2);
 
 x  = linspace(0,1,Mx);
 y  = linspace(0,1,My);
-[X,Y] = meshgrid(x,y); X=X'; Y=Y';
+[X,Y] = ndgrid(x,y);
 
 u    = zeros(Mx,My);
 unph = zeros(Mx,My);

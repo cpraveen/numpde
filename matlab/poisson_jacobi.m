@@ -4,7 +4,7 @@ xmin=0; xmax=1; ymin=xmin; ymax=xmax;
 h = (xmax-xmin)/(n-1); TOL=1e-6; res=TOL+1; iter=0;
 x=linspace(xmin,xmax,n);
 y=linspace(ymin,ymax,n);
-[X,Y]=meshgrid(x,y);
+[X,Y]=ndgrid(x,y);
 f=2*(2*pi)^2*sin(2*pi*X).*sin(2*pi*Y);
 u=zeros(n,n);
 while res>TOL

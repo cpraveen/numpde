@@ -44,10 +44,10 @@ uex = uexact(X,Y)
 b = f(X[1:-1,1:-1], Y[1:-1,1:-1])
 
 # Add boundary values to RHS vector
-b[ 0, :] += uex[   0,1:-1] / dx**2
-b[-1, :] += uex[  -1,1:-1] / dx**2
-b[ :, 0] += uex[1:-1,   0] / dy**2
-b[ :,-1] += uex[1:-1,  -1] / dy**2
+b[ 0, :] += uex[   0,1:-1] / dx**2 # left   boundary
+b[-1, :] += uex[  -1,1:-1] / dx**2 # right  boundary
+b[ :, 0] += uex[1:-1,   0] / dy**2 # bottom boundary
+b[ :,-1] += uex[1:-1,  -1] / dy**2 # top    boundary
 
 b = reshape(b, mx*my, order='F')
 
