@@ -1,8 +1,12 @@
+ifndef EIGEN_DIR
+TARGETS = poisson1
+else
+TARGETS = poisson1 poisson2
+endif
+
 CXX = c++
 CXXFLAGS = -O3 -Wall
-
 HDR = array2d.h
-TARGETS = poisson1 poisson2
 
 ifeq ($(debug),yes)
 	CXXFLAGS += -DDEBUG
@@ -19,9 +23,6 @@ poisson1: poisson1.o array2d.o $(HDR)
 	$(CXX) -o poisson1 poisson1.o array2d.o
 
 poisson2: poisson2.cc
-	ifndef EIGEN_DIR
-	$(error EIGEN_DIR is not set)
-	endif
 	$(CXX) $(CXXFLAGS) -o poisson2 poisson2.cc -I$(EIGEN_DIR)/include/eigen3
 
 help:

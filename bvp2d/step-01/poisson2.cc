@@ -67,7 +67,8 @@ int main()
       
       for(unsigned int i=1; i<n-1; ++i)
          for(unsigned int j=1; j<n-1; ++j)
-            u(i,j) = 0.25 * (uold(i-1,j) + uold(i+1,j) + uold(i,j-1) + uold(i,j+1))
+            u(i,j) =   0.25 * (uold(i-1,j) + uold(i+1,j) + 
+                               uold(i,j-1) + uold(i,j+1))
                      + 0.25 * h * h * b(i,j);
       
       res = residual (h, u, b);
