@@ -69,7 +69,7 @@ else:
     xf[1:-1] += delta * h * (2 * rand(N-1) - 1)
 
 Nlist, Errlist = [], []
-table = PrettyTable(['N','hmin','hmax','err','rate'])
+table = PrettyTable(['N','hmax','hmax/hmin','err','rate'])
 for i in range(5):
     x, u, hc = solve(xf,f)
 
@@ -84,13 +84,14 @@ for i in range(5):
     # Exact solution to estimate error
     uex = uexact(x)
     hmin = hc.min(); hmax = hc.max(); err = abs(uex-u).max()
+    hratio = hmax / hmin
     Nlist.append(N); Errlist.append(err)
     if i == 0:
-        table.add_row(['%3d' % N, '%.4e' % hmin, '%.4e' % hmax, 
+        table.add_row(['%3d' % N, '%.4e' % hmax, '%.4f' % hratio,
                        '%.4e' % err, '---'])
     else:
         rate = log(Errlist[-2]/Errlist[-1]) / log(Nlist[-1]/Nlist[-2])
-        table.add_row(['%3d' % N, '%.4e' % hmin, '%.4e' % hmax, 
+        table.add_row(['%3d' % N, '%.4e' % hmax, '%.4f' % hratio,
                        '%.4e' % err, '%.2f' % rate])
 
     # Refine grid
