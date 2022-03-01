@@ -1,6 +1,7 @@
 /*
- Solves -Laplace(u) = f in (0,1)x(0,1)
- with u = 0 on boundary
+ Solves Laplace equation in 2d
+        -Laplace(u) = f in (0,1)x(0,1)
+                 u  = 0 on boundary
 */
 #include <iostream>
 #include <vector>
