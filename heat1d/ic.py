@@ -1,7 +1,14 @@
 import numpy as np
 
 def const(x,t):
-    return np.ones(len(x))
+    if t < 1.0e-14:
+        return np.ones(len(x))
+    else:
+        w = np.arange(1,100)
+        w1 = 2*w - 1
+        f  = np.kron(x,w1).reshape(len(x),len(w))
+        u = np.sin(np.pi*f) * (np.exp(-w1**2 * np.pi**2 * t)/w1)
+        return (4/np.pi) * np.sum(u,1)
 
 # sin(pi*x)
 def sine1(x,t):

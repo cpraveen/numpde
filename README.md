@@ -1,6 +1,6 @@
 # Numerical methods for PDE
 
-Codes for my numerical methods for PDE course, taught at TIFR-CAM.
+Codes for my numerical methods for PDE course, taught at TIFR-CAM. These are based on finite difference and finite volume method.
 
 There are some examples of boundary value problems in my [Numerical Analysis](http://github.com/cpraveen/na) codes, under numerical linear algebra.
 
@@ -13,3 +13,11 @@ You can copy and paste the python code into a jupyter notebook, e.g., on [colab]
 ```
 %config InlineBackend.figure_format = 'svg'
 ```
+
+## Finite Element Method
+
+See these other repositories for FEM code
+
+* [FEM codes in Python/deal.II/Fenics](https://github.com/cpraveen/fem)
+* [Matlab FEM code](https://github.com/cpraveen/fem50)
+* [Julia FEM code](https://github.com/cpraveen/juliafem)
