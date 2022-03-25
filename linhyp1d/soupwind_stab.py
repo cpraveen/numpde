@@ -16,7 +16,7 @@ for cfl in s:
     g = np.abs(g)
     plt.plot(kh,g)
     leg += ('CFL='+str(cfl),)
-    print('cfl, max amp =', cfl, g.max())
+    print('cfl, max amp = %6.3f %16.12f' % (cfl, g.max()))
 
 plt.xlabel('Wave number $k h$')
 plt.ylabel('Amplification factor $|\gamma_k|$')
