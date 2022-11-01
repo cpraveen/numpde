@@ -69,6 +69,8 @@ void SparseMatrix<T>::set (const unsigned int i,
 template <class T>
 void SparseMatrix<T>::close ()
 {
+   assert(state == OPEN);
+
    unsigned int nval = 0;
    for(unsigned int i=0; i<nrow; ++i)
    {

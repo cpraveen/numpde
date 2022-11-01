@@ -86,7 +86,7 @@
 
 %\subject{Computational Fluid Dynamics}
 % This is only inserted into the PDF information catalog. Can be left
-% out. 
+% out.
 
 % If you have a file called "university-logo-filename.xxx", where xxx
 % is a graphic format that can be processed by latex or pdflatex,
@@ -106,7 +106,7 @@
 %}
 
 % If you wish to uncover everything in a step-wise fashion, uncomment
-% the following command: 
+% the following command:
 
 %\beamerdefaultoverlayspecification{<+->}
 
@@ -154,7 +154,7 @@ We assume C/C++ style indexing, starting from 0.
 10 & 0 & 0 & 7 \\
 0  & 1 & 2 & 0 \\
 3  & 0 & 5 & 9 \\
-0  & 0 & 0 & 1 
+0  & 0 & 0 & 1
 \end{bmatrix}
 \]
 \begin{center}
@@ -186,7 +186,7 @@ Integer arrays: {\tt row\_ptr} and {\tt col\_ind}
 \textrm{\tt length(col\_ind) = length(val) = row\_ptr[nrow]}
 \]
 \end{frame}
-%-----------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
 \begin{frame}
 \frametitle{Modified CSR format}
 {\tt row\_ptr[i]} is starting index of $i$'th row and the values
@@ -200,9 +200,13 @@ are the non-zero values in the $i$'th row. Their corresponding column indices ar
 
 \vspace{5mm}
 
-In each row, the columns need not be stored in order. This allows us to store the diagonal element as the first element in each row. Very useful for iterative algorithms, since it allows us to access diagonal element without searching for the column.
+In each row, the columns need not be stored in any particular order. This allows us to store the diagonal element as the first element in each row. In modified CSR format
+\[
+\textrm{A(i,i) = val[c]}, \quad c = \textrm{\tt row\_ptr[i]}
+\]
+Very useful for some iterative algorithms, since it allows us to access diagonal element without searching for the column.
 \end{frame}
-%-----------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
 \begin{frame}[fragile]
 \frametitle{Example of SparseMatrix Class}
 
@@ -214,7 +218,7 @@ class SparseMatrix
       ~SparseMatrix(); // destructor
       void multiply(const Vector& x, Vector& y) const;
       double operator()(int i, int j) const;
-      
+
    private:
       int nrow;
       int *row_ptr, *col_ind;
@@ -223,7 +227,7 @@ class SparseMatrix
 \end{lstlisting}
 {\tt class Vector} allows us to store an array of doubles. We will see more in the examples.
 \end{frame}
-%-----------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
 \begin{frame}[fragile]
 \frametitle{Multiply sparse matrix with vector}
 
@@ -232,7 +236,7 @@ y = A x
 \]
 
 \begin{lstlisting}
-void SparseMatrix::multiply(const Vector& x, 
+void SparseMatrix::multiply(const Vector& x,
                                   Vector& y) const
 {
    assert (x.size() == nrow);
@@ -249,7 +253,7 @@ void SparseMatrix::multiply(const Vector& x,
 \end{lstlisting}
 
 \end{frame}
-%-----------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
 \begin{frame}[fragile]
 \frametitle{Example usage}
 
@@ -264,7 +268,7 @@ int main()
 \end{lstlisting}
 
 \end{frame}
-%-----------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
 \begin{frame}[fragile]
 \frametitle{Access element of SparseMatrix}
 
@@ -274,7 +278,7 @@ double operator()(int i, int j) const
    int row_beg = row_ptr[i];
    int row_end = row_ptr[i+1];
    for(int d=row_beg; d<row_end; ++d)
-      if(col_ind[d] == j) 
+      if(col_ind[d] == j)
          return val[d];
    return 0.0;
 }
@@ -287,7 +291,7 @@ Usage:
 \end{lstlisting}
 
 \end{frame}
-%-----------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
 \begin{frame}[fragile]
 \frametitle{Destructor}
 
@@ -313,7 +317,7 @@ SparseMatrix::~SparseMatrix()
 \end{center}
 
 \end{frame}
-%-----------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
 \begin{frame}[fragile]
 \frametitle{SparseMatrix Class: {\tt sparse\_matrix.h}}
 Usually, {\em header} files contain function or class {\em declarations}.
@@ -323,14 +327,14 @@ template<class T>
 class SparseMatrix
 {
    public:
-      SparseMatrix (std::vector<unsigned int>& row_ptr, 
-                    std::vector<unsigned int>& col_ind, 
+      SparseMatrix (std::vector<unsigned int>& row_ptr,
+                    std::vector<unsigned int>& col_ind,
                                std::vector<T>& val);
       ~SparseMatrix() {};
       void multiply(const Vector<T>& x, Vector<T>& y) const;
-      T operator()(unsigned int i, 
+      T operator()(unsigned int i,
                    unsigned int j) const;
-      
+
    private:
       unsigned int nrow;
       std::vector<unsigned int> row_ptr, col_ind;
@@ -339,7 +343,7 @@ class SparseMatrix
 \end{lstlisting}
 {\tt class vector} is part of {\tt standard} {\em namespace} in C++.
 \end{frame}
-%-----------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
 \begin{frame}[fragile]
 \frametitle{Constructor: {\tt sparse\_matrix.cc}}
 
@@ -347,9 +351,9 @@ The actual function or class {\em definition} is usually put in a {\tt *.cc} fil
 
 \begin{lstlisting}
 template<class T>
-SparseMatrix<T>::SparseMatrix 
-    (std::vector<unsigned int>& row_ptr, 
-     std::vector<unsigned int>& col_ind, 
+SparseMatrix<T>::SparseMatrix
+    (std::vector<unsigned int>& row_ptr,
+     std::vector<unsigned int>& col_ind,
                 std::vector<T>& val)
    :
    nrow (row_ptr.size()-1),
@@ -364,7 +368,7 @@ SparseMatrix<T>::SparseMatrix
 \end{lstlisting}
 {\tt row\_ptr (row\_ptr)} calls the {\em copy constructor} of {\tt std::vector}.
 \end{frame}
-%-----------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
 \begin{frame}[fragile]
 \frametitle{Main program}
 
@@ -383,7 +387,7 @@ int main ()
    SparseMatrix<double> A(row_ptr, col_ind, val);
    cout << A;
    cout << A(2,3) << endl;
-   
+
    Vector<double> x(nrow), y(nrow);
    x = 1.0;
    A.multiply(x, y);
@@ -393,7 +397,7 @@ int main ()
 \end{lstlisting}
 
 \end{frame}
-%-----------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
 \begin{frame}
 \frametitle{Now we program}
 
@@ -405,7 +409,7 @@ int main ()
 \end{itemize}
 
 \end{frame}
-%-----------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
 \begin{frame}[fragile]
 \frametitle{Assignment}
 
@@ -425,9 +429,16 @@ A.close();
 \end{lstlisting}
 After this point, we cannot change the sparsity structure of the matrix.
 \item Read up about conjugate gradient method.
+
+\item Write a function that implements $y = A^\top x$ given $A$ in CSR format.
 \end{itemize}
 
 \end{frame}
-%-----------------------------------------------------------------------------------
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+\frametitle{COO format}
+
+\end{frame}
+%-------------------------------------------------------------------------------
 
 \end{document}

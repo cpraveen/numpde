@@ -1,6 +1,6 @@
-CXX = g++ -Wall
+CXX = g++ -Wall -std=c++11
 
-TARGETS = sparse_test linsol_test_1d linsol_test_2d
+TARGETS = sparse_test1 sparse_test2 linsol_test_1d linsol_test_2d
 
 all: $(TARGETS)
 
@@ -11,7 +11,10 @@ jacobi_solver.o: jacobi_solver.cc jacobi_solver.h
 sor_solver.o: sor_solver.cc sor_solver.h
 ssor_solver.o: ssor_solver.cc ssor_solver.h
 
-sparse_test: sparse_matrix.o Vector.o sparse_test.o 
+sparse_test1: sparse_matrix.o Vector.o sparse_test1.o 
+	$(CXX) -o $@ $^
+
+sparse_test2: sparse_matrix.o Vector.o sparse_test2.o 
 	$(CXX) -o $@ $^
 
 linsol_test_1d: sparse_matrix.o Vector.o cg_solver.o jacobi_solver.o \
