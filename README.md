@@ -6,6 +6,19 @@ There are some examples of boundary value problems in my [Numerical Analysis](ht
 
 Codes on finite element method are available [here](http://github.com/cpraveen/fem).
 
+* fd: finite difference approximation
+* bvp1d: 1D boundary value problems
+* bvp2d: 2D boundary value problems
+* linhyp1d: Linear hyperbolic pde in 1D
+* linadv2d: linear hyperbolic pde in 2D
+* claw1d: non-linear conservations laws in 1D
+* heat1d: Heat equation in 1D
+* euler1d: compressible Euler eqns in 1D
+* euler2d: compressible Euler eqns in 2D
+* multigrid: Multigrid method for BVP
+* vte2d: vorticity-streamfunction form of Navier-Stokes
+* matlab: older matlab examples
+
 ## Jupyter notebooks
 
 You can copy and paste the python code into a jupyter notebook, e.g., on [colab](http://colab.research.google.com). Add following lines at the top of each notebook to get better images
