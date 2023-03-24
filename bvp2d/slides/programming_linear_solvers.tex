@@ -1,0 +1,521 @@
+% $Header: /cvsroot/latex-beamer/latex-beamer/solutions/conference-talks/conference-ornate-20min.en.tex,v 1.6 2004/10/07 20:53:08 tantau Exp $
+\pdfminorversion=4
+
+\documentclass[10pt,xcolor=svgnames]{beamer}
+
+\mode<presentation>
+{
+  %\usetheme{Madrid}
+  \usetheme{Boadilla}
+  % or ...
+
+  \setbeamercovered{transparent}
+  \setbeamertemplate{navigation symbols}{}
+  % suppress slide number for continued slides
+  \setbeamertemplate{frametitle continuation}[from second][]
+  % or whatever (possibly just delete it)
+}
+
+
+\usepackage{bm}
+\usepackage{graphicx}
+\usepackage{colortbl}
+\usepackage{color}
+\usepackage{stmaryrd}
+\usepackage{cancel}
+
+
+\usepackage[english]{babel}
+% or whatever
+
+%\usepackage[latin1]{inputenc}
+% or whatever
+
+%\usepackage{times}
+%\usepackage[T1]{fontenc}
+% Or whatever. Note that the encoding and the font should match. If T1
+% does not look nice, try deleting the line with the fontenc.
+
+\usefonttheme{serif}
+\setbeamertemplate{itemize item}[circle]
+\setbeamertemplate{itemize subitem}[triangle]
+\setbeamertemplate{enumerate item}[circle]
+\setbeamertemplate{enumerate subitem}[square]
+
+%\newcommand{\clr}[2]{{\color{#1}#2\color{black}}}
+\newcommand{\hoz}{H^1_0}
+\newcommand{\hozO}{H^1_0(\Omega)}
+\newcommand{\hoO}{H^1(\Omega)}
+\newcommand{\htO}{H^2(\Omega)}
+\newcommand{\htzO}{H^2_0(\Omega)}
+
+%\everydisplay{\color{blue}}
+
+
+\title[$Ax=b$] % (optional, use only with long paper titles)
+{Programming linear solver}
+
+%\subtitle
+%{1-D boundary value problem}
+
+\author[Praveen. C] % (optional, use only with lots of authors)
+{Praveen. C\\
+{\tt praveen@math.tifrbng.res.in}}
+% - Give the names in the same order as the appear in the paper.
+% - Use the \inst{?} command only if the authors have different
+%   affiliation.
+
+\institute[TIFR-CAM] % (optional, but mostly needed)
+{
+   \includegraphics[height=1.0cm]{tifr.png}\\
+   Tata Institute of Fundamental Research\\
+   Center for Applicable Mathematics\\
+   Bangalore 560065\\
+{\tt http://math.tifrbng.res.in}
+}
+% - Use the \inst command only if there are several affiliations.
+% - Keep it simple, no one is interested in your street address.
+
+%\date[ADA, 16 Jan 2010] % (optional, should be abbreviation of conference name)
+%{MAT2010\\
+%Aeronautical Development Agency, Bangalore\\
+%16 January, 2010}
+% - Either use conference name or its abbreviation.
+% - Not really informative to the audience, more for people (including
+%   yourself) who are reading the slides online
+
+%\subject{Computational Fluid Dynamics}
+% This is only inserted into the PDF information catalog. Can be left
+% out. 
+
+% If you have a file called "university-logo-filename.xxx", where xxx
+% is a graphic format that can be processed by latex or pdflatex,
+% resp., then you can add a logo as follows:
+
+%\pgfdeclareimage[height=0.5cm]{university-logo}{inria}
+%\logo{\pgfuseimage{university-logo}}
+
+% Delete this, if you do not want the table of contents to pop up at
+% the beginning of each subsection:
+%\AtBeginSubsection[]
+%{
+%  \begin{frame}<beamer>
+%    \frametitle{Outline}
+%    \tableofcontents[currentsection,currentsubsection]
+%  \end{frame}
+%}
+
+% If you wish to uncover everything in a step-wise fashion, uncomment
+% the following command: 
+
+%\beamerdefaultoverlayspecification{<+->}
+
+
+\newcommand{\clr}[2]{{\color{#1}#2\color{black}}}
+\newcommand{\ii}{\textrm{i}}
+\newcommand{\ee}{\textrm{e}}
+
+\newcommand{\ud}{\textrm{d}}
+%\DeclareMathOperator*{\argmin}{\textrm{argmin}}
+\newcommand{\df}[2]{\frac{\partial #1}{\partial #2}}
+\newcommand{\dd}[2]{\frac{\ud #1}{\ud #2}}
+\newcommand{\re}{\mathbb{R}}
+\newcommand{\allint}{\mathbb{Z}}
+
+\newcommand{\supp}{\textrm{supp}}
+
+\newcommand{\pps}{{]\hspace{-0.3mm}|}}
+\newcommand{\norm}[1]{\left\| #1 \right\|}
+\newcommand{\normth}[1]{\norm{#1}_{2,h}}
+\newcommand{\inph}[1]{\left({#1}\right)_{h}}
+\newcommand{\normh}[1]{\norm{#1}_{h}}
+\newcommand{\normlh}[1]{\| {#1} \pps_{h}}
+\newcommand{\normlx}[1]{\| {#1} \pps_{x}}
+\newcommand{\normly}[1]{\| {#1} \pps_{y}}
+\newcommand{\normih}[1]{\norm{#1}_{\infty,h}}
+\newcommand{\normoh}[1]{\norm{#1}_{1,h}}
+
+\newcommand{\normid}[1]{\norm{#1}_{L^\infty(\Delta)}}
+\newcommand{\normod}[1]{\norm{#1}_{L^1(\Delta)}}
+
+\newcommand{\normir}[1]{\norm{#1}_{L^\infty(\re)}}
+\newcommand{\normor}[1]{\norm{#1}_{L^1(\re)}}
+
+\newcommand{\BV}{\textrm{BV}}
+\newcommand{\TV}{\textrm{TV}}
+
+\newcommand{\dt}{\Delta t}
+\newcommand{\dx}{\Delta x}
+
+% finite difference in space
+\newcommand{\fdop}{D}
+\newcommand{\fdx}{\fdop^+_x}
+\newcommand{\bdx}{\fdop^-_x}
+\newcommand{\cdx}{\fdop^0_x}
+\newcommand{\ddx}{\fdx\bdx}
+\newcommand{\fdy}{\fdop^+_y}
+\newcommand{\bdy}{\fdop^-_y}
+\newcommand{\cdy}{\fdop^0_y}
+\newcommand{\ddy}{\fdy\bdy}
+
+% finite difference in time
+\newcommand{\fdt}{\delta_t^+}
+\newcommand{\cdt}{\delta_t^0}
+
+\newcommand{\half}{{\footnotesize\frac{1}{2}}}
+\newcommand{\quart}{\tfrac{1}{4}}
+
+% space of continuous functions
+\newcommand{\cspace}{\mathcal{C}}
+\newcommand{\DO}{\mathcal{D}(\Omega)}
+
+% fourier transform
+\newcommand{\fou}[1]{\widehat{#1}}
+
+\newcommand{\order}[1]{\mathcal{O}\left(#1\right)}
+\newcommand{\sign}{\textrm{sign}}
+\newcommand{\minmod}{\textrm{minmod}}
+
+\newcommand{\MAX}[2]{#1 \vee #2}
+\newcommand{\MIN}[2]{#1 \wedge #2}
+
+\newcommand{\Pe}{\textrm{Pe}}
+
+\newcommand{\nph}{{n+\half}}
+\newcommand{\iph}{{i+\half}}
+\newcommand{\imh}{{i-\half}}
+\newcommand{\jph}{{j+\half}}
+\newcommand{\jmh}{{j-\half}}
+\newcommand{\kph}{{k+\half}}
+\newcommand{\kmh}{{k-\half}}
+
+\newcommand{\tf}{\tilde{f}}
+\newcommand{\tQ}{\tilde{Q}}
+\newcommand{\tu}{\tilde{u}}
+\newcommand{\tv}{\tilde{v}}
+\newcommand{\tS}{\tilde{S}}
+
+\newcommand{\hdelta}{\hat{\delta}}
+
+\newcommand\remark[1]{%
+  \vspace{2mm}
+  \par\noindent {\bf Remark}: 
+  #1\par
+}
+
+\newcommand\myexample[1]{%
+  \vspace{2mm}
+  \par\noindent {\bf Example}: 
+  #1\par
+}
+
+%\newcommand{\bv}{\bar{v}}
+
+\newcommand{\mesh}{\mathcal{T}_h}
+\newcommand{\ptri}{\mathbb{P}}
+\newcommand{\pquad}{\mathbb{Q}}
+\newcommand{\Kref}{\hat{K}}
+\newcommand{\xref}{\hat{x}}
+\newcommand{\yref}{\hat{y}}
+\newcommand{\pref}{\hat{p}}
+\newcommand{\hphi}{\hat{\varphi}}
+
+\newcommand{\jump}[1]{\left\llbracket #1 \right\rrbracket}
+
+\newcommand{\aip}[1]{ \left\langle #1 \right\rangle }
+
+\newcommand{\con}{{\mathbf u}}
+\newcommand{\be}{{\mathbf e}}
+\newcommand{\bu}{{\mathbf u}}
+\newcommand{\bv}{{\mathbf v}}
+\newcommand{\bw}{{\mathbf w}}
+\newcommand{\br}{{\mathbf r}}
+\newcommand{\bl}{{\mathbf l}}
+\newcommand{\fl}{{\mathbf f}}
+\newcommand{\bn}{{\mathbf n}}
+\newcommand{\bA}{{\mathbf A}}
+\newcommand{\bR}{{\mathbf R}}
+\newcommand{\bL}{{\mathbf L}}
+\newcommand{\bI}{{\mathbf I}}
+\newcommand{\balpha}{\bm{\alpha}}
+\newcommand{\bomg}{\bm{\omega}}
+\newcommand{\btheta}{\bm{\theta}}
+\newcommand{\bLambda}{\bm{\Lambda}}
+
+\newcommand{\rare}{{\mathcal R}}
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+%\begin{frame}
+% \frametitle{Outline}
+%\tableofcontents
+% You might wish to add the option [pausesections]
+%\end{frame}
+%#############################################################################
+\begin{frame}
+\frametitle{Linear problem}
+We want to find $x$ such that
+\begin{equation}
+A x = b
+\label{eq:prob}
+\end{equation}
+$A$ is symmetric positive definite. The function
+\[
+J(y) = \frac{1}{2} y^\top A y - b^\top y
+\]
+is strictly convex  and has unique minimum $x$ which is characterized by
+\[
+J'(x) = Ax - b = 0
+\]
+The solution of (\ref{eq:prob}) is the unique minimizer of $J$.
+\end{frame}
+%------------------------------------------------------------------------------------
+\begin{frame}
+\frametitle{Steepest descent method}
+Descent direction
+\[
+d_n = -J'(x_n) = b - A x_n =: r_n
+\]
+Determine step size
+\[
+J(x_n + \omega_n d_n) = \min_\omega J(x_n + \omega d_n) \quad \Longrightarrow \quad \omega_n = \frac{ d_n^\top r_n }{d_n^\top A d_n}
+\]
+Update
+\[
+x_{n+1} = x_n + \omega_n d_n
+\]
+
+\end{frame}
+%------------------------------------------------------------------------------------
+\begin{frame}
+\frametitle{Conjugate direction method}
+In first step, descent direction
+\[
+d_0 = -J'(x_0) = b - A x_0
+\]
+Then for $n=1,2,\ldots$, choose next descent direction $d_n$ to be $A$-orthogonal to all previous descent directions
+\[
+d_j^\top A d_n = 0, \qquad 0 \le j \le n-1
+\]
+Determine step size
+\[
+J(x_n + \omega_n d_n) = \min_\omega J(x_n + \omega d_n)  \quad \Longrightarrow \quad \omega_n = \frac{ d_n^\top r_n }{d_n^\top A d_n}
+\]
+Update
+\[
+x_{n+1} = x_n + \omega_n d_n
+\]
+
+\end{frame}
+%------------------------------------------------------------------------------------
+\begin{frame}
+\frametitle{CG algorithm}
+Assume initial guess $x_0$ is given. Otherwise set $x_0=0$\\
+Set $n=0$ 
+\[
+r_0 = b - Ax_0, \qquad d_0 = r_0
+\]
+While $\norm{r_n} > \varepsilon \norm{r_0}$ and $n < N_{max}$
+\begin{itemize}
+\item If $n > 0$
+\[
+d_n = r_n + \frac{ \norm{r_n}^2 }{ \norm{r_{n-1}}^2} d_{n-1}
+\]
+\item $\omega_n = \frac{ \norm{r_n}^2 }{d_n^\top \clr{red}{A d_n}}$
+\item $x_{n+1} = x_n + \omega_n d_n$
+\item $r_{n+1} = r_n - \omega_n \clr{red}{A d_n}$
+\item $n = n + 1$
+\end{itemize}
+Need matrix-vector product and dot product of two vectors.
+\end{frame}
+%------------------------------------------------------------------------------------
+\begin{frame}
+\frametitle{CG algorithm: Computer version}
+Assume initial guess $x$ is given. Otherwise set $x=0$\\
+Set $n=0$
+\[
+r = b - Ax, \qquad d = r, \qquad \rho_0 = \norm{r_0}^2
+\]
+While $\sqrt{\rho_n} > \varepsilon \sqrt{\rho_0}$ and $n < N_{max}$
+\begin{itemize}
+\item If $n > 0$
+\[
+d \leftarrow r + \frac{ \rho_n }{ \rho_{n-1}} d
+\]
+\item $v = A d$
+\item $\omega = \frac{ \rho_n }{d^\top v}$
+\item $x \leftarrow x + \omega d$
+\item $r \leftarrow r - \omega v$
+\item $\rho_{n+1} = \norm{r}^2$
+\item $n \leftarrow n + 1$
+\end{itemize}
+
+\remark{
+Need storage for three vectors: $r$, $d$, $v$
+}
+\end{frame}
+%------------------------------------------------------------------------------------
+\begin{frame}[allowframebreaks]
+\frametitle{Jacobi method}
+Solve $i$'th equation of
+\[
+Ax = b
+\]
+for $x_i$
+\[
+x_i = \frac{1}{a_{ii}}\left[ b_i - \sum_{j=1, j \ne i}^N a_{ij} x_j \right]
+\]
+Jacobi method: Make an initial guess $x^0$ and then iterate
+\[
+x_i^{n+1} = \frac{1}{a_{ii}}\left[ b_i - \sum_{j=1, j \ne i}^N a_{ij} x_j^n \right]
+\]
+Rewrite
+\[
+x_i^{n+1} = x_i^n + \frac{1}{a_{ii}}\left[ b_i - \sum_{j=1}^N a_{ij} x_j^n \right]
+\]
+
+\pagebreak
+
+{\bf Algorithm}:\\
+\vspace{2mm}
+Make initial guess $x$, set $n=0$
+\begin{enumerate}
+\item $r = b - Ax$, $\rho = \norm{r}$
+\item If $n=0$, then $\rho_0 = \rho$
+\item If $\rho < \varepsilon \rho_0$, then stop.
+\item For $i=1,2,\ldots,N$
+\[
+x_i \leftarrow x_i + \frac{r_i}{a_{ii}}
+\]
+\item $n \leftarrow n + 1$, go to step (1)
+\end{enumerate}
+
+\remark{
+Need additional storage for vector $r$.
+}
+
+\remark{
+Very good for parallelization
+}
+
+\end{frame}
+%------------------------------------------------------------------------------------
+\begin{frame}[allowframebreaks]
+\frametitle{Gauss-Seidel (GS) method}
+Solve $i$'th equation of
+\[
+Ax = b
+\]
+for $x_i$
+\[
+x_i = \frac{1}{a_{ii}}\left[ b_i - \sum_{j=1, j \ne i}^N a_{ij} x_j \right]
+\]
+GS method: Make an initial guess $x^0$ and then iterate
+\[
+x_i^{n+1} = \frac{1}{a_{ii}}\left[ b_i - \sum_{j=1}^{i-1} a_{ij} x_j^{n+1} - \sum_{j=i+1}^N a_{ij} x_j^n \right]
+\]
+Rewrite
+\[
+x_i^{n+1} = x_i^n + \frac{1}{a_{ii}}\left[ b_i - \sum_{j=1}^{i-1} a_{ij} x_j^{n+1} - \sum_{j=i}^N a_{ij} x_j^n \right]
+\]
+
+\pagebreak
+
+{\bf Algorithm}:\\
+\vspace{2mm}
+Make initial guess $x$, set $\rho = \rho_0 = 1$
+\begin{enumerate}
+\item If $\rho < \varepsilon \rho_0$, then stop.
+\item $\rho = 0$
+\item For $i=1,2,\ldots,N$
+\[
+r = b_i - \sum_{j=1}^N a_{ij} x_j
+\]
+\[
+x_i \leftarrow x_i + \frac{r}{a_{ii}}
+\]
+\[
+\rho \leftarrow \rho + r * r
+\]
+\item $\rho \leftarrow \sqrt{\rho}$
+\item If $n = 0$, $\rho_0 = \rho$
+\item $n \leftarrow n + 1$, go to step (1)
+\end{enumerate}
+
+\remark{
+No additional storage is required.
+}
+
+\remark{
+Cannot be parallelized.
+}
+
+\end{frame}
+%------------------------------------------------------------------------------------
+\begin{frame}[allowframebreaks]
+\frametitle{Successive Over Relaxation (SOR) method}
+A variation on GS method. Choose $\omega > 1$\\
+\vspace{5mm}
+
+For $i=1,2,\ldots,N$
+\begin{eqnarray*}
+x_i^{*} &=& \frac{1}{a_{ii}}\left[ b_i - \sum_{j=1}^{i-1} a_{ij} x_j^{n+1} - \sum_{j=i}^N a_{ij} x_j^n \right] + x_i^n \\
+x_i^{n+1} &=& x_i^n + \omega (x_i^* - x_i^n)
+\end{eqnarray*}
+or equivalently
+\[
+x_i^{n+1} = x_i^n + \frac{\omega}{a_{ii}}\left[ b_i - \sum_{j=1}^{i-1} a_{ij} x_j^{n+1} - \sum_{j=i}^N a_{ij} x_j^n \right]
+\]
+
+\remark{
+$\omega=1$ yields the GS method.
+}
+
+
+
+\pagebreak
+
+{\bf Algorithm}:\\
+\vspace{2mm}
+Make initial guess $x$, set $\rho = \rho_0 = 1$
+\begin{enumerate}
+\item If $\rho < \varepsilon \rho_0$, then stop.
+\item $\rho = 0$
+\item For $i=1,2,\ldots,N$
+\[
+r = b_i - \sum_{j=1}^N a_{ij} x_j
+\]
+\[
+x_i \leftarrow \omega \frac{ r}{a_{ii}} + x_i
+\]
+\[
+\rho \leftarrow \rho + r * r
+\]
+\item $\rho \leftarrow \sqrt{\rho}$
+\item If $n = 0$, $\rho_0 = \rho$
+\item $n \leftarrow n + 1$, go to step (1)
+\end{enumerate}
+
+\end{frame}
+%------------------------------------------------------------------------------------
+\begin{frame}[allowframebreaks]
+\frametitle{Symmetric Gauss-Seidel (SGS) method}
+For $i=1,2,\ldots,N$
+\[
+x_i^{*} = \frac{1}{a_{ii}}\left[ b_i - \sum_{j=1}^{i-1} a_{ij} x_j^{*} - \sum_{j=i}^N a_{ij} x_j^n \right] + x_i^n
+\]
+For $i=N,N-1,\ldots,1$
+\[
+x_i^{n+1} = \frac{1}{a_{ii}}\left[ b_i - \sum_{j=1}^{i-1} a_{ij} x_j^{*} - \sum_{j=i}^N a_{ij} x_j^{n+1} \right] + x_i^*
+\]
+
+\remark{
+Symmetric SOR (SSOR) method is obtained by doing over-relaxation in SGS method.
+}
+\end{frame}
+%------------------------------------------------------------------------------------
+
+\end{document}
