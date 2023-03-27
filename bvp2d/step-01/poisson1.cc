@@ -29,7 +29,8 @@ double residual (const double h, const Array2D& u, const Array2D& b)
       for(unsigned int j=1; j<ny-1; ++j)
       {
          double res1 = - b(i,j)
-                       + ihh * ( 4.0 * u(i,j) - u(i-1,j) - u(i+1,j) - u(i,j-1) - u(i,j+1) );
+                       + ihh * ( 4.0 * u(i,j) - u(i-1,j) - u(i+1,j) 
+                                              - u(i,j-1) - u(i,j+1) );
          res += res1 * res1;
       }
    

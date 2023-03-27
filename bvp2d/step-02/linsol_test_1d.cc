@@ -34,7 +34,7 @@ double exact_solution(const double x)
 //------------------------------------------------------------------------------
 int main(int argc, char **argv)
 {
-   if(argc == 1)
+   if(argc <= 2)
    {
       cout << "Specify: n, solver (jacobi, sor, ssor, cg), max_iter\n";
       cout << "Example: " << argv[0] << " 100 jacobi 1000\n";
@@ -121,6 +121,7 @@ int main(int argc, char **argv)
       exit(1);
    }
    
+   cout << "Convergence tolerance = " << tol << endl;
    cout << "Number of iterations = " << iter << endl;
 
    // Save solution to file

@@ -196,6 +196,7 @@ int main(int argc, char **argv)
       exit(1);
    }
 
+   cout << "Convergence tolerance = " << tol << endl;
    cout << "Number of iterations = " << iter << endl;
 
    // Save solution to file

@@ -12,7 +12,8 @@ public:
    unsigned int sizex() const;
    unsigned int sizey() const;
 
-   inline const double&  operator()(const unsigned int i, const unsigned int j) const
+   inline const double&  operator()(const unsigned int i, 
+                                    const unsigned int j) const
    {
       #if defined(DEBUG)
       if (i < 0 || i > nx - 1 || j < 0 || j > ny - 1)
@@ -25,7 +26,8 @@ public:
       return u[i * ny + j];
    }
 
-   inline double& operator()(const unsigned int i, const unsigned int j)
+   inline double& operator()(const unsigned int i, 
+                             const unsigned int j)
    {
       #if defined(DEBUG)
       if (i < 0 || i > nx - 1 || j < 0 || j > ny - 1)
