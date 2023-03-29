@@ -93,6 +93,7 @@ int main(int argc, char **argv)
 
    // Create solver object
    const double tol = 1.0e-6;
+   const double omega = 2.0/(1.0 + sin(M_PI*h)); // SOR relaxation
 
    unsigned int iter = 0;
    if(method == "jacobi")
@@ -102,12 +103,12 @@ int main(int argc, char **argv)
    }
    else if(method == "sor")
    {
-      SORSolver<double> solver (max_iter, tol, 1.5);
+      SORSolver<double> solver (max_iter, tol, omega);
       iter = solver.solve (A, u, f);
    }
    else if(method == "ssor")
    {
-      SSORSolver<double> solver (max_iter, tol, 1.5);
+      SSORSolver<double> solver (max_iter, tol, omega);
       iter = solver.solve (A, u, f);
    }
    else if(method == "cg")
@@ -125,10 +126,12 @@ int main(int argc, char **argv)
    cout << "Number of iterations = " << iter << endl;
 
    // Save solution to file
-   ofstream fsol("sol.dat");
+   string fname = "sol.dat";
+   ofstream fsol(fname);
    for(unsigned int i=0; i<n; ++i)
       fsol << x(i) << "  " 
            << u(i) << "  " 
            << exact_solution(x(i)) << endl;
    fsol.close ();
+   cout << "Saved solution into file " << fname << endl;
 }

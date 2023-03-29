@@ -91,12 +91,12 @@ int main(int argc, char **argv)
       {
          x = xmin + i*dx;
 
-         // j = 0;
+         // j = 0: bottom
          y = ymin;
          c = i + 0*nx;
          u(c) = boundary_value(x,y);
 
-         // j = ny-1;
+         // j = ny-1: top
          y = ymax;
          c = i + (ny-1)*nx;
          u(c) = boundary_value(x,y);
@@ -106,12 +106,12 @@ int main(int argc, char **argv)
       {
          y = ymin + j*dy;
 
-         // i = 0;
+         // i = 0: left
          x = xmin;
          c = 0 + j*nx;
          u(c) = boundary_value(x,y);
 
-         // i = nx-1;
+         // i = nx-1: right
          x = xmax;
          c = (nx-1) + j*nx;
          u(c) = boundary_value(x,y);
@@ -139,12 +139,12 @@ int main(int argc, char **argv)
       unsigned int c;
       for(unsigned int i=0; i<nx; ++i)
       {
-         // j = 0;
+         // j = 0: bottom
          c = i + 0*nx;
          f(c) = A(c,c) * u(c);
          A.zero_off_diag(c);
 
-         // j = ny-1;
+         // j = ny-1: top
          c = i + (ny-1)*nx;
          f(c) = A(c,c) * u(c);
          A.zero_off_diag(c);
@@ -152,12 +152,12 @@ int main(int argc, char **argv)
 
       for(unsigned int j=0; j<ny; ++j)
       {
-         // i = 0;
+         // i = 0: left
          c = 0 + j*nx;
          f(c) = A(c,c) * u(c);
          A.zero_off_diag(c);
 
-         // i = nx-1;
+         // i = nx-1: right
          c = (nx-1) + j*nx;
          f(c) = A(c,c) * u(c);
          A.zero_off_diag(c);
@@ -168,7 +168,9 @@ int main(int argc, char **argv)
    //cout << "f = \n" << f << endl;
 
    // Create solver object
-   double tol = 1.0e-6;
+   const double tol = 1.0e-6;
+   const double h = fmin(dx, dy);
+   const double omega = 2.0/(1.0 + sin(M_PI*h)); // relaxation factor in SOR
    unsigned int iter = 0;
    if (method == "jacobi")
    {
@@ -177,12 +179,12 @@ int main(int argc, char **argv)
    }
    else if (method == "sor")
    {
-      SORSolver<double> solver(max_iter, tol, 1.5);
+      SORSolver<double> solver(max_iter, tol, omega);
       iter = solver.solve(A, u, f);
    }
    else if (method == "ssor")
    {
-      SSORSolver<double> solver(max_iter, tol, 1.5);
+      SSORSolver<double> solver(max_iter, tol, omega);
       iter = solver.solve(A, u, f);
    }
    else if (method == "cg")
@@ -200,7 +202,8 @@ int main(int argc, char **argv)
    cout << "Number of iterations = " << iter << endl;
 
    // Save solution to file
-   ofstream fsol("u.dat");
+   string fname = "u.dat";
+   ofstream fsol(fname);
    for(unsigned int j=0; j<ny; ++j)
    {
       double y = ymin + j*dy;
@@ -213,4 +216,5 @@ int main(int argc, char **argv)
       fsol << endl;
    }
    fsol.close ();
+   cout << "Saved solution into file " << fname << endl;
 }
