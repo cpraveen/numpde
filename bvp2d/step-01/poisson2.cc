@@ -1,5 +1,5 @@
 /*
- Solves Laplace equation in 2d
+ Solves Laplace equation in 2d using Jacobi method
         -Laplace(u) = f in (0,1)x(0,1)
                  u  = 0 on boundary
 */
@@ -43,6 +43,7 @@ double residual (const double h, const Array2D& u, const Array2D& b)
 int main()
 {
    const double TOL = 1.0e-6;
+   const unsigned int itmax = 10000;
    const unsigned int n = 50;
    const double h = 1.0/(n-1);
    
@@ -63,7 +64,7 @@ int main()
    const double res0 = residual (h, u, b);
    double res  = res0;
    unsigned int iter = 0;
-   while (res > TOL*res0)
+   while (res > TOL*res0 && iter < itmax)
    {
       uold = u;
       

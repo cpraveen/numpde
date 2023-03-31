@@ -1,5 +1,5 @@
 /*
- Solves Laplace equation in 2d
+ Solves Laplace equation in 2d using Jacobi method
         -Laplace(u) = f in (0,1)x(0,1)
                  u  = 0 on boundary
 */
@@ -20,8 +20,8 @@ double rhs(const double x, const double y)
 // Computes L2 norm of residual
 double residual (const double h, const Array2D& u, const Array2D& b)
 {
-   const unsigned int nx = u.sizex();
-   const unsigned int ny = u.sizey();
+   const unsigned int nx = u.rows();
+   const unsigned int ny = u.cols();
    const double ihh = 1.0/(h*h);
    
    double res = 0.0;
@@ -41,6 +41,7 @@ double residual (const double h, const Array2D& u, const Array2D& b)
 int main()
 {
    const double TOL = 1.0e-6;
+   const unsigned int itmax = 10000;
    const unsigned int n = 50;
    const double h = 1.0/(n-1);
    
@@ -61,7 +62,7 @@ int main()
    const double res0 = residual (h, u, b);
    double res  = res0;
    unsigned int iter = 0;
-   while (res > TOL*res0)
+   while (res > TOL*res0 && iter < itmax)
    {
       uold = u;
       

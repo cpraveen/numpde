@@ -6,22 +6,22 @@ using namespace std;
 // Empty constructor
 Array2D::Array2D ()
 :
-nx (0),
-ny (0),
+nrow (0),
+ncol (0),
 n  (0)
 {
 }
 
 // Constructor based on size
-Array2D::Array2D (const unsigned int nx, const unsigned int ny)
+Array2D::Array2D (const unsigned int nrow, const unsigned int ncol)
 :
-nx (nx),
-ny (ny),
-n  (nx*ny),
-u  (nx*ny)
+nrow (nrow),
+ncol (ncol),
+n  (nrow*ncol),
+u  (nrow*ncol)
 {
 #if defined(DEBUG)
-   if(nx < 0 || ny < 0)
+   if(nrow < 0 || ncol < 0)
    {
       cout << "Dimensions cannot be negative" << endl;
       exit(0);
@@ -30,31 +30,31 @@ u  (nx*ny)
 }
 
 // Change size of array
-void Array2D::resize(const unsigned int nx1, const unsigned int ny1)
+void Array2D::resize(const unsigned int nrow1, const unsigned int ncol1)
 {
 #if defined(DEBUG)
-   if(nx1 < 0 || ny1 < 0)
+   if(nrow1 < 0 || ncol1 < 0)
    {
       cout << "Dimensions cannot be negative" << endl;
       exit(0);
    }
 #endif
-   nx = nx1;
-   ny = ny1;
-   n  = nx1 * ny1;
+   nrow = nrow1;
+   ncol = ncol1;
+   n  = nrow1 * ncol1;
    u.resize (n);
 }
 
 // return number of rows, size of first index
-unsigned int Array2D::sizex() const
+unsigned int Array2D::rows() const
 {
-   return nx;
+   return nrow;
 }
 
 // return number of columns, size of second index
-unsigned int Array2D::sizey() const
+unsigned int Array2D::cols() const
 {
-   return ny;
+   return ncol;
 }
 
 // Set all elements to scalar value
@@ -69,7 +69,7 @@ Array2D& Array2D::operator= (const double scalar)
 Array2D& Array2D::operator= (const Array2D& a)
 {
 #if defined(DEBUG)
-   if(nx != a.sizex() || ny != a.sizey())
+   if(nrow != a.rows() || ncol != a.cols())
    {
       cout << "Array sizes do not match" << endl;
       exit(0);

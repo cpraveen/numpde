@@ -74,10 +74,11 @@ int main(int argc, char **argv)
 
    // Apply boundary conditions
    f(0)   = A(0,0) * u0;
-   f(1)  -= A(1,0) * u0;
-   f(n-2)-= A(n-2,n-1) * u1;
    f(n-1) = A(n-1,n-1) * u1;
 
+   // make symmetric
+   f(1)      -= A(1,0) * u0;
+   f(n-2)    -= A(n-2,n-1) * u1;
    A(1,0)     = 0;
    A(n-2,n-1) = 0;
 
