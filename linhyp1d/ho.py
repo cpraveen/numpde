@@ -151,7 +151,8 @@ def solve(N, cfl, rscheme, Tf, xmin, xmax, uinit, nrk):
             u = ark[rk]*uold + (1.0-ark[rk])*(u - (dt/h)*res)
         t += dt; it += 1
         line1.set_ydata(u)
-        line2.set_ydata(uinit(x-a*t))
+        xp = x - a * t; xp = xmin + np.mod(xp-xmin, xmax-xmin)
+        line2.set_ydata(uinit(xp))
         plt.draw(); plt.pause(0.1)
     plt.show()
 
@@ -163,7 +164,8 @@ parser.add_argument('-scheme', choices=('FO','SOUP','MMOD','MC','VL','WENO5',
                                         'MP5'),
                     help='Scheme', default='FO')
 parser.add_argument('-Tf', type=float, help='Final time', default=1.0)
-parser.add_argument('-ic', choices=('smooth','hat','mult'), help='Init cond', default='smooth')
+parser.add_argument('-ic', choices=('smooth','hat','mult','exphat'), 
+                    help='Init cond', default='smooth')
 args = parser.parse_args()
 
 if args.scheme=="FO":
@@ -191,3 +193,6 @@ elif args.ic == "hat":
 elif args.ic == "mult":
     xmin, xmax = -1.0, 1.0
     solve(args.N, args.cfl, args.scheme, args.Tf, xmin, xmax, mult, nrk)
+elif args.ic == "exphat":
+    xmin, xmax = 0.0, 1.0
+    solve(args.N, args.cfl, args.scheme, args.Tf, xmin, xmax, exphat, nrk)

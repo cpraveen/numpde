@@ -40,3 +40,10 @@ def mult(x):
         else:
             f[i] = 0.0;
     return f
+
+# See Fig. 6.1, 6.2 of Leveque FVM book
+# Domain [0,1]
+def exphat(x):
+    beta, x0 = 200.0, 0.3
+    f = np.exp(-beta * (x-x0)**2) + (np.abs(x - 0.7) < 0.1) * 1.0
+    return f
