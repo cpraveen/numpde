@@ -56,6 +56,15 @@ def update_bw(nu, u):
                      + 0.5*nu**2*(u[0:-2] - 2.0*u[1:-1] + u[2:])
     return unew
 
+# Second order upwind
+def update_soup(nu, u):
+    unew = np.empty_like(u)
+    unew[0] = u[0] - nu*(1.5*u[0] - 2.0*u[-2] + 0.5*u[-3])
+    unew[1] = u[1] - nu*(1.5*u[1] - 2.0*u[0] + 0.5*u[-2])
+    unew[2:] = u[2:] - nu*(1.5*u[2:] - 2.0*u[1:-1] + 0.5*u[0:-2])
+    return unew
+
+# Solve the problem
 # Solve the problem
 def solve(a, N, cfl, scheme, Tf, uinit):
     xmin, xmax = 0.0, 1.0
@@ -92,6 +101,8 @@ def solve(a, N, cfl, scheme, Tf, uinit):
             u = update_lw(nu, u)
         elif scheme=='BW':
             u = update_bw(nu, u)
+        elif scheme=='SOUP':
+            u = update_soup(nu, u)
         else:
             print("Unknown scheme: ", scheme)
             return
@@ -114,7 +125,7 @@ def solve(a, N, cfl, scheme, Tf, uinit):
 parser = argparse.ArgumentParser()
 parser.add_argument('-N', type=int, help='Number of cells', default=100)
 parser.add_argument('-cfl', type=float, help='CFL number', default=0.98)
-parser.add_argument('-scheme', choices=('FTBS','FTFS','FTCS','LF','LW','BW'),
+parser.add_argument('-scheme', choices=('FTBS','FTFS','FTCS','LF','LW','BW','SOUP'),
                     help='Scheme', default='FTBS')
 parser.add_argument('-a', type=float, help='Advection speed', default=1.0)
 parser.add_argument('-Tf', type=float, help='Final time', default=1.0)
