@@ -31,7 +31,7 @@ subroutine roe_flux(ul, ur, nflux)
    ! Local variables
    real :: vl(nvar), vr(nvar), fl(nvar), fr(nvar), lam(nvar), HL, HR
    real :: alpha(nvar), r1(nvar), r2(nvar), r3(nvar)
-   real ::  u, H, a, RT, du(nvar)
+   real ::  u, H, a, RT, du(nvar), delta
 
    call con2prim(ul, vl)
    call con2prim(ur, vr)
@@ -69,6 +69,13 @@ subroutine roe_flux(ul, ur, nflux)
 
    call euler_flux(vl, fl)
    call euler_flux(vr, fr)
+
+   ! Apply Harten's entropy fix on nonlinear waves
+   if(efix)then
+      delta = 0.1 * a
+      if(abs(lam(1)) < delta) lam(1) = 0.5*(lam(1)**2 + delta**2)/delta
+      if(abs(lam(3)) < delta) lam(3) = 0.5*(lam(3)**2 + delta**2)/delta
+   endif
 
    nflux = 0.5*(fl + fr) &
            - 0.5*(alpha(1)*abs(lam(1))*r1 + alpha(2)*abs(lam(2))*r2 + alpha(3)*abs(lam(3))*r3)

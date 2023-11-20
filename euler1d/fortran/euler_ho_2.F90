@@ -12,11 +12,14 @@ module constants
    integer :: iflux, irecon, ichar
    integer :: ncel, nbeg, nend
    real    :: cfl
+   logical :: efix
 end module constants
 
 ! Include one file for test case definition
 #if defined(SOD)
 include 'sod.F90'
+#elif defined(MSOD)
+include 'msod.F90'
 #elif defined(SHUOSHER)
 include 'shuosher.F90'
 #elif defined(TORO5)
@@ -409,6 +412,7 @@ subroutine read_input()
    read(fid,*) recon
    read(fid,*) var
    read(fid,*) flux
+   read(fid,*) efix
    close(fid)
 
    if(flux == 'lxf')then
@@ -450,6 +454,7 @@ subroutine read_input()
    write(*,*) 'flux     = ', trim(flux)
    write(*,*) 'recon    = ', trim(recon)
    write(*,*) 'lim var  = ', trim(var)
+   write(*,*) 'efix     = ', efix
 
 end subroutine read_input
 
