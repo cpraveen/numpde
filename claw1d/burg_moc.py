@@ -62,6 +62,8 @@ parser.add_argument('-nt', type=int, help='Number of t points', default=50)
 parser.add_argument('-Tf', type=float, help='Final time', default=1.0)
 parser.add_argument('-ic', choices=('1','2','3','4','5','6'), 
                     help='Initial condition', default='1')
+parser.add_argument('-pde', choices=('adv','burg'), 
+                    help='PDE: lin adv or burger', default='burg')
 args = parser.parse_args()
 
 xmin, xmax = -1.0, 1.0
@@ -90,7 +92,10 @@ ts = np.linspace(0.0, Tf, nt)
 plt.figure()
 for t in ts:
     plt.clf()
-    plt.plot(x + u*t, u, lw=2)
+    if args.pde == 'adv':
+        plt.plot(x + t, u, lw=2)
+    else:
+        plt.plot(x + u*t, u, lw=2)
     plt.xlabel('x'); plt.ylabel('u')
     plt.title('t = '+str(round(t,3)))
     plt.grid(True)
