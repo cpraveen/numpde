@@ -38,6 +38,8 @@ def solve(N, cfl, Tf, uinit):
     wait = input("Press enter to continue ")
 
     t, it = 0.0, 0
+    energy = [0.5*h*u[0]**2 + h*np.sum(u[1:-1]**2) + 0.5*h*u[-1]**2]
+    times = [0.0]
     while t < Tf:
         k0 = a * rhs(h, u)
         k1 = a * rhs(h, u+0.5*dt*k0)
@@ -48,6 +50,11 @@ def solve(N, cfl, Tf, uinit):
         line1.set_ydata(u)
         line2.set_ydata(uinit(x-a*t))
         plt.draw(); plt.pause(0.1)
+        energy.append(0.5*h*u[0]**2 + h*np.sum(u[1:-1]**2) + 0.5*h*u[-1]**2)
+        times.append(t)
+    plt.figure()
+    plt.plot(times, energy)
+    plt.xlabel('Time'); plt.ylabel('Total energy')
     plt.show()
 
 # Get arguments
