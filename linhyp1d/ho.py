@@ -124,7 +124,9 @@ def compute_residual(u):
     return res
 
 # Solve the problem
-def solve(N, cfl, rscheme, Tf, xmin, xmax, uinit, nrk):
+def solve(args, xmin, xmax, uinit, nrk):
+    N,cfl,rscheme,Tf,freq = args.N, args.cfl, args.scheme, args.Tf, args.freq
+
     h = (xmax - xmin)/N
     dt= cfl * h / np.abs(a)
 
@@ -151,14 +153,16 @@ def solve(N, cfl, rscheme, Tf, xmin, xmax, uinit, nrk):
             u = ark[rk]*uold + (1.0-ark[rk])*(u - (dt/h)*res)
         t += dt; it += 1
         line1.set_ydata(u)
-        xp = x - a * t; xp = xmin + np.mod(xp-xmin, xmax-xmin)
-        line2.set_ydata(uinit(xp))
-        plt.draw(); plt.pause(0.1)
+        if it % freq == 0:
+            xp = x - a * t; xp = xmin + np.mod(xp-xmin, xmax-xmin)
+            line2.set_ydata(uinit(xp))
+            plt.draw(); plt.pause(0.1)
     plt.show()
 
 # Get arguments
 parser = argparse.ArgumentParser()
 parser.add_argument('-N', type=int, help='Number of cells', default=100)
+parser.add_argument('-freq', type=int, help='Plot frequency', default=1)
 parser.add_argument('-cfl', type=float, help='CFL number', default=0.9)
 parser.add_argument('-scheme', choices=('FO','SOUP','MMOD','MC','VL','WENO5',
                                         'MP5'),
@@ -186,13 +190,13 @@ elif args.scheme == "VL":
 # Run the solver
 if args.ic == "smooth":
     xmin, xmax = 0.0, 1.0
-    solve(args.N, args.cfl, args.scheme, args.Tf, xmin, xmax, smooth, nrk)
+    solve(args, xmin, xmax, smooth, nrk)
 elif args.ic == "hat":
     xmin, xmax = 0.0, 1.0
-    solve(args.N, args.cfl, args.scheme, args.Tf, xmin, xmax, hat, nrk)
+    solve(args, xmin, xmax, hat, nrk)
 elif args.ic == "mult":
     xmin, xmax = -1.0, 1.0
-    solve(args.N, args.cfl, args.scheme, args.Tf, xmin, xmax, mult, nrk)
+    solve(args, xmin, xmax, mult, nrk)
 elif args.ic == "exphat":
     xmin, xmax = 0.0, 1.0
-    solve(args.N, args.cfl, args.scheme, args.Tf, xmin, xmax, exphat, nrk)
+    solve(args, xmin, xmax, exphat, nrk)
