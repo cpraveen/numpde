@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import argparse
+from prettytable import PrettyTable
 from ic import *
 
 def update_ftbs(nu, u):
@@ -67,13 +68,15 @@ for N in args.N:
     i += 1
 
 # Compute convergence rate
-print("  N        L1        rate         L2         rate         max        rate")
+table = PrettyTable(['N','L1','1rate','L2','2rate','max','mrate'])
 for i in range(1,len(emax)):
     pmax = np.log(emax[i-1]/emax[i])/np.log(2.0)
     p1 = np.log(e1[i-1]/e1[i])/np.log(2.0)
     p2 = np.log(e2[i-1]/e2[i])/np.log(2.0)
-    print("%3d  %e  %f  %e  %f  %e  %f" % (args.N[i], e1[i], p1, e2[i], p2, emax[i], pmax))
+    table.add_row(['%4d' % args.N[i], '%e' % e1[i], '%4.2f' % p1,  
+                   '%e' % e2[i],  '%4.2f' % p2,  '%e' % emax[i],  '%4.2f' % pmax])
 
+print(table)
 # Plot error convergence
 plt.loglog(args.N, e1  , '*-')
 plt.loglog(args.N, e2  , 's-')
