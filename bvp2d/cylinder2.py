@@ -15,7 +15,10 @@ m = int(m)
 # Map uniform partition of xi in [0,1] to r in [R1,R2]
 xi = np.linspace(0.0,1.0,m)
 r = R1 * np.exp(xi * np.log(R2/R1))
+print("inner radius = ", r[0])
 print("outer radius = ", r[-1])
+print("Points in angular direction = ", n)
+print("Points in radial  direction = ", m)
 
 # Angular grid
 theta = np.linspace(0.0,2.0*np.pi,n)
