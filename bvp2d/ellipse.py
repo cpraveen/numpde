@@ -10,6 +10,9 @@ ratio = 6.0
 b = 1.0/np.sqrt(ratio**2 - 1.0)
 a = ratio * b
 
+print("Axis a = ", a)
+print("Axis b = ", b)
+
 n = 100 # no. angular points
 
 R1, R2 = a+b, 100.0
@@ -20,8 +23,6 @@ m = int(m)
 # Map uniform partition of xi in [0,1] to r in [R1,R2]
 xi = np.linspace(0.0,1.0,m)
 r = R1 * np.exp(xi * np.log(R2/R1))
-print("inner radius = ", r[0])
-print("outer radius = ", r[-1])
 print("Points in angular direction = ", n)
 print("Points in radial  direction = ", m)
 
@@ -47,6 +48,7 @@ ratio = np.max(xe)/np.max(ye)
 xo, yo = x[-1,:], y[-1,:]
 rout = np.min( np.sqrt(xo**2 + yo**2) )
 print("Distance of outer boundary = ", rout)
+print("rout/a = ", rout/a)
 
 plt.figure()
 plt.plot(xe, ye)
@@ -60,6 +62,6 @@ for i in range(m):
 # Plot radial lines
 for j in range(n):
     plt.plot(x[:,j],y[:,j],'k-')
-plt.title(str(n)+'x'+str(m)+' mesh')
+plt.title(str(n)+' x '+str(m)+' mesh')
 plt.axis('equal')
 plt.show()
