@@ -10,14 +10,13 @@ ratio = 6.0
 b = 1.0/np.sqrt(ratio**2 - 1.0)
 a = ratio * b
 
-print("Axis a = ", a)
-print("Axis b = ", b)
-
-n = 100 # no. angular points
+ncells = 100   # no. cells along angle, divisible by 4
+assert ncells%4 == 0, "ncells must be divisible by 4"
+n = ncells + 1 # no. points along angle
 
 R1, R2 = a+b, 100.0
 
-m = (n/(2*np.pi)) * np.log(R2/R1)
+m = (ncells/(2*np.pi)) * np.log(R2/R1)
 m = int(m)
 
 # Map uniform partition of xi in [0,1] to r in [R1,R2]
@@ -37,6 +36,7 @@ y = np.outer(r, np.sin(theta))
 # Map circles to ellipses
 z = x + 1j * y
 z = 0.5 * ( z + 1/z)
+z = z/a # make semi-major axis = 1
 x = np.real(z)
 y = np.imag(z)
 
@@ -48,7 +48,6 @@ ratio = np.max(xe)/np.max(ye)
 xo, yo = x[-1,:], y[-1,:]
 rout = np.min( np.sqrt(xo**2 + yo**2) )
 print("Distance of outer boundary = ", rout)
-print("rout/a = ", rout/a)
 
 plt.figure()
 plt.plot(xe, ye)
