@@ -66,11 +66,17 @@ def gRK3(nu, theta):
     z = rhs(nu,theta)
     return 1 + z + z**2/2 + z**3/6
 
+# RK4 Amplification factor
+def gRK4(nu, theta):
+    z = rhs(nu,theta)
+    return 1 + z + z**2/2 + z**3/6 + z**4/24
+
 ntheta = 1000
 theta = np.linspace(0, 2*np.pi, ntheta)
 gvalues1 = np.zeros(ntheta, dtype=complex)
 gvalues2 = np.zeros(ntheta, dtype=complex)
 gvalues3 = np.zeros(ntheta, dtype=complex)
+gvalues4 = np.zeros(ntheta, dtype=complex)
 
 # CFL
 nu = 0.1
@@ -79,15 +85,18 @@ for k in range(ntheta):
     gvalues1[k] = gRK1(nu, theta[k])
     gvalues2[k] = gRK2(nu, theta[k])
     gvalues3[k] = gRK3(nu, theta[k])
+    gvalues4[k] = gRK4(nu, theta[k])
 
 print("CFL = ", nu)
 print("RK1, Max amp factor = ", np.max(np.abs(gvalues1)))
 print("RK2, Max amp factor = ", np.max(np.abs(gvalues2)))
 print("RK3, Max amp factor = ", np.max(np.abs(gvalues3)))
+print("RK4, Max amp factor = ", np.max(np.abs(gvalues4)))
 
 plt.plot(theta, np.abs(gvalues1),label='RK1')
 plt.plot(theta, np.abs(gvalues2),label='RK2')
 plt.plot(theta, np.abs(gvalues3),label='RK3')
+plt.plot(theta, np.abs(gvalues4),label='RK4')
 plt.xlabel('Wave number')
 plt.ylabel('Amp factor')
 plt.legend()
