@@ -72,7 +72,7 @@ def gRK4(nu, theta):
     return 1 + z + z**2/2 + z**3/6 + z**4/24
 
 ntheta = 1000
-theta = np.linspace(0, 2*np.pi, ntheta)
+theta = np.linspace(0, np.pi, ntheta)
 gvalues1 = np.zeros(ntheta, dtype=complex)
 gvalues2 = np.zeros(ntheta, dtype=complex)
 gvalues3 = np.zeros(ntheta, dtype=complex)
