@@ -36,13 +36,15 @@ def weno5(um2,um1,u0,up1,up2):
 def rhs(nu,theta):
     # Returns exp(i * l * theta)
     u = lambda l: np.exp(1j * l * theta)
-    ujm3 = u(-3)
-    ujm2 = u(-2)
-    ujm1 = u(-1)
-    uj   = u( 0)
-    ujp1 = u( 1)
-    ujp2 = u( 2)
-    ujp3 = u( 3) # Not needed for this pde
+
+    j = 0
+    ujm3 = u(j-3)
+    ujm2 = u(j-2)
+    ujm1 = u(j-1)
+    uj   = u(j)
+    ujp1 = u(j+1)
+    ujp2 = u(j+2)
+    ujp3 = u(j+3) # Not needed for this pde
 
     fjmh = weno5(ujm3, ujm2, ujm1, uj, ujp1)
     fjph = weno5(ujm2, ujm1, uj, ujp1, ujp2)
