@@ -88,18 +88,18 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-N', type=int, help='Number of points', default=128)
 parser.add_argument('-cfl', type=float, help='CFL number', default=0.5)
 parser.add_argument('-Tf', type=float, help='Final time', default=2*np.pi)
-parser.add_argument('-scheme', type=int, choices=(2,4,6), help='derivative order', default=2)
+parser.add_argument('-order', type=int, choices=(2,4,6), help='deriv acc order', default=2)
 args = parser.parse_args()
 
-# select derivative scheme
-if args.scheme == 2:
+# select derivative scheme order of accuracy
+if args.order == 2:
     diff = Q2
-elif args.scheme == 4:
+elif args.order == 4:
     diff = Q4
-elif args.scheme == 6:
+elif args.order == 6:
     diff = Q6
 else:
-    print('Unknown scheme=',args.scheme)
+    print('Unknown order=',args.order)
 
 # Run the solver
 solve(args.N, args.cfl, args.Tf, diff, sin10)

@@ -96,6 +96,7 @@ for t in ts:
         plt.plot(x + t, u, lw=2)
     else:
         plt.plot(x + u*t, u, lw=2)
+    plt.xlim([-2.5,2.5])
     plt.xlabel('x'); plt.ylabel('u')
     plt.title('t = '+str(round(t,3)))
     plt.grid(True)
