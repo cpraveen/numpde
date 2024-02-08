@@ -34,6 +34,7 @@ def solve(N, cfl, Tf):
     t, it = 0.0, 0
     while t < Tf:
         t += dt; it += 1
+        # Left boundary point
         unew[0] = f(xmin-a*t)
         # Interior points, use Lax-Wendroff
         unew[1:-1] = u[1:-1] - 0.5*nu*(u[2:]-u[0:-2]) \
