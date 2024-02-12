@@ -78,11 +78,12 @@ for i in range(1,len(emax)):
 
 print(table)
 # Plot error convergence
-plt.loglog(args.N, e1  , '*-')
-plt.loglog(args.N, e2  , 's-')
-plt.loglog(args.N, emax, 'o-')
+plt.loglog(args.N, e1  , '*-', ms=8)
+plt.loglog(args.N, e2  , 's-', ms=8)
+plt.loglog(args.N, emax, 'o-', ms=8)
 plt.xlabel('N')
 plt.ylabel('Error norm')
+plt.grid(True)
 plt.title('Scheme='+args.scheme+', CFL='+str(args.cfl))
 plt.legend(('$L_1$ norm','$L_2$ norm','$L_\infty$ norm'))
 plt.show()
