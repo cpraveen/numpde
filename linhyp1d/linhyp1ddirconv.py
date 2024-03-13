@@ -21,6 +21,7 @@ def update_lw(nu, u):
                 + 0.5*nu**2*(u[0:-2] - 2*u[1:-1] + u[2:])
     return unew
 
+# N = number of cells in [xmin,xmax]
 def solve(N, cfl, scheme, rbc, Tf, uinit):
     xmin, xmax = 0.0, 1.0
     a          = 1.0
@@ -70,7 +71,7 @@ parser.add_argument('-N', metavar='N', type=int, nargs='+', help='Number of cell
 parser.add_argument('-cfl', type=float, help='CFL number', default=0.9)
 parser.add_argument('-scheme', choices=('FTBS','LW'), help='Scheme', default='FTBS')
 parser.add_argument('-Tf', type=float, help='Final time', default=1.0)
-parser.add_argument('-rbc', type=int, choices=(1,2), help='Extrap order', default=1)
+parser.add_argument('-rbc', type=int, choices=(1,2), help='Extrap order at right boundary', default=1)
 parser.add_argument('-ic', choices=('smooth','hat'), help='Init cond', default='smooth')
 args = parser.parse_args()
 
