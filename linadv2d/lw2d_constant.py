@@ -55,7 +55,7 @@ while t < Tf:
           + 0.25 * s1 * s2 * (qip1jp1 - qip1jm1 - qim1jp1 + qim1jm1) \
           + 0.5 * s2**2 * (qijm1 - 2.0*q + qijp1)
     t += dt; it += 1
-    print('it,t = ',it,t)
+    print('it,t,qmax = %6d %12.4e %12.4e' % (it,t,np.abs(q).max()))
     if it%5 == 0 or np.abs(t-Tf) < 1.0e-12:
         plt.clf()
         plt.contour(X,Y,q)
