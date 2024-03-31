@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 N = 500
 
-zr = np.linspace(-3.0,1.0,N)
+zr = np.linspace(-3.0,0.5,N)
 zi = np.linspace(-3.0,3.0,N)
 
 zr,zi = np.meshgrid(zr,zi)
@@ -21,7 +21,7 @@ plt.axhline(0, color='white')
 plt.axvline(0, color='white')
 plt.text(-2,0,'Stable region',verticalalignment='center',
          color='white',bbox=dict(facecolor='grey'))
-plt.text(-4, 0, 'Unstable region', verticalalignment='center',
+plt.text(-2.9, 0, 'Unstable region', verticalalignment='center',
          color='white', rotation=90,bbox=dict(facecolor='red'))
 plt.title('RK3: Magnitude of amplification factor')
 plt.xlabel('Real z')
