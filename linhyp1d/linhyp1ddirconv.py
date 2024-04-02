@@ -59,7 +59,7 @@ def solve(N, cfl, scheme, rbc, Tf, uinit):
     u   = u[1:-1]
     x   = x[1:-1]
     err = np.abs(u - uinit(x-a*t))
-    em  = np.max(err)
+    em  = np.max(err[0:-2])
     e1  = h*err[0] + h*np.sum(err[1:-2])
     err = err**2
     e2  = np.sqrt(h*err[0] + h*np.sum(err[1:-2]))
