@@ -9,13 +9,10 @@ class TriDiagSolver
 {
    public:
       TriDiagSolver ();
-      TriDiagSolver (const SparseMatrix<T>& A);
       ~TriDiagSolver () {};
       unsigned int solve (const SparseMatrix<T>& A,
                                       Vector<T>& x, 
                           const       Vector<T>& f);
-      unsigned int solve (            Vector<T>& x, 
-                          const       Vector<T>& f) const;
 
    private:
       void lu_factor();

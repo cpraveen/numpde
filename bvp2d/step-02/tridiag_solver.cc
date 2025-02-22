@@ -15,21 +15,6 @@ TriDiagSolver<T>::TriDiagSolver ()
 }
 
 //-----------------------------------------------------------------------------
-// Constructor
-//-----------------------------------------------------------------------------
-template <class T>
-TriDiagSolver<T>::TriDiagSolver (const SparseMatrix<T>& A)
-{
-   std::cout << "Using TriDiag solver\n";
-
-   // Allocate memory for a,b,c
-   // Copy diagonals of A into a,b,c
- 
-   // Do LU factorization
-   lu_factor();
-}
-
-//-----------------------------------------------------------------------------
 // Perform LU factorization
 //-----------------------------------------------------------------------------
 template <class T>
@@ -70,20 +55,6 @@ unsigned int TriDiagSolver<T>::solve (const SparseMatrix<T>& A,
 
    // Perform LU decomposition
    lu_factor();
-
-   // Perform backward and forward solve
-   lu_solve(x, f);
-
-   return n;
-}
-
-//-----------------------------------------------------------------------------
-template <class T>
-unsigned int TriDiagSolver<T>::solve (            Vector<T>& x,
-                                      const       Vector<T>& f) const
-{
-   const unsigned int n = x.size();
-   assert (n == f.size());
 
    // Perform backward and forward solve
    lu_solve(x, f);
