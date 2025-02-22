@@ -16,6 +16,7 @@
 #include "jacobi_solver.h"
 #include "sor_solver.h"
 #include "ssor_solver.h"
+#include "tridiag_solver.h"
 
 using namespace std;
 
@@ -115,6 +116,11 @@ int main(int argc, char **argv)
    else if(method == "cg")
    {
       CGSolver<double> solver (max_iter, tol);
+      iter = solver.solve (A, u, f);
+   }
+   else if(method == "tri")
+   {
+      TriDiagSolver<double> solver;
       iter = solver.solve (A, u, f);
    }
    else

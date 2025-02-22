@@ -10,6 +10,7 @@ cg_solver.o: cg_solver.cc cg_solver.h
 jacobi_solver.o: jacobi_solver.cc jacobi_solver.h
 sor_solver.o: sor_solver.cc sor_solver.h
 ssor_solver.o: ssor_solver.cc ssor_solver.h
+tridiag_solver.o: tridiag_solver.cc tridiag_solver.h
 
 sparse_test1: sparse_matrix.o Vector.o sparse_test1.o 
 	$(CXX) -o $@ $^
@@ -18,7 +19,7 @@ sparse_test2: sparse_matrix.o Vector.o sparse_test2.o
 	$(CXX) -o $@ $^
 
 linsol_test_1d: sparse_matrix.o Vector.o cg_solver.o jacobi_solver.o \
-             sor_solver.o ssor_solver.o linsol_test_1d.o
+             sor_solver.o ssor_solver.o tridiag_solver.o linsol_test_1d.o
 	$(CXX) -o $@ $^
 
 linsol_test_2d: sparse_matrix.o Vector.o cg_solver.o jacobi_solver.o \

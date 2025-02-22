@@ -8,10 +8,12 @@ template <class T>
 class Vector
 {
    public:
+      Vector();
       Vector (unsigned int nrow);
       Vector (const Vector<T>& v);
       ~Vector (){};
       unsigned int size () const;
+      void resize(unsigned int nrow);
       T& operator()(unsigned int i);
       T  operator()(unsigned int i) const;
       Vector<T>& operator=  (const T scalar);
