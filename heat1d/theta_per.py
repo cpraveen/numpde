@@ -35,7 +35,7 @@ def solve(N, lam, Tf, theta):
     line2, = ax.plot(x, u, 'b')
     ax.set_xlabel('x'); ax.set_ylabel('u')
     plt.legend(('Exact','Numerical'))
-    plt.title('N='+str(N)+', $\lambda$='+str(lam)+', $\\theta$='+str(theta))
+    plt.title('N='+str(N)+', $\\lambda$='+str(lam)+', $\\theta$='+str(theta))
     plt.draw(); plt.pause(0.1)
     wait = input("Press enter to continue ")
 
