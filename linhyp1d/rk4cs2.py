@@ -41,6 +41,7 @@ def solve(N, cfl, Tf, uinit):
     energy = [0.5*h*u[0]**2 + h*np.sum(u[1:-1]**2) + 0.5*h*u[-1]**2]
     times = [0.0]
     while t < Tf:
+        # Classical RK4
         k0 = a * rhs(h, u)
         k1 = a * rhs(h, u+0.5*dt*k0)
         k2 = a * rhs(h, u+0.5*dt*k1)
@@ -62,11 +63,13 @@ parser = argparse.ArgumentParser()
 parser.add_argument('-N', type=int, help='Number of cells', default=100)
 parser.add_argument('-cfl', type=float, help='CFL number', default=0.9)
 parser.add_argument('-Tf', type=float, help='Final time', default=1.0)
-parser.add_argument('-ic', choices=('smooth','hat'), help='Init cond', default='smooth')
+parser.add_argument('-ic', choices=('smooth','hat','wpack'), help='Init cond', default='smooth')
 args = parser.parse_args()
 
 # Run the solver
 if args.ic == "smooth":
     solve(args.N, args.cfl, args.Tf, smooth)
-else:
+elif args.ic == "hat":
     solve(args.N, args.cfl, args.Tf, hat)
+else:
+    solve(args.N, args.cfl, args.Tf, wpack)

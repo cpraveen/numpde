@@ -47,3 +47,10 @@ def exphat(x):
     beta, x0 = 200.0, 0.3
     f = np.exp(-beta * (x-x0)**2) + (np.abs(x - 0.7) < 0.1) * 1.0
     return f
+
+# Wave packet
+# Domain: [-1,1]
+def wpack(x):
+    y = np.abs(x - np.floor(x)) # xx in [0,1]
+    y = y - 0.5
+    return np.sin(20 * np.pi * y) * np.exp(-50 * y**2)
