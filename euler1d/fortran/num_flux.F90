@@ -94,10 +94,10 @@ subroutine hll_speed(vl, vr, sl, sr)
    real :: u, H, a, upa, uma, RT
 
    HL   = gam*vl(3)/((gam-1.0)*vl(1)) + 0.5*vl(2)**2
-   laml = abs(vl(2)) - sqrt(gam*vl(3)/vl(1))
+   laml = vl(2) - sqrt(gam*vl(3)/vl(1))
 
    HR   = gam*vr(3)/((gam-1.0)*vr(1)) + 0.5*vr(2)**2
-   lamr = abs(vr(2)) + sqrt(gam*vr(3)/vr(1))
+   lamr = vr(2) + sqrt(gam*vr(3)/vr(1))
 
    ! Roe average speed
    RT  = sqrt(vr(1)/vl(1))
