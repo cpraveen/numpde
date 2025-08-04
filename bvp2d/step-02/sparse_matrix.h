@@ -54,6 +54,7 @@ class SparseMatrix
       std::vector<unsigned int> row_ptr, col_ind;
       std::vector<T> val;
       MatrixState state;
+      // Temporary variables used during matrix construction.
       std::vector<std::vector<unsigned int>> cols;
       std::vector<std::vector<T>> vals;
 };

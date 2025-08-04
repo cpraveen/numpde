@@ -25,9 +25,17 @@ SparseMatrix<T>::SparseMatrix (std::vector<unsigned int>& row_ptr,
    assert (col_ind.size() == val.size());
    assert (row_ptr[nrow] == val.size());
 
+   // Check col indices are within [0,nrow)
    for(unsigned int i=0; i<col_ind.size(); ++i)
       assert (col_ind[i] >= 0 && col_ind[i] < nrow);
    
+   // Check first value in each row is diagonal
+   for(unsigned int i=0; i<nrow; ++i)
+   {
+      const unsigned int c = col_ind[ row_ptr[i] ];
+      assert(c == i);
+   }
+
    state = CLOSED;
 }
 
@@ -37,7 +45,7 @@ SparseMatrix<T>::SparseMatrix (std::vector<unsigned int>& row_ptr,
 template <class T>
 SparseMatrix<T>::SparseMatrix (unsigned int nrow)
    :
-      nrow (nrow)
+   nrow (nrow)
 {
    assert (nrow > 0);
    row_ptr.resize (nrow+1, 0);
@@ -64,6 +72,9 @@ void SparseMatrix<T>::set (const unsigned int i,
 }
 
 //------------------------------------------------------------------------------
+// Copy 
+//    cols into col_ind
+//    vals into val
 // Close sparsity pattern. After this point, sparsity pattern cannot be changed.
 //------------------------------------------------------------------------------
 template <class T>
@@ -76,7 +87,7 @@ void SparseMatrix<T>::close ()
    {
       nval += cols[i].size();
       assert(cols[i].size() > 0); // i'th row is empty
-      assert(i == cols[i][0]); // set diagonal first
+      assert(i == cols[i][0]);    // set diagonal first
    }
    col_ind.resize(nval);
    val.resize(nval);
@@ -116,8 +127,8 @@ void SparseMatrix<T>::zero_off_diag(const unsigned int i)
    unsigned int row_end = row_ptr[i+1];
    for(unsigned int d=row_beg+1; d<row_end; ++d)
    {
-      val[d] = 0; // a(i,j)
-      (*this)(col_ind[d],i) = 0; // a(j,i)
+      val[d]                = static_cast<T>(0); // a(i,j)
+      (*this)(col_ind[d],i) = static_cast<T>(0); // a(j,i)
    }
 }
 
@@ -133,7 +144,7 @@ T SparseMatrix<T>::operator()(unsigned int i,
    for(unsigned int d=row_beg; d<row_end; ++d)
       if(col_ind[d] == j) 
          return val[d];
-   return 0;
+   return static_cast<T>(0);
 }
 
 //-----------------------------------------------------------------------------
