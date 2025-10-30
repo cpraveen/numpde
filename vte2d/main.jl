@@ -2,12 +2,11 @@ push!(LOAD_PATH,".")
 using VTE2d
 using PyPlot
 
-# Reynolds number
-Re = 10.0
-# Number of grid points
-n = 20
+Re   = 100.0 # Reynolds number
+n    = 128   # n x n grid
+pgap = 100   # plot interval
 
-X,Y,psi,omega,u,v = solve(Re, n)
+X,Y,psi,omega,u,v = solve(Re, n, pgap=pgap)
 
 # Plot final solution contours
 figure(figsize=(10,5))

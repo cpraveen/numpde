@@ -1,5 +1,7 @@
 # Lid driven cavity using Vorticity-Stream function formulation
 
+> There is also a Chapel version of this which is more sophisticated.
+
 ## Stream function solver
 
 Set the grid size and test the stream function solver
