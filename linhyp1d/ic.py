@@ -54,3 +54,9 @@ def wpack(x):
     y = np.abs(x - np.floor(x)) # xx in [0,1]
     y = y - 0.5
     return np.sin(20 * np.pi * y) * np.exp(-50 * y**2)
+
+# zero + noise
+# Domain: [0,1]
+def noise(x):
+    y = 2.0 * np.random.rand(len(x)) - 1.0
+    return 1.0e-16 * y

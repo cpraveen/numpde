@@ -129,7 +129,8 @@ parser.add_argument('-scheme', choices=('FTBS','FTFS','FTCS','LF','LW','BW','SOU
                     help='Scheme', default='FTBS')
 parser.add_argument('-a', type=float, help='Advection speed', default=1.0)
 parser.add_argument('-Tf', type=float, help='Final time', default=1.0)
-parser.add_argument('-ic', choices=('smooth','hat','sine'), help='Init cond', default='smooth')
+parser.add_argument('-ic', choices=('smooth','hat','sine','noise'), 
+                    help='Init cond', default='smooth')
 args = parser.parse_args()
 
 # Run the solver
@@ -139,3 +140,5 @@ elif args.ic == "hat":
     solve(args.a, args.N, args.cfl, args.scheme, args.Tf, hat)
 elif args.ic == "sine":
     solve(args.a, args.N, args.cfl, args.scheme, args.Tf, sine)
+elif args.ic == "noise":
+    solve(args.a, args.N, args.cfl, args.scheme, args.Tf, noise)
