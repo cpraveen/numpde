@@ -31,6 +31,6 @@ You can copy and paste the python code into a jupyter notebook, e.g., on [colab]
 
 See these other repositories for FEM code
 
-* [FEM codes in Python/deal.II/Fenics](https://github.com/cpraveen/fem)
+* [FEM codes in Python/deal.II/Firedrake/Fenics](https://github.com/cpraveen/fem)
 * [Matlab FEM code](https://github.com/cpraveen/fem50)
 * [Julia FEM code](https://github.com/cpraveen/juliafem)
