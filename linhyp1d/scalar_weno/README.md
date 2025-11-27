@@ -9,12 +9,12 @@ f_t + (a(x) f)_x = 0
 * Available schemes: TVD, WENO3, WENO5
 * Boundary condition: periodic
 
-Set parameters in `main.f` file. For scheme, set variable "recon_scheme"
- to "itvd" or "iweno3" or "iweno5"
+Set parameters in `main.f` file. 
 
-To set wave speed a(x), modify the function "speed"
+* For scheme, set variable "recon_scheme" to "itvd" or "iweno3" or "iweno5"
+* To set wave speed a(x), modify the function "speed"
 
-To compile, run `make`. This creates executable "fvm"
+To compile, run `make`. This creates executable `fvm`.
 
 Run the code
 

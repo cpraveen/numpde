@@ -22,7 +22,7 @@ open sol.pdf
 
 ## euler_ho_1
 
-Set some parameters in `input.txt` file.
+Uses Rusanov flux and minmod/wenojs/wenoz reconstruction. Solves sod problem. Set some parameters in `input.txt` file.
 
 ```shell
 ./euler_ho
@@ -52,6 +52,16 @@ Set some parameters in `input.txt` file.
 ```shell
 ./euler_shuosher
 gnuplot shuosher.gnu
+open sol.pdf
+```
+
+### Toro5 test case
+
+Set some parameters in `input.txt` file.
+
+```shell
+./euler_toro5
+gnuplot toro5.gnu
 open sol.pdf
 ```
 

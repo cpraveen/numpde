@@ -1,5 +1,11 @@
 # 1-D FV code for Euler equations
 
+Available options
+
+* Test cases: sod
+* Numerical fluxes: KFVS
+* Reconstruction: first, minmod/mc, vanleer
+
 Compile the code
 
 ```shell
