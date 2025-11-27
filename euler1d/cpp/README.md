@@ -3,7 +3,7 @@
 Available options
 
 * Test cases: sod
-* Numerical fluxes: KFVS
+* Numerical fluxes: KFVS, Roe
 * Reconstruction: first, minmod/mc, vanleer
 
 Compile the code
@@ -15,7 +15,7 @@ make
 Run first order code
 
 ```shell
-./fv sod
+./fv sod kfvs
 gnuplot fvm.gnu
 open fvm.ps
 ```
@@ -23,7 +23,7 @@ open fvm.ps
 Run high order code: minmod limiter
 
 ```shell
-./fv sod minmod
+./fv sod kfvs minmod
 gnuplot fvm.gnu
 open fvm.ps
 ```
@@ -31,7 +31,7 @@ open fvm.ps
 Run high order code: vanleer limiter
 
 ```shell
-./fv sod vanleer
+./fv sod kfvs vanleer
 gnuplot fvm.gnu
 open fvm.ps
 ```

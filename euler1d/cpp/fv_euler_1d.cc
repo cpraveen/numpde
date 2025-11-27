@@ -2,6 +2,7 @@
 #include <fstream>
 #include <vector>
 #include <cmath>
+#include <cassert>
 
 #define SIGN(a) (((a) < 0) ? -1 : 1)
 #define Cp      (GAMMA * gas_const / (GAMMA - 1.0))
@@ -15,6 +16,7 @@ double GAMMA;
 double gas_const;
 
 enum class SchemeOrder { first, second };
+enum class NumFlux { kfvs, roe };
 enum class Limiter { minmod, vanleer };
 
 using namespace std;
@@ -27,6 +29,7 @@ struct Parameters
    int test_case;
    SchemeOrder order;
    Limiter limiter;
+   NumFlux nflux;
 };
 
 //------------------------------------------------------------------------------
@@ -128,6 +131,12 @@ class FVProblem
       void kfvs_split_flux (const vector<double>& prim,
                             const int sign,
                             vector<double>& flux) const;
+      void kfvs_flux (const vector<double>&,
+                      const vector<double>&,
+                      vector<double>&) const;
+      void roe_flux (const vector<double>&,
+                     const vector<double>&,
+                     vector<double>&) const;
       void num_flux (const vector<double>&,
                      const vector<double>&,
                      vector<double>&) const;
@@ -137,6 +146,7 @@ class FVProblem
 
       SchemeOrder order;
       Limiter     limiter;
+      NumFlux     nflux;
       int         test_case;
       double d_left, u_left, p_left;
       double d_right, u_right, p_right;
@@ -171,6 +181,7 @@ FVProblem::FVProblem (const Parameters param)
    test_case = param.test_case;
    order = param.order;
    limiter = param.limiter;
+   nflux = param.nflux;
 
    if(test_case == 1)
    {
@@ -345,22 +356,101 @@ void FVProblem::kfvs_split_flux (const vector<double>& prim,
 }
 
 //------------------------------------------------------------------------------
+// KFVS flux
+//------------------------------------------------------------------------------
+void FVProblem::kfvs_flux(const vector<double> &left,
+                          const vector<double> &right,
+                          vector<double> &flux) const
+{
+   vector<double> flux_pos(n_var);
+   vector<double> flux_neg(n_var);
+
+   kfvs_split_flux(left, +1, flux_pos);
+   kfvs_split_flux(right, -1, flux_neg);
+
+   for (unsigned int i = 0; i < n_var; ++i)
+      flux[i] = flux_pos[i] + flux_neg[i];
+}
+
+//------------------------------------------------------------------------------
+// ROE flux
+//------------------------------------------------------------------------------
+void FVProblem::roe_flux(const vector<double> &left,
+                         const vector<double> &right,
+                         vector<double> &flux) const
+{
+   const double eps = 0.1;
+
+   // Roe averaged values
+   double sl = sqrt(left[0]);
+   double sr = sqrt(right[0]);
+   double al2 = GAMMA * left[2] / left[0];
+   double ar2 = GAMMA * right[2] / right[0];
+   double Hl = al2 / (GAMMA - 1.0) + 0.5 * left[1] * left[1];
+   double Hr = ar2 / (GAMMA - 1.0) + 0.5 * right[1] * right[1];
+   double u = (sl * left[1] + sr * right[1]) / (sl + sr);
+   double H = (sl * Hl + sr * Hr) / (sl + sr);
+   double a = sqrt((GAMMA - 1.0) * (H - 0.5 * u * u));
+
+   // Eigenvalues
+   double lambda[3] = {abs(u - a), abs(u), abs(u + a)};
+
+   // Entropy fux
+   const double delta = eps * a;
+   if(lambda[0] < delta) lambda[0] = 0.5*(pow(lambda[0],2) + pow(delta,2))/delta;
+   if(lambda[2] < delta) lambda[2] = 0.5*(pow(lambda[2],2) + pow(delta,2))/delta;
+
+   // Jump in U
+   double El = left[2] / (GAMMA - 1.0) + 0.5 * left[0] * left[1] * left[1];
+   double Er = right[2] / (GAMMA - 1.0) + 0.5 * right[0] * right[1] * right[1];
+   double dU[3] = {right[0] - left[0],
+                   right[0] * right[1] - left[0] * left[1],
+                   Er - El};
+   // alphas
+   double alpha[3];
+   alpha[1] = (GAMMA - 1.0) / (a * a) * ((H - u * u) * dU[0] + u * dU[1] - dU[2]);
+   alpha[0] = 0.5 / a * ((u + a) * dU[0] - dU[1] - a * alpha[1]);
+   alpha[2] = dU[0] - alpha[0] - alpha[1];
+
+   // Eigenvectors
+   double R[3][3];
+   R[0][0] = 1.0;       R[0][1] = 1.0;         R[0][2] = 1.0;
+   R[1][0] = u - a;     R[1][1] = u;           R[1][2] = u + a;
+   R[2][0] = H - u * a; R[2][1] = 0.5 * u * u; R[2][2] = H + u * a;
+
+   // Central Flux
+   flux[0] = 0.5 * (left[0] * left[1] + right[0] * right[1]);
+   flux[1] = 0.5 * (left[2] + left[0] * left[1] * left[1] +
+                    right[2] + right[0] * right[1] * right[1]);
+   flux[2] = 0.5 * (left[0] * left[1] * Hl + right[0] * right[1] * Hr);
+
+   // Dissipative flux
+   for (unsigned int i = 0; i < n_var; ++i)
+      for (unsigned int j = 0; j < n_var; ++j)
+         flux[i] -= 0.5 * alpha[j] * lambda[j] * R[i][j];
+}
+
+//------------------------------------------------------------------------------
 // Numerical flux function
 //------------------------------------------------------------------------------
 void FVProblem::num_flux(const vector<double>& left,
                          const vector<double>& right,
                          vector<double>&       flux) const
 {
-   vector<double> flux_pos(n_var);
-   vector<double> flux_neg(n_var);
+   switch(nflux)
+   {
+      case NumFlux::kfvs:
+         kfvs_flux(left, right, flux);
+         break;
 
-   kfvs_split_flux (left,  +1, flux_pos);
-   kfvs_split_flux (right, -1, flux_neg);
+      case NumFlux::roe:
+         roe_flux(left, right, flux);
+         break;
 
-   for(unsigned int i=0; i<n_var; ++i)
-      flux[i] = flux_pos[i] + flux_neg[i];
-
-
+      default:
+         cout << "Unknown NumFlux\n";
+         exit(0);
+   }
 }
 
 //------------------------------------------------------------------------------
@@ -463,19 +553,23 @@ void FVProblem::run ()
 }
 
 //------------------------------------------------------------------------------
+// test_case, flux, limiter
+//------------------------------------------------------------------------------
 void  get_command_line(int argc, char *argv[],
                        Parameters& param)
 {
-   if(argc == 1)
+   if(argc != 3 && argc != 4)
    {
       cout << "Not enough arguments\n";
-      cout << "  first order: " << argv[0] << " testcase\n";
-      cout << "  high order : " << argv[0] << " testcase  limiter\n";
-      cout << "  Testcases  : sod\n";
-      cout << "  Limiters   : minmod, vanleer\n";
+      cout << "./fv TestCase NumFlux\n";
+      cout << "./fv TestCase NumFlux Limiter\n";
+      cout << "  TestCase   : sod\n";
+      cout << "  NumFlux    : kfvs, roe\n";
+      cout << "  Limiter    : minmod, vanleer\n";
       exit(0);
    }
 
+   // Test case
    if(string(argv[1]) == "sod")
    {
       param.test_case = 1;
@@ -486,23 +580,43 @@ void  get_command_line(int argc, char *argv[],
       exit(0);
    }
 
-   if(argc == 2)
+   // Numerical flux
+   if(string(argv[2]) == "kfvs")
+   {
+      param.nflux = NumFlux::kfvs;
+   }
+   else if(string(argv[2]) == "roe")
+   {
+      param.nflux = NumFlux::roe;
+   }
+   else
+   {
+      cout << "Unknown flux = " << argv[2] << endl;
+      exit(0);
+   }
+
+   // Reconstruction
+   if(argc == 3)
    {
       param.order = SchemeOrder::first;
       cout << "First order scheme\n";
    }
-   else if(argc == 3)
+   else if(argc == 4)
    {
       param.order = SchemeOrder::second;
       cout << "Second order scheme\n";
-      string val = string(argv[2]);
-      if(val == "minmod")
+
+      if(string(argv[3]) == "minmod")
+      {
          param.limiter = Limiter::minmod;
-      else if(val == "vanleer")
+      }
+      else if(string(argv[3]) == "vanleer")
+      {
          param.limiter = Limiter::vanleer;
+      }
       else
       {
-         cout << "Unknown limiter = " << val << endl;
+         cout << "Unknown limiter: " << argv[3] << std::endl;
          exit(0);
       }
    }
