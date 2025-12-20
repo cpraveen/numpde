@@ -1,0 +1,455 @@
+% $Header: /cvsroot/latex-beamer/latex-beamer/solutions/conference-talks/conference-ornate-20min.en.tex,v 1.6 2004/10/07 20:53:08 tantau Exp $
+\pdfminorversion=4
+
+\documentclass[10pt,xcolor=svgnames]{beamer}
+
+\mode<presentation>
+{
+  %\usetheme{Madrid}
+  \usetheme{Boadilla}
+  % or ...
+
+  \setbeamercovered{transparent}
+  \setbeamertemplate{navigation symbols}{}
+  % suppress slide number for continued slides
+  \setbeamertemplate{frametitle continuation}[from second][]
+  % or whatever (possibly just delete it)
+}
+
+
+\usepackage{graphicx}
+\usepackage{aliases}
+\usepackage{colortbl}
+\usepackage{color}
+\usepackage{stmaryrd}
+\usepackage{listings}
+
+
+\usepackage[english]{babel}
+% or whatever
+
+%\usepackage[latin1]{inputenc}
+% or whatever
+
+%\usepackage{times}
+%\usepackage[T1]{fontenc}
+% Or whatever. Note that the encoding and the font should match. If T1
+% does not look nice, try deleting the line with the fontenc.
+
+\usefonttheme{serif}
+\setbeamertemplate{itemize item}[circle]
+\setbeamertemplate{itemize subitem}[triangle]
+\setbeamertemplate{enumerate item}[circle]
+\setbeamertemplate{enumerate subitem}[square]
+
+%\newcommand{\clr}[2]{{\color{#1}#2\color{black}}}
+\newcommand{\hoz}{H^1_0}
+\newcommand{\hozO}{H^1_0(\Omega)}
+\newcommand{\hoO}{H^1(\Omega)}
+\newcommand{\htO}{H^2(\Omega)}
+\newcommand{\htzO}{H^2_0(\Omega)}
+
+%\everydisplay{\color{blue}}
+
+
+\title[Sparse Matrix] % (optional, use only with long paper titles)
+{Sparse data structures}
+
+%\subtitle
+%{1-D boundary value problem}
+
+\author[Praveen. C] % (optional, use only with lots of authors)
+{Praveen. C\\
+{\tt praveen@math.tifrbng.res.in}}
+% - Give the names in the same order as the appear in the paper.
+% - Use the \inst{?} command only if the authors have different
+%   affiliation.
+
+\institute[TIFR-CAM] % (optional, but mostly needed)
+{
+   \includegraphics[height=1.0cm]{tifr.png}\\
+   Tata Institute of Fundamental Research\\
+   Center for Applicable Mathematics\\
+   Bangalore 560065\\
+{\tt http://math.tifrbng.res.in}
+}
+% - Use the \inst command only if there are several affiliations.
+% - Keep it simple, no one is interested in your street address.
+
+%\date[ADA, 16 Jan 2010] % (optional, should be abbreviation of conference name)
+%{MAT2010\\
+%Aeronautical Development Agency, Bangalore\\
+%16 January, 2010}
+% - Either use conference name or its abbreviation.
+% - Not really informative to the audience, more for people (including
+%   yourself) who are reading the slides online
+
+%\subject{Computational Fluid Dynamics}
+% This is only inserted into the PDF information catalog. Can be left
+% out.
+
+% If you have a file called "university-logo-filename.xxx", where xxx
+% is a graphic format that can be processed by latex or pdflatex,
+% resp., then you can add a logo as follows:
+
+%\pgfdeclareimage[height=0.5cm]{university-logo}{inria}
+%\logo{\pgfuseimage{university-logo}}
+
+% Delete this, if you do not want the table of contents to pop up at
+% the beginning of each subsection:
+%\AtBeginSubsection[]
+%{
+%  \begin{frame}<beamer>
+%    \frametitle{Outline}
+%    \tableofcontents[currentsection,currentsubsection]
+%  \end{frame}
+%}
+
+% If you wish to uncover everything in a step-wise fashion, uncomment
+% the following command:
+
+%\beamerdefaultoverlayspecification{<+->}
+
+\begin{document}
+
+\lstset{
+	language=C++,
+	keywordstyle=\bfseries\ttfamily\color[rgb]{0,0,1},
+	identifierstyle=\ttfamily,
+	commentstyle=\color[rgb]{0.133,0.545,0.133},
+	stringstyle=\ttfamily\color[rgb]{0.627,0.126,0.941},
+	showstringspaces=false,
+	basicstyle=\small,
+	numberstyle=\footnotesize,
+	numbers=left,
+	stepnumber=1,
+	numbersep=10pt,
+	tabsize=2,
+	breaklines=true,
+	prebreak = \raisebox{0ex}[0ex][0ex]{\ensuremath{\hookleftarrow}},
+	breakatwhitespace=false,
+	aboveskip={0.1\baselineskip},
+    columns=fixed,
+    upquote=true,
+    extendedchars=true,
+% frame=single,
+    backgroundcolor=\color[rgb]{0.9,0.9,0.9}
+}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+%\begin{frame}
+% \frametitle{Outline}
+%\tableofcontents
+% You might wish to add the option [pausesections]
+%\end{frame}
+%#############################################################################
+\begin{frame}
+\frametitle{Sparse matrix: Compressed Row Storage (CRS)}
+We assume C/C++ style indexing, starting from 0.
+\[
+\textrm{{\tt nrow $\times$ ncol} matrix } \qquad A = \begin{bmatrix}
+10 & 0 & 0 & 7 \\
+0  & 1 & 2 & 0 \\
+3  & 0 & 5 & 9 \\
+0  & 0 & 0 & 1
+\end{bmatrix}
+\]
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+               & 0 & 1 & 2 & 3 & - \\
+\hline
+{\tt row\_ptr} & 0 & 2 & 4 & 7 & 8 \\
+\hline
+\end{tabular}
+\end{center}
+
+\begin{center}
+\begin{tabular}{|c|c|c||c|c||c|c|c||c|c|}
+\hline
+               & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 \\
+\hline
+{\tt col\_ind} & 0 & 3 & 1 & 2 & 0 & 2 & 3 & 3\\
+\hline
+{\tt val} & 10 & 7 & 1 & 2 & 3 & 5 & 9 & 1 \\
+\hline
+\end{tabular}
+\end{center}
+Integer arrays: {\tt row\_ptr} and {\tt col\_ind}
+\[
+\textrm{\tt length(row\_ptr) = nrow + 1}
+\]
+\[
+\textrm{\tt length(col\_ind) = length(val) = row\_ptr[nrow]}
+\]
+\end{frame}
+%-------------------------------------------------------------------------------
+\begin{frame}
+\frametitle{Modified CSR format}
+{\tt row\_ptr[i]} is starting index of $i$'th row and the values
+\[
+\textrm{\tt val[c]}, \quad c = \textrm{\tt row\_ptr[i]}, ..., {\tt row\_ptr[i+1]-1}
+\]
+are the non-zero values in the $i$'th row. Their corresponding column indices are
+\[
+\textrm{\tt col\_ind[c]}, \quad c = \textrm{\tt row\_ptr[i]}, ..., {\tt row\_ptr[i+1]-1}
+\]
+
+%\vspace{5mm}
+
+In each row, the columns need not be stored in any particular order. This allows us to store the diagonal element as the first element in each row. In modified CSR format
+\[
+\textrm{A(i,i) = val[c]}, \quad c = \textrm{\tt row\_ptr[i]}
+\]
+\begin{center}
+\begin{tabular}{|c|c|c||c|c||c|c|c||c|c|}
+\hline
+               & 0 & 1 & 2 & 3 & 4 & 5 & 6 & 7 \\
+\hline
+{\tt col\_ind} & 0 & 3 & 1 & 2 & 2 & 0 & 3 & 3\\
+\hline
+{\tt val} & 10 & 7 & 1 & 2 & 5 & 3 & 9 & 1 \\
+\hline
+\end{tabular}
+\end{center}
+Very useful for some iterative algorithms, since it allows us to access diagonal element without searching for the column.
+\end{frame}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+\frametitle{Example of SparseMatrix Class}
+
+\begin{lstlisting}
+class SparseMatrix
+{
+   public:
+      SparseMatrix (); // constructor
+      ~SparseMatrix(); // destructor
+      void multiply(const Vector& x, Vector& y) const;
+      double operator()(int i, int j) const;
+
+   private:
+      int nrow;
+      int *row_ptr, *col_ind;
+      double *val;
+}
+\end{lstlisting}
+{\tt class Vector} allows us to store an array of doubles. We will see more in the examples.
+\end{frame}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+\frametitle{Multiply sparse matrix with vector}
+
+\[
+y = A x
+\]
+
+\begin{lstlisting}
+void SparseMatrix::multiply(const Vector& x,
+                                  Vector& y) const
+{
+   assert (x.size() == nrow);
+   assert (x.size() == y.size());
+   for(int i=0; i<nrow; ++i)
+   {
+      y(i) = 0;
+      int row_beg = row_ptr[i];
+      int row_end = row_ptr[i+1];
+      for(int j=row_beg; j<row_end; ++j)
+         y(i) += val[j] * x(col_ind[j]);
+   }
+}
+\end{lstlisting}
+
+\end{frame}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+\frametitle{Example usage}
+
+\begin{lstlisting}
+int main()
+{
+   SparseMatrix A;
+   Vector x, y;
+   // Fill the matrix A and vector x
+   A.multiply(x, y); // y = A*x
+}
+\end{lstlisting}
+
+\end{frame}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+\frametitle{Access element of SparseMatrix}
+
+\begin{lstlisting}
+double operator()(int i, int j) const
+{
+   int row_beg = row_ptr[i];
+   int row_end = row_ptr[i+1];
+   for(int d=row_beg; d<row_end; ++d)
+      if(col_ind[d] == j)
+         return val[d];
+   return 0.0;
+}
+\end{lstlisting}
+Usage:
+\begin{lstlisting}
+   SparseMatrix A;
+   // Fill the matrix A
+   cout << A(2,3) << endl;
+\end{lstlisting}
+
+\end{frame}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+\frametitle{Destructor}
+
+\begin{lstlisting}
+SparseMatrix::~SparseMatrix()
+{
+   // WARNING: Check that these data have been allocated
+   if(nrow > 0)
+   {
+      delete[] row_ptr;
+      delete[] col_ind;
+      delete[] val;
+   }
+}
+\end{lstlisting}
+
+\end{frame}
+%-----------------------------------------------------------------------------------
+\begin{frame}
+
+\begin{center}
+\Huge Practical example
+\end{center}
+
+\end{frame}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+\frametitle{SparseMatrix Class: {\tt sparse\_matrix.h}}
+Usually, {\em header} files contain function or class {\em declarations}.
+
+\begin{lstlisting}
+template<class T>
+class SparseMatrix
+{
+   public:
+      SparseMatrix (std::vector<unsigned int>& row_ptr,
+                    std::vector<unsigned int>& col_ind,
+                               std::vector<T>& val);
+      ~SparseMatrix() {};
+      void multiply(const Vector<T>& x, Vector<T>& y) const;
+      T operator()(unsigned int i,
+                   unsigned int j) const;
+
+   private:
+      unsigned int nrow;
+      std::vector<unsigned int> row_ptr, col_ind;
+      std::vector<T> val;
+}
+\end{lstlisting}
+{\tt class vector} is part of {\tt standard} {\em namespace} in C++.
+\end{frame}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+\frametitle{Constructor: {\tt sparse\_matrix.cc}}
+
+The actual function or class {\em definition} is usually put in a {\tt *.cc} file.
+
+\begin{lstlisting}
+template<class T>
+SparseMatrix<T>::SparseMatrix
+    (std::vector<unsigned int>& row_ptr,
+     std::vector<unsigned int>& col_ind,
+                std::vector<T>& val)
+   :
+   nrow (row_ptr.size()-1),
+   row_ptr (row_ptr),
+   col_ind (col_ind),
+   val (val)
+{
+   assert (row_ptr.size() >= 2);
+   assert (col_ind.size() > 0);
+   assert (col_ind.size() == val.size());
+}
+\end{lstlisting}
+{\tt row\_ptr (row\_ptr)} calls the {\em copy constructor} of {\tt std::vector}.
+\end{frame}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+\frametitle{Main program}
+
+\begin{lstlisting}
+#include "sparse_matrix.h"
+#include "Vector.h"
+
+using namespace std;
+
+int main ()
+{
+   unsigned int nrow=4, nval=8;
+   vector<unsigned int> row_ptr(nrow+1), col_ind(nval);
+   vector<double> val(nval);
+   row_ptr[0] = 0; row_ptr[1] = 2; etc...
+   SparseMatrix<double> A(row_ptr, col_ind, val);
+   cout << A;
+   cout << A(2,3) << endl;
+
+   Vector<double> x(nrow), y(nrow);
+   x = 1.0;
+   A.multiply(x, y);
+   cout << y;
+   return 0;
+}
+\end{lstlisting}
+
+\end{frame}
+%-------------------------------------------------------------------------------
+\begin{frame}
+\frametitle{Now we program}
+
+\begin{itemize}
+\item {\tt Vector.h, Vector.cc}
+\item {\tt sparse\_matrix.h, sparse\_matrix.cc}
+\item {\tt sparse\_test.cc}
+\item {\tt makefile}
+\end{itemize}
+
+\end{frame}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+\frametitle{Assignment}
+
+\begin{itemize}
+
+\item What happens if a row does not have any non-zero entries ? Try with an example.
+
+\item Create sparse matrix by directly entering values: This should automatically create {\tt row\_ptr}, {\tt col\_ind} and {\tt val} data. Assume the values are entered {\em row-wise only}.
+\begin{lstlisting}
+SparseMatrix<double> A(4); // 4 x 4 sparse matrix
+A.set(0,0,10);
+A.set(0,3,7);
+A.set(1,1,1);
+etc..
+A.set(3,3,1);
+A.close();
+\end{lstlisting}
+After this point, we cannot change the sparsity structure of the matrix.
+\item Read up about conjugate gradient method.
+
+\item Write a function that implements $y = A^\top x$ given $A$ in CSR format.
+\end{itemize}
+
+\end{frame}
+%-------------------------------------------------------------------------------
+\begin{frame}[fragile]
+\frametitle{COO format}
+
+\end{frame}
+%-------------------------------------------------------------------------------
+
+\end{document}

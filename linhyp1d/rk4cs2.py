@@ -1,0 +1,82 @@
+"""
+Solve u_t + u_x = 0 with periodic bc
+Central finite difference in space
+RK4 for time integration for du/dt = r(u)
+"""
+import numpy as np
+import matplotlib.pyplot as plt
+import argparse
+from ic import *
+
+# Returns -a * u_x using central difference
+def rhs(a, h, u):
+    ux = np.empty_like(u)
+    ux[0]    = (0.5/h)*(u[1] - u[-2])    # first point
+    ux[1:-1] = (0.5/h)*(u[2:] - u[0:-2]) # second to last but one
+    ux[-1]   = ux[0]                     # last is same as first
+    return -a * ux
+
+# 2-norm of u using trapezoid rule
+def Energy(h, u):
+    return 0.5*h*u[0]**2 + h*np.sum(u[1:-1]**2) + 0.5*h*u[-1]**2
+
+# Grid has N+1 points with x[0] = x[N]
+def solve(N, cfl, Tf, uinit):
+    xmin, xmax = 0.0, 1.0
+    a          = 1.0
+
+    h = (xmax - xmin)/N
+    dt= cfl * h / np.abs(a)
+
+    x = np.linspace(xmin, xmax, N+1)
+    u = uinit(x)
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    line1, = ax.plot(x, u, 'r')
+    line2, = ax.plot(x, u, 'b')
+    ax.set_xlabel('x'); ax.set_ylabel('u'); plt.grid(True)
+    plt.legend(('Numerical','Exact'))
+    plt.title('N='+str(N)+', CFL='+str(cfl)+', Scheme=RK4+CS')
+    plt.draw(); plt.pause(0.1)
+    wait = input("Press enter to continue ")
+
+    t, it = 0.0, 0
+    energy = [Energy(h,u)]
+    times = [0.0]
+    while t < Tf:
+        # Classical RK4
+        k0 = rhs(a, h, u)
+        k1 = rhs(a, h, u+0.5*dt*k0)
+        k2 = rhs(a, h, u+0.5*dt*k1)
+        k3 = rhs(a, h, u+dt*k2)
+        u += (dt/6)*(k0 + 2*k1 + 2*k2 + k3)
+        t += dt; it += 1
+        line1.set_ydata(u)
+        line2.set_ydata(uinit(x-a*t))
+        plt.draw(); plt.pause(0.1)
+        energy.append(Energy(h,u))
+        times.append(t)
+    plt.figure()
+    plt.plot(times, energy)
+    plt.xlabel('Time'); plt.ylabel('Total energy')
+    plt.show()
+
+# Get arguments
+parser = argparse.ArgumentParser()
+parser.add_argument('-N', type=int, help='Number of cells', default=100)
+parser.add_argument('-cfl', type=float, help='CFL number', default=0.9)
+parser.add_argument('-Tf', type=float, help='Final time', default=1.0)
+parser.add_argument('-ic', choices=('smooth','hat','wpack','noise'), 
+                    help='Init cond', default='smooth')
+args = parser.parse_args()
+
+# Run the solver
+if args.ic == "smooth":
+    solve(args.N, args.cfl, args.Tf, smooth)
+elif args.ic == "hat":
+    solve(args.N, args.cfl, args.Tf, hat)
+elif args.ic == "wpack":
+    solve(args.N, args.cfl, args.Tf, wpack)
+else:
+    solve(args.N, args.cfl, args.Tf, noise)

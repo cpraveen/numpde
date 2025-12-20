@@ -1,0 +1,6 @@
+0.95      ! cfl
+400       ! no of cells
+first     ! recon scheme: first, minmod, wenojs, wenoz
+cons      ! variable to limit: cons, char
+roe       ! flux: lxf, roe, hll, hllc, vl
+.false.   ! efix for Roe flux: .true. or .false.
