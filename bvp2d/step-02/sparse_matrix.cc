@@ -67,8 +67,8 @@ void SparseMatrix<T>::set (const unsigned int i,
    assert (i >= 0 && i < nrow);
    assert (j >= 0 && j < nrow);
 
-   cols[i].push_back(j);
-   vals[i].push_back(value);
+   cols[i].emplace_back(j);
+   vals[i].emplace_back(value);
 }
 
 //------------------------------------------------------------------------------
