@@ -30,13 +30,13 @@ for sigma_x in sigma_x_range:
                 A.append(sigma_x)
 print('Highest sigma for which (sigma,sigma) is stable pair is ', np.max(A))
 plt.scatter(X,Y,c='y',label='Stable Region')
-plt.plot(A,A,label="$\sigma_x = \sigma_y$")
+plt.plot(A,A,label=r"$\sigma_x = \sigma_y$")
 R = 2*0.36
 Z = np.linspace(0.0,R,100) # Trying to fit the best line.
-plt.plot(Z,R-Z,label='$\sigma_x+\sigma_y = 0.72$')
+plt.plot(Z,R-Z,label=r'$\sigma_x+\sigma_y = 0.72$')
 plt.title('Lax-Wendroff: Region of stable CFLs')
-plt.xlabel('$\sigma_x$')
-plt.ylabel('$\sigma_y$')
+plt.xlabel(r'$\sigma_x$')
+plt.ylabel(r'$\sigma_y$')
 plt.axis('equal')
 plt.legend()
 plt.grid(True)
