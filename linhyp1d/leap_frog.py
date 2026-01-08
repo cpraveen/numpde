@@ -5,6 +5,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import argparse
 from ic import *
+from errornorm import *
 
 def solve(N, cfl, Tf, uinit):
     xmin, xmax = 0.0, 1.0
@@ -28,7 +29,7 @@ def solve(N, cfl, Tf, uinit):
     plt.draw(); plt.pause(0.1)
     wait = input("Press enter to continue ")
 
-    t, it = 0.0, 0
+    t, it, times, error, = 0.0, 0, [], []
 
     # First step: FTCS
     u1 = np.empty_like(u)
@@ -37,6 +38,8 @@ def solve(N, cfl, Tf, uinit):
     u1[-1]   = u1[0]
 
     t += dt; it += 1
+    times.append(t)
+    error.append(errornorm(h, u1, uinit(x-a*t)))
 
     # Now use Leap-Frog: u -> u^(n-1), u1 -> u^(n), u2 -> u^(n+1)
     u2 = np.empty_like(u)
@@ -50,6 +53,14 @@ def solve(N, cfl, Tf, uinit):
         plt.draw(); plt.pause(0.1)
         u[:]  = u1
         u1[:] = u2
+        times.append(t)
+        error.append(errornorm(h, u2, uinit(x-a*t)))
+
+    np.savetxt('error_LEAP.txt',np.column_stack([times,error]))
+    plt.figure()
+    plt.plot(times, error)
+    plt.xlabel('t'); plt.ylabel('Error norm')
+    plt.grid(True)
     plt.show()
 
 # Get arguments

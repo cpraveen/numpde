@@ -5,6 +5,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import argparse
 from ic import *
+from errornorm import *
+
+def errornorm(h, u1, u2):
+    return np.sqrt(h * np.sum((u1[0:-1] - u2[0:-1])**2))
 
 # FTBS
 def update_ftbs(nu, u):
@@ -87,7 +91,7 @@ def solve(a, N, cfl, scheme, Tf, uinit):
     plt.draw(); plt.pause(0.1)
     wait = input("Press enter to continue ")
 
-    t, it = 0.0, 0
+    t, it, times, error = 0.0, 0, [], []
     while t < Tf:
         if scheme=='FTBS':
             u = update_ftbs(nu, u)
@@ -109,7 +113,13 @@ def solve(a, N, cfl, scheme, Tf, uinit):
         t += dt; it += 1
         line1.set_ydata(u)
         line2.set_ydata(uinit(x-a*t))
+        times.append(t)
+        error.append(errornorm(h, u, uinit(x-a*t)))
         plt.draw(); plt.pause(0.1)
+
+    np.savetxt('sol_'+scheme+'.txt',np.column_stack([x,u,uinit(x-a*t)]))
+    np.savetxt('error_'+scheme+'.txt',np.column_stack([times,error]))
+
     # Plot final solution with symbols
     plt.figure()
     plt.plot(x,u,'ro',label='Numerical')
@@ -117,7 +127,12 @@ def solve(a, N, cfl, scheme, Tf, uinit):
     plt.title('N='+str(N)+', CFL='+str(cfl)+', Scheme='+scheme)
     plt.xlabel('x'); plt.ylabel('u')
     plt.legend(); plt.grid(True)
-    np.savetxt('sol.txt',np.column_stack([x,u,uinit(x-a*t)]))
+
+    plt.figure()
+    plt.plot(times, error)
+    plt.xlabel('t'); plt.ylabel('Error norm')
+    plt.grid(True)
+
     plt.show()
 
 #------------------------------------------------------------------------------
