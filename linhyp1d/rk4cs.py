@@ -37,9 +37,18 @@ def Q6(h, u):
     e = u - (h**2/6)*b + (h**4/30)*d
     return Q2(h,e)
 
+def wpack(x):
+    y = x - np.pi
+    return np.sin(20 * y) * np.exp(-5.0*y**2)
+
 # ic = sin(10 x)
 def sin10(x):
     return np.sin(10*x)
+
+def periodic(a,b,f,x):
+    y = a + np.mod(x-a, b-a)
+    fv = np.vectorize(f)
+    return fv(y)
 
 # Following convention for periodicity
 # Grid points = N+1
@@ -54,7 +63,7 @@ def solve(N, cfl, Tf, diff, uinit):
     print('dt, h = ',dt,h)
 
     x = np.linspace(xmin, xmax-h, N+1) # Note: last point does not reach xmax
-    u = uinit(x)
+    u = periodic(xmin,xmax,uinit,x)
 
     err = np.array([[0,0]]) # collect (time, max error) in this array
     t = 0.0
@@ -65,13 +74,14 @@ def solve(N, cfl, Tf, diff, uinit):
         k4 = -a * dt * diff(h,u+k3)
         u += (1.0/6.0)*(k1 + 2.0*k2 + 2.0*k3 + k4)
         t = t + dt
-        ue = uinit(x-a*t)
+        ue = periodic(xmin,xmax,uinit,x-a*t)
         err = np.append(err, [[t,np.abs(u-ue).max()]], axis=0)
 
     print('Final error =', err[-1,1])
 
     plt.figure()
-    plt.plot(x,uinit(x-a*t),x,u)
+    ue = periodic(xmin,xmax,uinit,x-a*t)
+    plt.plot(x,ue,x,u)
     plt.xlabel('x')
     plt.ylabel('u')
     plt.legend(('Exact','Numerical'))
@@ -89,6 +99,8 @@ parser.add_argument('-N', type=int, help='Number of points', default=128)
 parser.add_argument('-cfl', type=float, help='CFL number', default=0.5)
 parser.add_argument('-Tf', type=float, help='Final time', default=2*np.pi)
 parser.add_argument('-order', type=int, choices=(2,4,6), help='deriv acc order', default=2)
+parser.add_argument('-ic', choices=('wpack','sin10'), 
+                    help='Init cond', default='sin10')
 args = parser.parse_args()
 
 # select derivative scheme order of accuracy
@@ -102,4 +114,7 @@ else:
     print('Unknown order=',args.order)
 
 # Run the solver
-solve(args.N, args.cfl, args.Tf, diff, sin10)
+if args.ic == "sin10":
+    solve(args.N, args.cfl, args.Tf, diff, sin10)
+else:
+    solve(args.N, args.cfl, args.Tf, diff, wpack)
