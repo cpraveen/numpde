@@ -1,5 +1,5 @@
 """
-Solve u_t + u_x = 0 with periodic bc
+Solve u_t + u_x = 0 with periodic bc and 2,4,6 order central scheme.
 """
 import numpy as np
 import matplotlib.pyplot as plt
