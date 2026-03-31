@@ -26,7 +26,7 @@ def Q4(h,u):
     c = u - (h**2/6)*b
     return Q2(h,c)
 
-def rhs(a,h,eps,u):
+def rhs(a,eps,h,u):
     d = Dm(h,u)
     d = Dp(h,d)
     d = Dm(h,d)
@@ -60,10 +60,10 @@ def solve(N, cfl, eps, Tf, uinit):
     it,t = 0, 0.0
     while t < Tf:
         # RK4
-        k0 = rhs(a, h, eps, u)
-        k1 = rhs(a, h, eps, u+0.5*dt*k0)
-        k2 = rhs(a, h, eps, u+0.5*dt*k1)
-        k3 = rhs(a, h, eps, u+dt*k2)
+        k0 = rhs(a, eps, h, u)
+        k1 = rhs(a, eps, h, u+0.5*dt*k0)
+        k2 = rhs(a, eps, h, u+0.5*dt*k1)
+        k3 = rhs(a, eps, h, u+dt*k2)
         u += (dt/6)*(k0 + 2*k1 + 2*k2 + k3)
         t = t + dt
         it = it + 1
